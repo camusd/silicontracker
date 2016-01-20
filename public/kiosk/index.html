@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Silicon Tracker Project</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="Description" lang="en" content="ADD SITE DESCRIPTION">
+		<meta name="author" content="ADD AUTHOR INFORMATION">
+		<meta name="robots" content="index, follow">
+
+		<!-- icons -->
+
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+
+		<script src="iframe1.js" type="text/javascript"></script>
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+
+	</head>
+	<body>
+		<div class="header">
+			<div class="container">
+				<h1 class="header-heading">Silicon Tracker</h1>
+			</div>
+		</div>
+		<div class="nav-bar">
+			<div class="container">
+				
+				<div data-role="navbar">
+					<ul>
+					<li><a href="#scan" data-rel="popup" data-position-to="window">Item Information</a></li>
+					<li><a href="#camera" data-rel="popup" data-position-to="window">Camera</a></li>
+					</ul>
+				</div>
+				
+			</div>
+		</div>
+		
+		
+		<div class="content">
+			<div class="container">
+				<div class="main">
+					<h1>Kiosk Login</h1>
+					<hr>
+		
+					<section class="login">
+						<div class="title">Staff Login</div>
+							<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+							<input type="text" required title="Username required" placeholder="Username" data-icon="U">
+							<input type="password" required title="Password required" placeholder="Password" data-icon="x">
+							<a href="cart.html" class="send">Submit</a>
+							</form>
+					</section>
+	
+		
+				<div data-role="popup" id="camera" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
+					<iframe src="http://people.oregonstate.edu/~cronisej/SolarThermal" seamless="" height="298" width="497"></iframe>
+				</div>
+				
+				<div data-role="popup" id="scan" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
+					<iframe src="http://people.oregonstate.edu/~cronisej/SolarThermal" seamless="" height="298" width="497"></iframe>
+				</div>
+
+				</div>
+
+				<div class="aside">
+					<h1>RFID Login</h1>
+					<hr>
+					<p>Press button then scan ID badge</p>
+					<p><a href="#" class="btn">Login</a></p>
+				</div>
+			</div>
+		</div>
+		<div class="footer">
+			<div class="container">
+				&copy; Copyright 2016
+			</div>
+		</div>
+	</body>
+</html>

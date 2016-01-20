@@ -13,5 +13,13 @@ http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
 });
 
 app.get('/', function(req, res) {
-		res.sendFile('index.html');
+	res.sendFile('index.html');
+});
+
+app.get('/kiosk', function(req, res) {
+	res.sendFile(__dirname + '/public/kiosk/index.html');
+});
+
+app.get('/kiosk/cart', function(req, res) {
+	res.sendFile(__dirname + '/public/kiosk/cart.html');
 });
