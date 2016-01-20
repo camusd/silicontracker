@@ -164,6 +164,10 @@ Nav
 Single styles
 ------------------------*/
 
+.wrapper {
+    text-align: center;
+}
+
 .img-responsive { max-width: 100%; }
 
 .btn
