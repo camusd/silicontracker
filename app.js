@@ -16,6 +16,14 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/web/index.html');
 });
 
+app.get('/additem', function(req, res) {
+	res.sendFile(__dirname + '/public/web/add.html');
+});
+
+app.get('/admin', function(req, res) {
+	res.sendFile(__dirname + '/public/web/admin.html');
+});
+
 app.get('/kiosk', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/index.html');
 });
