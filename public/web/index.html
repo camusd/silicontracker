@@ -12,8 +12,22 @@
 
 
 		<link rel="stylesheet" href="css/web/style.css">
-		
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
+
+		<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
+		<script>
+		$(document).ready(function() {
+    		$('#example').DataTable( {
+    			"ajax": "/data",
+    			"sScrollY": "400px",
+		        scrollCollapse: true,
+		        paging:         false
+				} );
+			} );
+		</script>		
 	</head>
+
 	<body>
 		<div class="header">
 			<div class="container">
@@ -35,17 +49,20 @@
 			<div class="container">
 				<div class="main">
 					<h1>Database</h1>
-					<hr>
-
-					<!-- database -->
-					<p>Database Table goes here</p>
-					<hr>
-					<p>If logged in as admin, each row will have a button to the right to logically delete/undelete the item</p>
-					
-
-
-
-
+					<table id="example" class="stripe hover row-border" cellspacing="0" width="100%">
+				        <thead>
+				            <tr>
+				                <th>Name</th>
+				                <th>Position</th>
+				                <th>Office</th>
+				                <th>Extn.</th>
+				                <th>Start date</th>
+				                <th>Salary</th>
+				            </tr>
+				        </thead>
+				        <tfoot>
+				        </tfoot>
+				    </table>
 				</div>
 			</div>
 		</div>

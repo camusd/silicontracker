@@ -16,6 +16,10 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/web/index.html');
 });
 
+app.get('/data', function(req, res) {
+	res.sendFile(__dirname + '/public/web/data.txt');
+});
+
 app.get('/additem', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add.html');
 });
