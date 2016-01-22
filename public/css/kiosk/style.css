@@ -169,7 +169,7 @@ Single styles
 .btn
 {
 	color: #fff !important;
-	background-color: #349e92;
+	background-color: royalblue;
 	border-color: #222;
 	display: inline-block;
 	padding: .5em 1em;
@@ -243,15 +243,15 @@ Wide styles
 	.main
 	{
 		float: left;
-		width: 65%;
-		margin-right: 5%;
+		width: 45%;
+		margin-right: 10%;
 		margin-bottom: 1em;
 	}
 
 	.aside
 	{
 		float: left;
-		width: 30%;
+		width: 45%;
 		margin-bottom: 1em;
 	}
 
@@ -320,7 +320,7 @@ iframe {
 
 
 .login form input[type="text"], .login form input[type="password"] {
-	width: 200px;
+	width: 100%;
 	font-size: 12px;
 	padding-top: 14px;
 	padding-bottom: 14px;
@@ -336,7 +336,7 @@ iframe {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
 	border-top: 1px solid #0B0B0B;
-	background: #141414 none repeat scroll 0% 0%;
+	background: #141414 none 10px center no-repeat;
 }
 
 .login form input[type=password] {
@@ -357,7 +357,7 @@ iframe {
     border: none;
     border-top: #4eb2a8 1px solid;
     border-bottom: #161616 1px solid;
-    background: #349e92;
+    background: royalblue;
     text-align: center;
     text-decoration: none;
     font-size: 12px;
@@ -394,4 +394,8 @@ blockquote:before, blockquote:after, q:before, q:after {
 table {
     border-collapse: collapse;
     border-spacing: 0;
+}
+
+.wrapper {
+    text-align: center;
 }
