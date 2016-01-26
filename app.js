@@ -12,11 +12,11 @@ http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-app.get('*', function(req, res) {
-	if (!req.secure) {
-		res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
-	}
-});
+// app.get('*', function(req, res) {
+// 	if (!req.secure) {
+// 		res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
+// 	}
+// });
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/web/index.html');
