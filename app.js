@@ -1,21 +1,19 @@
 var express = require('express');
 var app = express();
 var http = require('http');
-var https = require('https');
 var fs = require('fs');
-
-var options = {
-	key: fs.readFileSync('key.pem'),
-	cert: fs.readFileSync('cert.pem')
-};
 
 app.use(express.static('public'));
 
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
 app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
  
-https.createServer(options, app).listen(app.get('port'), app.get('ip'), function(){
+http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('port'));
+});
+
+app.get('*', function(req, res) {
+	res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
 });
 
 app.get('/', function(req, res) {
