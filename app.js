@@ -13,7 +13,9 @@ http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
 });
 
 app.get('*', function(req, res) {
-	res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
+	if (!req.secure) {
+		res.redirect('http://tracker-hayesbre.rhcloud.com'+req.url);
+	}
 });
 
 app.get('/', function(req, res) {
