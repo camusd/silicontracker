@@ -14,7 +14,7 @@ http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
 
 app.get('*', function(req, res) {
 	if (!req.secure) {
-		res.redirect('http://tracker-hayesbre.rhcloud.com'+req.url);
+		res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
 	}
 });
 
