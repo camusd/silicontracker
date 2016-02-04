@@ -31,10 +31,10 @@ app.use(express.static('public'));
 app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8082);
 app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
 
-var options = {
-	key: fs.readFileSync('server.key'),
-	cert: fs.readFileSync('server.crt')
-};
+// var options = {
+// 	key: fs.readFileSync('server.key'),
+// 	cert: fs.readFileSync('server.crt')
+// };
  
 // https.createServer(options, app).listen(app.get('port'), app.get('ip'), function(){
 //   console.log('Express server listening on port ' + app.get('port'));
