@@ -10,10 +10,10 @@ var models = require('./models')
 
 // Database Connections
 var conn = mysql.createConnection({
-	  host : proccess.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
-	  port : proccess.env.OPENSHIFT_MYSQL_DB_PORT || 3307,
-	  user : proccess.env.OPENSHIFT_MYSQL_DB_USERNAME || 'adminla1Z7lq',
-	  password : proccess.env.OPENSHIFT_MYSQL_DB_PASSWORD || '8hr7dIZ-NPVQ',
+	  host : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
+	  port : process.env.OPENSHIFT_MYSQL_DB_PORT || 3307,
+	  user : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'adminla1Z7lq',
+	  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '8hr7dIZ-NPVQ',
 	  database : 'tracker'
   });
 
