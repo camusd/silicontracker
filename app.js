@@ -1,16 +1,50 @@
 var express = require('express');
 var app = express();
 var http = require('http');
+var https = require('https');
 var fs = require('fs');
+//var nodemailer = require('nodemailer');
+//var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com')
+var mysql = require('mysql');
+var models = require('./models')
+
+// Database Connections
+var conn = mysql.createConnection({
+	  host : '127.0.0.1',
+	  port : 3307,
+	  user     : 'adminla1Z7lq',
+	  password : '8hr7dIZ-NPVQ',
+	  database : 'tracker'
+  });
+
+conn.connect(function(err){
+	if (err) {
+		console.error('mysql: error connecting: ' + err.stack);
+		return;
+	}
+
+	console.log('mysql: connected as id ' + conn.threadId);
+});
 
 app.use(express.static('public'));
 
-app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8080);
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8082);
 app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+
+var options = {
+	key: fs.readFileSync('server.key'),
+	cert: fs.readFileSync('server.crt')
+};
  
+// https.createServer(options, app).listen(app.get('port'), app.get('ip'), function(){
+//   console.log('Express server listening on port ' + app.get('port'));
+// });
+
 http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+
 
 // app.get('*', function(req, res) {
 // 	if (!req.secure) {
@@ -23,7 +57,17 @@ app.get('/', function(req, res) {
 });
 
 app.get('/data', function(req, res) {
-	res.sendFile(__dirname + '/public/web/data.txt');
+	conn.query('SELECT * FROM Items', function(error, results, fields){
+		a = [];
+		for (i = 0; i < results.length; i++) {
+			a.push(new models.Item(results[i].type, 
+								   results[i].serial_num, 
+								   results[i].checked_in, 
+								   results[i].notes, 
+								   results[i].scrapped));
+		}
+		res.send(a);
+	});
 });
 
 app.get('/additem', function(req, res) {

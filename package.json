@@ -5,6 +5,7 @@
 	},
 	"main": "app.js",
 	"dependencies": {
-		"express": "latest"
+		"express": "latest",
+		"mysql" : "latest"
 	}
 }

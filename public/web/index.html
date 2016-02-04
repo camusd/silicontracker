@@ -19,7 +19,17 @@
 		<script>
 		$(document).ready(function() {
     		$('#example').DataTable( {
-    			"ajax": "/data",
+    			"ajax": {
+    				"url" :"/data",
+    				"dataSrc" : "",
+    			},
+    			"columns" : [
+    				{"data" : "type"},
+    				{"data" : "serial_num"},
+    				{"data" : "checked_in"},
+    				{"data" : "notes"},
+    				{"data" : "scrapped"}
+    			],
     			"sScrollY": "400px",
 		        scrollCollapse: true,
 		        paging:         false
@@ -52,12 +62,11 @@
 					<table id="example" class="stripe hover row-border" cellspacing="0" width="100%">
 				        <thead>
 				            <tr>
-				                <th>Name</th>
-				                <th>Position</th>
-				                <th>Office</th>
-				                <th>Extn.</th>
-				                <th>Start date</th>
-				                <th>Salary</th>
+				                <th>Type</th>
+				                <th>Serial Number</th>
+				                <th>Checked In</th>
+				                <th>Notes</th>
+				                <th>Scrapped</th>
 				            </tr>
 				        </thead>
 				        <tfoot>
