@@ -3,10 +3,8 @@ var app = express();
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
-//var nodemailer = require('nodemailer');
-//var transporter = nodemailer.createTransport('smtps://user%40gmail.com:pass@smtp.gmail.com')
 var mysql = require('mysql');
-var models = require('./models')
+var models = require('./app/models')
 
 // Database Connections
 var conn = mysql.createConnection({
@@ -45,29 +43,36 @@ http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
 });
 
 
-
-// app.get('*', function(req, res) {
-// 	if (!req.secure) {
-// 		res.redirect('https://tracker-hayesbre.rhcloud.com'+req.url);
-// 	}
-// });
+/**************************************
+ *
+ *	Server Routes
+ *
+ **************************************/
 
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/web/index.html');
 });
 
 app.get('/data', function(req, res) {
-	conn.query('SELECT * FROM Items', function(error, results, fields){
-		a = [];
+	// TODO: Turn SQL string into a stored proc.
+	var options = {sql: 'SELECT * FROM Items item JOIN CPU cpu ON item.id = cpu.product_id',
+				   nestTables: '_'};
+	conn.query(options, function(error, results, fields){
+		var a = [];
 		for (i = 0; i < results.length; i++) {
-			a.push(new models.Item(results[i].type, 
-								   results[i].serial_num, 
-								   results[i].checked_in, 
-								   results[i].notes, 
-								   results[i].scrapped));
+			a.push(new models.CPUVM(results[i].item_id, results[i].cpu_spec, results[i].cpu_mm, 
+									results[i].cpu_frequency, results[i].cpu_stepping, results[i].cpu_llc, 
+									results[i].cpu_cores, results[i].cpu_codename, results[i].cpu_cpu_class, 
+									results[i].cpu_external_name, results[i].cpu_architecture));
 		}
 		res.send(a);
 	});
+});
+
+
+// For testing purposes. Will need to be deleted.
+app.get('/table', function(req, res) {
+	res.sendFile(__dirname + '/public/web/table.html');
 });
 
 app.get('/additem', function(req, res) {

@@ -24,14 +24,19 @@
     				"dataSrc" : "",
     			},
     			"columns" : [
-    				{"data" : "type"},
-    				{"data" : "serial_num"},
-    				{"data" : "checked_in"},
-    				{"data" : "notes"},
-    				{"data" : "scrapped"}
+    				{"data" : "spec"},
+    				{"data" : "mm"},
+    				{"data" : "frequency"},
+    				{"data" : "stepping"},
+    				{"data" : "llc"},
+    				{"data" : "cores"},
+    				{"data" : "codename"},
+    				{"data" : "cpu_class"},
+    				{"data" : "external_name"},
+    				{"data" : "architecture"}
     			],
     			"sScrollY": "400px",
-		        scrollCollapse: true,
+    			"scrollX" : true,
 		        paging:         false
 				} );
 			} );
@@ -62,11 +67,16 @@
 					<table id="example" class="stripe hover row-border" cellspacing="0" width="100%">
 				        <thead>
 				            <tr>
-				                <th>Type</th>
-				                <th>Serial Number</th>
-				                <th>Checked In</th>
-				                <th>Notes</th>
-				                <th>Scrapped</th>
+				                <th>Spec</th>
+				                <th>MM</th>
+				                <th>Frequency</th>
+				                <th>Stepping</th>
+				                <th>LLC</th>
+				                <th>Cores</th>
+				                <th>Codename</th>
+				                <th>CPU Class</th>
+				                <th>External Name</th>
+				                <th>Architecture</th>
 				            </tr>
 				        </thead>
 				        <tfoot>
