@@ -11,83 +11,14 @@
 
 		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-		<style>
-		.dataTables_filter {
-			display: none;
-		}
-		.text_filter {
-			/* This is to kill the text bootstrap */
-			outline: none;
-			border: none !important;
-			-webkit-box-shadow: none !important;
-			-moz-box-shadow: none !important;
-  			box-shadow: none !important;
-
-  			min-width: 50px;
-  			height: 30px;
-  			padding: 5px 10px;
-  			font-size: 12px;
-  			line-height: 1.5;
-			border: solid 1px #c9c9c9 !important;
-			transition: border 0.3s;
-		}
-		</style>
+		<link rel="stylesheet" href="../css/web/table.css">
 
 		<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-		<script src="http://jquery-datatables-column-filter.googlecode.com/svn/trunk/media/js/jquery.dataTables.columnFilter.js">
-		</script>
-
-		<script>
-		$(document).ready(function() {
-			// // Setup - add a text input to each footer cell
-		 //    $('#cpu_table thead tr#filterrow th').each( function () {
-		 //        var title = $('#cpu_table thead th').eq( $(this).index() ).text();
-   //      		$(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-		 //    });
-
-		    // Datatable
-    		var table = $('#cpu_table').DataTable({
-			    			"ajax": {
-			    				"url" :"/data",
-			    				"dataSrc" : "",
-			    			},
-			    			"columns" : [
-			    				{"data" : "spec"},
-			    				{"data" : "mm"},
-			    				{"data" : "frequency"},
-			    				{"data" : "stepping"},
-			    				{"data" : "llc"},
-			    				{"data" : "cores"},
-			    				{"data" : "codename"},
-			    				{"data" : "cpu_class"},
-			    				{"data" : "external_name"},
-			    				{"data" : "architecture"}
-			    			],
-			    			"sScrollY": "400px",
-			    			"scrollX" : true,
-					        paging: false,
-					        orderCellsTop: true
-							});
-    		$('#cpu_table').dataTable().columnFilter({
-    			sPlaceHolder : 'head:after',
-    			aoColumns: [ 
-    				{ type: "text"},
-                 	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"},
-                	{ type: "text"}
-               	] 
-    		});
-		});
-		</script>		
+		<script src="../../js/web/columnFilter.js"></script>
+		<script src="../../js/web/table.js"></script>
+		
 	</head>
 
 	<body>

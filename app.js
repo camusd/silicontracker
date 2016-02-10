@@ -75,13 +75,45 @@ app.get('/table', function(req, res) {
 	res.sendFile(__dirname + '/public/web/table.html');
 });
 
-app.get('/additem', function(req, res) {
+// For testing purposes. Will need to be deleted.
+app.get('/arrays', function(req, res) {
+	res.sendFile(__dirname + '/public/web/arrays.txt');
+});
+
+
+
+app.get('/add', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add.html');
 });
+
+app.get('/add/cpu', function(req, res) {
+	res.sendFile(__dirname + '/public/web/add_cpu.html');
+});
+
+app.get('/add/ssd', function(req, res) {
+	res.sendFile(__dirname + '/public/web/add_ssd.html');
+});
+
+app.get('/add/memory', function(req, res) {
+	res.sendFile(__dirname + '/public/web/add_memory.html');
+});
+
+app.get('/add/flash', function(req, res) {
+	res.sendFile(__dirname + '/public/web/add_flash_drive.html');
+});
+
+
 
 app.get('/admin', function(req, res) {
 	res.sendFile(__dirname + '/public/web/admin.html');
 });
+
+app.get('/login', function(req, res) {
+	res.sendFile(__dirname + '/public/web/login.html');
+});
+
+
+
 
 app.get('/kiosk', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/index.html');

@@ -1,94 +1,264 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>Silicon Tracker</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="Description" lang="en" content="ADD SITE DESCRIPTION">
-		<meta name="author" content="ADD AUTHOR INFORMATION">
-		<meta name="robots" content="index, follow">
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Silicon Tracker</title>
+<meta charset="utf-8">
+<noscript>
 
 
+    
+<link rel="stylesheet" href="../css/5grid/core.css">
+<link rel="stylesheet" href="../css/5grid/core-desktop.css">
+<link rel="stylesheet" href="../css/5grid/core-1200px.css">
+<link rel="stylesheet" href="../css/5grid/core-noscript.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style-desktop.css">
+ 
+</noscript>
+<script src="../css/5grid/jquery.js"></script>
+<script src="../css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=60&amp;mobileUI.openerWidth=52"></script>
+<!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css"><![endif]-->
 
-		<link rel="stylesheet" href="css/web/style.css">
-		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.min.css">
 
-		<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-		<script>
-		$(document).ready(function() {
-    		$('#example').DataTable( {
-    			"ajax": {
-    				"url" :"/data",
-    				"dataSrc" : "",
-    			},
-    			"columns" : [
-    				{"data" : "spec"},
-    				{"data" : "mm"},
-    				{"data" : "frequency"},
-    				{"data" : "stepping"},
-    				{"data" : "llc"},
-    				{"data" : "cores"},
-    				{"data" : "codename"},
-    				{"data" : "cpu_class"},
-    				{"data" : "external_name"},
-    				{"data" : "architecture"}
-    			],
-    			"sScrollY": "400px",
-    			"scrollX" : true,
-		        paging:         false
-				} );
-			} );
-		</script>		
-	</head>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script> 
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> 
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
+<script src="../js/web/script1.js" type="text/javascript"></script>
+<script src="../../js/web/columnFilter.js"></script>
+<script src="../../js/web/table.js"></script>    
+<script type="text/javascript" class="init">
 
-	<body>
-		<div class="header">
-			<div class="container">
-				<h1 class="header-heading">Silicon Tracker Web Interface</h1>
-			</div>
-		</div>
-		<div class="nav-bar">
-			<div class="container">
-				<ul class="nav">
-					<li><a href="/">Database</a></li>
-					<li><a href="additem">Add Item</a></li>
-					<li><a href="admin">Admin Page</a></li>
-					
-					
-				</ul>
-			</div>
-		</div>
-		<div class="content">
-			<div class="container">
-				<div class="main">
-					<h1>Database</h1>
-					<table id="example" class="stripe hover row-border" cellspacing="0" width="100%">
-				        <thead>
-				            <tr>
-				                <th>Spec</th>
-				                <th>MM</th>
-				                <th>Frequency</th>
-				                <th>Stepping</th>
-				                <th>LLC</th>
-				                <th>Cores</th>
-				                <th>Codename</th>
-				                <th>CPU Class</th>
-				                <th>External Name</th>
-				                <th>Architecture</th>
-				            </tr>
-				        </thead>
-				        <tfoot>
-				        </tfoot>
-				    </table>
-				</div>
-			</div>
-		</div>
-		<div class="footer">
-			<div class="container">
-				&copy; Copyright 2015
-			</div>
-		</div>
-	</body>
+	
+
+// $(document).ready(function() {
+//     $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
+//         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
+//     } );
+     
+//     $('table.table').DataTable( {
+//         ajax:           '/arrays',
+//         paging:         true,
+//         "pagingType": "full_numbers",
+//         "pageLength": 10
+//     } );
+    
+
+
+// } );
+    
+    
+    
+</script>    
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="../css/web/table.css">
+   
+</head>
+    
+    
+<body>
+<!-- Header -->
+    
+    
+<div id="header-wrapper">
+  <header class="5grid-layout" id="site-header">
+    <div class="row">
+      <div class="12u">
+        <div class="mobileUI-site-name" id="logo">
+           <a href="index.html">
+               <img src="../images/intel-logo.png" alt="Home" style="width:128px;height:84px;border:0;">
+            </a> 
+        </div>
+        <nav class="mobileUI-site-nav" id="site-nav">
+          <ul>
+            <li class="current_page_item"><a href="/">Database</a></li>
+            <li><a href="/add">Add Item</a></li>
+            <li><a href="/login">Login</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+</div>
+<!-- Main -->
+<div id="main-wrapper">
+  <div class="5grid-layout">
+    <!-- Banner -->
+    <div class="row">
+      <div class="12u">
+        <div id="banner"> <a href="#"><img src="../images/banner.jpg" alt=""></a>
+          <div class="caption"> <span><strong>Total Items </strong>: 1463 non-scrapped+399 scrapped = 1862</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Features -->
+
+      
+    <!-- Divider -->
+    <div class="row">
+      <div class="12u">
+        <div class="divider divider-top"></div>
+      </div>
+    </div>
+    <!-- Highlight Box -->
+    <div class="row">
+      <div class="12u">
+
+			
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="active">
+							<a href="#tab-table1" data-toggle="tab">CPU</a>
+						</li>
+						<li>
+							<a href="#tab-table2" data-toggle="tab">SSD</a>
+						</li>
+                        <li>
+							<a href="#tab-table3" data-toggle="tab">Memory</a>
+						</li>
+                    	<li>
+							<a href="#tab-table4" data-toggle="tab">Flash Drives</a>
+						</li>
+                        
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane active" id="tab-table1">
+							<table id="cpu_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
+								<thead>
+									<tr>
+										<th>Spec</th>
+                    <th>MM</th>
+                    <th>Frequency</th>
+                    <th>Stepping</th>
+                    <th>LLC</th>
+                    <th>Cores</th>
+                    <th>Codename</th>
+                    <th>CPU Class</th>
+                    <th>External Name</th>
+                    <th>Architecture</th>
+									</tr>
+                  <tr>
+                    <th>Spec</th>
+                    <th>MM</th>
+                    <th>Frequency</th>
+                    <th>Stepping</th>
+                    <th>LLC</th>
+                    <th>Cores</th>
+                    <th>Codename</th>
+                    <th>CPU Class</th>
+                    <th>External Name</th>
+                    <th>Architecture</th>
+                  </tr>
+								</thead>
+                <tfoot>
+			          </tfoot>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab-table2">
+							<table id="myTable2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Position</th>
+										<th>Office</th>
+										<th>Extn.</th>
+										<th>Start date</th>
+										<th>Salary</th>
+									</tr>
+								</thead>
+                                <tfoot>
+						          <tr>
+                                      <th>Name</th>
+                                      <th>Position</th>
+                                      <th>Office</th>
+                                      <th>Age</th>
+                                      <th>Start date</th>
+							          <th>Salary</th>
+						          </tr>
+					           </tfoot>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab-table3">
+							<table id="myTable3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Position</th>
+										<th>Office</th>
+										<th>Extn.</th>
+										<th>Start date</th>
+										<th>Salary</th>
+									</tr>
+								</thead>
+                                <tfoot>
+						          <tr>
+                                      <th>Name</th>
+                                      <th>Position</th>
+                                      <th>Office</th>
+                                      <th>Age</th>
+                                      <th>Start date</th>
+							          <th>Salary</th>
+						          </tr>
+					           </tfoot>
+							</table>
+						</div>
+						<div class="tab-pane" id="tab-table4">
+							<table id="myTable4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Position</th>
+										<th>Office</th>
+										<th>Extn.</th>
+										<th>Start date</th>
+										<th>Salary</th>
+									</tr>
+								</thead>
+                                <tfoot>
+						          <tr>
+                                      <th>Name</th>
+                                      <th>Position</th>
+                                      <th>Office</th>
+                                      <th>Age</th>
+                                      <th>Start date</th>
+							          <th>Salary</th>
+						          </tr>
+					           </tfoot>
+							</table>
+						</div>
+					</div>
+				
+          
+      </div>
+    </div>
+    <!-- Divider -->
+
+    <!-- Divider -->
+    <div class="row">
+      <div class="12u">
+        <div class="divider divider-top"></div>
+      </div>
+    </div>
+    <!-- CTA Box -->
+
+  </div>
+</div>
+<!-- Footer -->
+<div id="footer-wrapper">
+  <footer class="5grid-layout" id="site-footer">
+
+    <div class="row">
+      <div class="12u">
+        <div class="divider"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="12u">
+        <div id="copyright"> &copy; Untitled. All rights reserved. | Design: <a target="_blank" href="http://html5up.net">HTML5 Up!</a> | Images: <a target="_blank" href="http://hdwallpapers.in">hdwallpapers</a> </div>
+      </div>
+    </div>
+  </footer>
+</div>
+</body>
 </html>
