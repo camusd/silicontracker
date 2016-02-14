@@ -71,8 +71,8 @@ app.get('/data', function(req, res) {
 
 
 // For testing purposes. Will need to be deleted.
-app.get('/table', function(req, res) {
-	res.sendFile(__dirname + '/public/web/table.html');
+app.get('/testsite', function(req, res) {
+	res.sendFile(__dirname + '/public/web/testsite.html');
 });
 
 // For testing purposes. Will need to be deleted.

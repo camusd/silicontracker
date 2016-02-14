@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Silicon Tracker</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<!-- Datatables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
+	<style>
+		.dataTables_filter {
+			display: none;
+		}
+	</style>
+
+</head>
+<body>
+	<div class="container">
+		<nav class="navbar navbar-inverse" style="border-radius: 0 !important;">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand">Silicon Tracker</a>
+				</div>
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="/">Home</a></li>
+						<li><a href="/add">Add Item</a></li>
+					</ul>
+					<div class="nav navbar-nav navbar-right">
+						<li><a href="/login">Login</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<img src="../images/banner.jpg" class="img-responsive">
+		<div class="col-sm-12">
+			<h3 class="text-center">Total Items : 1463 non-scrapped+399 scrapped = 1862</h3>
+		</div>
+
+		<!-- Tables -->
+		<ul class="nav nav-tabs" role="tablist">
+			<li class="active">
+				<a href="#tab-table1" data-toggle="tab">CPU</a>
+			</li>
+			<li>
+				<a href="#tab-table2" data-toggle="tab">SSD</a>
+			</li>
+			<li>
+				<a href="#tab-table3" data-toggle="tab">Memory</a>
+			</li>
+			<li>
+				<a href="#tab-table4" data-toggle="tab">Flash Drives</a>
+			</li>
+
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="tab-table1">
+				<table id="cpu_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
+					<thead>
+						<tr id="filterCols">
+							<th>Spec</th>
+							<th>MM</th>
+							<th>Freq</th>
+							<th>Stepping</th>
+							<th>LLC</th>
+							<th>Cores</th>
+							<th>Codename</th>
+							<th>CPU Class</th>
+							<th>External Name</th>
+							<th>Architecture</th>
+						</tr>
+						<tr>
+							<th>Spec</th>
+							<th>MM</th>
+							<th>Freq</th>
+							<th>Stepping</th>
+							<th>LLC</th>
+							<th>Cores</th>
+							<th>Codename</th>
+							<th>CPU Class</th>
+							<th>External Name</th>
+							<th>Architecture</th>
+						</tr>
+					</thead>
+					<tfoot>
+					</tfoot>
+				</table>
+			</div>
+			<div class="tab-pane" id="tab-table2">
+				<table id="myTable2" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Extn.</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Age</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<div class="tab-pane" id="tab-table3">
+				<table id="myTable3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Extn.</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Age</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<div class="tab-pane" id="tab-table4">
+				<table id="myTable4" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Extn.</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th>Name</th>
+							<th>Position</th>
+							<th>Office</th>
+							<th>Age</th>
+							<th>Start date</th>
+							<th>Salary</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+
+
+
+
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<!-- Datatables -->
+		<script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
+		<script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
+		<script src="../../js/web/columnFilter.js"></script>
+		<script src="../../js/web/table.js"></script>    
+	</body>
+	</html>
