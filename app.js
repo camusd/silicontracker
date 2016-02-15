@@ -1,7 +1,7 @@
 var express = require('express');
 var app = express();
-var http = require('http');
-var https = require('https');
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 var fs = require('fs');
 var mysql = require('mysql');
 var models = require('./app/models')
@@ -38,10 +38,17 @@ app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
 //   console.log('Express server listening on port ' + app.get('port'));
 // });
 
-http.createServer(app).listen(app.get('port'), app.get('ip'), function(){
+server.listen(app.get('port'), app.get('ip'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+io.on('connection', function(kiosk) {
+	console.log('client connected.');
+	kiosk.on('serial', function(data) {
+		console.log(data);
+		io.emit('fromServer', 'The server says:\n' + data);
+	});
+});
 
 /**************************************
  *
@@ -74,7 +81,10 @@ app.get('/data', function(req, res) {
 app.get('/testsite', function(req, res) {
 	res.sendFile(__dirname + '/public/web/testsite.html');
 });
-
+// For testing purposes. Will need to be deleted.
+app.get('/barcode', function(req, res) {
+	res.sendFile(__dirname + '/public/kiosk/socket.html');
+});
 // For testing purposes. Will need to be deleted.
 app.get('/arrays', function(req, res) {
 	res.sendFile(__dirname + '/public/web/arrays.txt');
