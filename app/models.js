@@ -1,35 +1,9 @@
 module.exports = {
-	Item: function(id, type, serial_num, checked_in, notes, scrapped) {
-		var self = this;
 
-		self.id = id || 0;
-		self.type = type;
-		self.serial_num = serial_num;
-		self.checked_in = checked_in;
-		self.notes = notes;
-		self.scrapped = scrapped;
-	},
-
-	CPU: function(spec, mm, frequency, stepping, llc, cores, codename, cpu_class, external_name, architecture, product_id) {
-		var self = this;
-
-		self.spec = spec;
-		self.mm = mm;
-		self.frequency = frequency;
-		self.stepping = stepping;
-		self.llc = llc;
-		self.cores = cores;
-		self.codename = codename;
-		self.cpu_class = cpu_class;
-		self.external_name = external_name;
-		self.architecture = architecture;
-		self.product_id = product_id;
-	},
-
-	CPUVM: function(id, spec, mm, frequency, stepping, llc, cores, codename, cpu_class, external_name, architecture) {
+	CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores, codename, cpu_class, external_name, architecture, user, checked_in, notes) {
 		var self = this;
 		
-		self.id = id || 0;
+		self.serial_num = serial_num;
 		self.spec = spec;
 		self.mm = mm;
 		self.frequency = frequency;
@@ -40,5 +14,47 @@ module.exports = {
 		self.cpu_class = cpu_class;
 		self.external_name = external_name;
 		self.architecture = architecture;
+		self.user = user;
+		self.checked_in = checked_in;
+		self.notes = notes;
+	}
+
+	SSD: function(serial_num, manufacturer, model, capacity, user, checked_in, notes) {
+		var self = this;
+		
+		self.serial_num = serial_num;
+		self.manufacturer = manufacturer;
+		self.model = model;
+		self.capacity = capacity;
+		self.user = user;
+		self.checked_in = checked_in;
+		self.notes = notes;
+	}
+
+	Memory: function(serial_num, manufacturer, physical_size, memory_type, capacity, speed, ecc, rank, user, checked_in, notes) {
+		var self = this;
+		
+		self.serial_num = serial_num;
+		self.manufacturer = manufacturer;
+		self.physical_size = physical_size;
+		self.memory_type = memory_type;
+		self.capacity = capacity;
+		self.speed = speed;
+		self.ecc = ecc;
+		self.rank = rank;
+		self.user = user;
+		self.checked_in = checked_in;
+		self.notes = notes;
+	}
+
+		Flash_Drive: function(serial_num, manufacturer, capacity, user, checked_in, notes) {
+		var self = this;
+		
+		self.serial_num = serial_num;
+		self.manufacturer = manufacturer;
+		self.capacity = capacity;
+		self.user = user;
+		self.checked_in = checked_in;
+		self.notes = notes;
 	}
 }
