@@ -276,7 +276,7 @@ app.get('/kiosk/:serial', function(req, res) {
 		});
 });
 
-app.get('/kiosk/cart', function(req, res) {
+app.get('/cart', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/cart.html');
 });
 
