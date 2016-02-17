@@ -43,6 +43,7 @@ $(document).ready(function() {
         val_array.push(theInput);
        // alert(val_array);
         t.row.add([theInput]).draw();
+        $('#Barcode_id').val('');
             
      // document.getElementById("Barcode_id").reset();
         }
@@ -50,10 +51,10 @@ $(document).ready(function() {
  </script>
     
 <script>
-  function submitData() {
-    $.post("/index", {
-      serial_nums: val_array
-    });
+  function submitData(val_array) {
+    var user = 1;
+    $.post("/kiosk", {val_array, user});
+    window.location="/kiosk";
   };
 </script>
     
@@ -171,9 +172,7 @@ $(document).ready(function() {
           </div> 
         </div>  
         <div class="col-md-4-c" style=" text-align: center">
-    <form action="/kiosk" method="post" id="submit_data" onsubmit="submitData()">
-      <button id="submit" name="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <button id="submit" name="submit" type="button" class="btn btn-primary" onclick="submitData(val_array)">Submit</button>
   </div>
       
       </div>

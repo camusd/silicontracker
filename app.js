@@ -260,5 +260,8 @@ app.get('/kiosk/cart', function(req, res) {
 });
 
 app.post('/kiosk', function(req, res) {
+	// for(var i in body.json.json_val_array) {
+	// 	conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
+	// }
 	res.sendFile(__dirname + '/public/kiosk/index.html');
 });
