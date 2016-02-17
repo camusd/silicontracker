@@ -3,20 +3,12 @@
 <head>
 <title>Silicon Tracker</title>
 <meta charset="utf-8">
-<noscript>
-<link rel="stylesheet" href="../css/5grid/core.css">
-<link rel="stylesheet" href="../css/5grid/core-desktop.css">
-<link rel="stylesheet" href="../css/5grid/core-1200px.css">
-<link rel="stylesheet" href="../css/5grid/core-noscript.css">
-<link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="../css/style-desktop.css">
-    
 
-</noscript>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script src="../css/5grid/jquery.js"></script>
 <script src="../css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=60&amp;mobileUI.openerWidth=52"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
         <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -63,12 +55,12 @@
           </ul>
         </section>
       </div>
-      <div class="4u mobileUI-main-content">
+      
          
         <!-- Content -->
-          <form action="#" method="post" id="Flash">
-<form class="form-horizontal" action="#" method="post" id="Flash">
-<fieldset>
+          <form action="/add/flash" method="post" id="Flash">
+    <div class="4u">
+
 
 <!-- Form Name -->
 
@@ -76,7 +68,7 @@
 <div class="form-group">
   <label class="col-md-4-c control-label" for="serial_input">Serial Number</label>  
   <div class="col-md-4-c">
-  <input id="serial_input" name="serial_input" placeholder="" class="form-control input-md" required="" type="text">
+  <textarea class="form-control" id="serial_input" name="serial_input" placeholder="" class="form-control input-md" required="" type="text"></textarea>
     
   </div>
 </div>
@@ -99,11 +91,12 @@
   </div>
 </div>
 
+</div>
 
-      </div>
     <div class="4u">
+
         <!-- Sidebar -->
-        <section>
+  
 
 <!-- Text input-->
 <div class="form-group">
@@ -130,10 +123,11 @@
   </div>
 </div>
 
-</fieldset>
-</form>
-        </section>
+
       </div>
+</form>
+
+
     </div>
   </div>
 </div>
