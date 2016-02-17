@@ -121,7 +121,6 @@ app.post('/add/cpu', function(req, res) {
 			if(error) {
 				throw error;
 			}
-			console.log(results[0].length);
 			if(results[0].length == 0) {
 				conn.query("CALL put_cpu('"+req.body.serial_input+"','"
 					+req.body.spec_input+"','"+req.body.mm_input+"','"
