@@ -103,7 +103,7 @@ app.get('/data/memory', function(req, res) {
 	});
 });
 
-app.get('/data/flash_drive', function(req, res) {
+app.get('/data/flash', function(req, res) {
 	var options = "CALL get_flash_drive();";
 	conn.query(options, function(error, results, fields){
 		var a = [];
@@ -185,7 +185,7 @@ app.post('/add/memory', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add_memory.html');
 });
 
-app.post('/add/flash_drive', function(req, res) {
+app.post('/add/flash', function(req, res) {
 	conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
 		function(error, results, fields){
 			if(error) {
