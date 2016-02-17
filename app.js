@@ -103,7 +103,7 @@ app.get('/data/memory', function(req, res) {
 	});
 });
 
-app.get('/data/flash_drive', function(req, res) {
+app.get('/data/flash', function(req, res) {
 	var options = "CALL get_flash_drive();";
 	conn.query(options, function(error, results, fields){
 		var a = [];
@@ -146,7 +146,6 @@ app.post('/add/ssd', function(req, res) {
 			if(error) {
 				throw error;
 			}
-			console.log(results[0].length);
 			if(results[0].length == 0) {
 				conn.query("CALL put_ssd('"+req.body.serial_input+"','"
 					+req.body.manufacturer_input+"','"+req.body.model_input+"','"
@@ -168,7 +167,6 @@ app.post('/add/memory', function(req, res) {
 			if(error) {
 				throw error;
 			}
-			console.log(results[0].length);
 			if(results[0].length == 0) {
 				conn.query("CALL put_memory('"+req.body.serial_input+"','"
 					+req.body.manufacturer_input+"','"+req.body.physical_size_input+"','"
@@ -185,13 +183,12 @@ app.post('/add/memory', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add_memory.html');
 });
 
-app.post('/add/flash_drive', function(req, res) {
+app.post('/add/flash', function(req, res) {
 	conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
 		function(error, results, fields){
 			if(error) {
 				throw error;
 			}
-			console.log(results[0].length);
 			if(results[0].length == 0) {
 				conn.query("CALL put_flash_drive('"+req.body.serial_input+"','"
 									  	   +req.body.manufacturer_input+"','"+req.body.capacity_input+"','"
