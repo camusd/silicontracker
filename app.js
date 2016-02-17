@@ -4,7 +4,9 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var fs = require('fs');
 var mysql = require('mysql');
-var models = require('./app/models')
+var models = require('./app/models');
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true}));
 
 // Database Connections
 var conn = mysql.createConnection({
@@ -12,7 +14,7 @@ var conn = mysql.createConnection({
 	  port : process.env.OPENSHIFT_MYSQL_DB_PORT || 3307,
 	  user : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'adminla1Z7lq',
 	  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '8hr7dIZ-NPVQ',
-	  database : 'tracker'
+	  database : 'tracker'	
   });
 
 conn.connect(function(err){
@@ -67,7 +69,7 @@ app.get('/data/cpu', function(req, res) {
 		for (var i in results[0]) {
 			a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
 				results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
-				results[0][i].codename, results[0][i].class, results[0][i].external_name, results[0][i].architecture,
+				results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
 				results[0][i].user, results[0][i].checked_in, results[0][i].notes));
 		}
 		res.send(a);

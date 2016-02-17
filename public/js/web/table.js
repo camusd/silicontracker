@@ -7,9 +7,9 @@ $(document).ready(function() {
         // The 14 represents the additional amount of space for the column sorting
     } );
 
-	var table = $('#cpu_table').DataTable({
+	var cpu_table = $('#cpu_table').DataTable({
 		"ajax": {
-			"url" :"/data",
+			"url" :"/data/cpu",
 			"dataSrc" : "",
 		},
 		"columns" : [
@@ -36,7 +36,7 @@ $(document).ready(function() {
 
 	// Apply the search
 	$('#filterCols th').each(function (idx){
-		var col = table.column(idx);
+		var col = cpu_table.column(idx);
 		$('input', this).on( 'keyup change', function () {
 			col.search( this.value )
 			   .draw();

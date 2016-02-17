@@ -17,7 +17,7 @@ module.exports = {
 		self.user = user;
 		self.checked_in = checked_in;
 		self.notes = notes;
-	}
+	},
 
 	SSD: function(serial_num, manufacturer, model, capacity, user, checked_in, notes) {
 		var self = this;
@@ -29,7 +29,7 @@ module.exports = {
 		self.user = user;
 		self.checked_in = checked_in;
 		self.notes = notes;
-	}
+	},
 
 	Memory: function(serial_num, manufacturer, physical_size, memory_type, capacity, speed, ecc, rank, user, checked_in, notes) {
 		var self = this;
@@ -45,7 +45,7 @@ module.exports = {
 		self.user = user;
 		self.checked_in = checked_in;
 		self.notes = notes;
-	}
+	},
 
 		Flash_Drive: function(serial_num, manufacturer, capacity, user, checked_in, notes) {
 		var self = this;
