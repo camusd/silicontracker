@@ -20,16 +20,12 @@
 <script type="text/javascript" class="init">
 	   
 $(document).ready(function() {
-    $('#Check_Out').DataTable();
-    $('#Check_In').DataTable();
-    
-} );
-     
-    $('table.table').DataTable( {
-        paging:         false,
-        "bFilter":      false
-    } ); 
- 
+    $('#Check_Out').DataTable( {
+      "bPaginate": false
+    } );
+    $('#Check_In').DataTable( {
+      "bPaginate": false
+    });
 } ); 
     
 </script>   
@@ -53,7 +49,13 @@ $(document).ready(function() {
     
  </script>
     
-
+<script>
+  function submitData() {
+    $.post("/index", {
+      serial_nums: val_array
+    });
+  };
+</script>
     
 
 
@@ -169,8 +171,9 @@ $(document).ready(function() {
           </div> 
         </div>  
         <div class="col-md-4-c" style=" text-align: center">
-    <button id="submit" name="submit" class="btn btn-primary" formaction="/kiosk">Submit</button>
-
+    <form action="/kiosk" method="post" id="submit_data" onsubmit="submitData()">
+      <button id="submit" name="submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
       
       </div>
@@ -185,8 +188,6 @@ $(document).ready(function() {
     </div>
     <!-- CTA Box -->
 
-  </div>
-</div>
 <!-- Footer -->
 <div id="footer-wrapper">
   <footer class="5grid-layout" id="site-footer">
