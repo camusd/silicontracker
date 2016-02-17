@@ -255,6 +255,27 @@ app.get('/kiosk', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/index.html');
 });
 
+app.get('/kiosk/:serial', function(req, res) {
+	var serial = req.params.serial;
+
+	// TODO: Put in Stored Procedure
+	conn.query('SELECT * FROM Processor WHERE Processor.serial_num = \'' + serial + '\'',
+		function(error, results, fields){
+			if(error) {
+				throw error;
+			}
+
+			var a = [];
+			for (var i in results) {
+			a.push(new models.CPU(results[i].serial_num, results[i].spec, results[i].mm, 
+				results[i].frequency, results[i].stepping, results[i].llc, results[i].cores,
+				results[i].codename, results[i].cpu_class, results[i].external_name, results[i].architecture,
+				results[i].user, results[i].checked_in, results[i].notes));
+			};
+			res.send(a);
+		});
+});
+
 app.get('/kiosk/cart', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/cart.html');
 });
