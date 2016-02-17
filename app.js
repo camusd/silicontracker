@@ -279,3 +279,7 @@ app.get('/kiosk/:serial', function(req, res) {
 app.get('/kiosk/cart', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/cart.html');
 });
+
+app.post('/kiosk', function(req, res) {
+	res.sendFile(__dirname + '/public/kiosk/index.html');
+});
