@@ -1,16 +1,36 @@
+/*
+ * app.js
+ *
+ * The main server code. Everything server-side is handled
+ * by this app. This code is broken down into a few components.
+ * There is the setup stage, execute stage, and router handling.
+ */
+
+
+
+/* 
+ * The setup stage
+ */
+
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
-var io = require('socket.io')(server);
 var fs = require('fs');
 var mysql = require('mysql');
-var db_creds = require('../tracker_db_creds.js');
 var models = require('./app/models');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true}));
 
+// Loading environment variables
+require('./env.js');
+
 // Database Connections
-var conn = mysql.createConnection(db_creds);
+var conn = mysql.createConnection({
+	host: process.env.DB_HOST || 'localhost',
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB || 'tracker'
+});
 
 conn.connect(function(err){
 	if (err) {
@@ -21,41 +41,34 @@ conn.connect(function(err){
 	console.log('mysql: connected as id ' + conn.threadId);
 });
 
+// All client-side code will be handled in the public folder.
 app.use(express.static('public'));
 
-app.set('port', 8080);
-app.set('ip', '127.0.0.1');
 
-// var options = {
-// 	key: fs.readFileSync('server.key'),
-// 	cert: fs.readFileSync('server.crt')
-// };
- 
-// https.createServer(options, app).listen(app.get('port'), app.get('ip'), function(){
-//   console.log('Express server listening on port ' + app.get('port'));
-// });
+/* 
+ *The execute stage
+ */
 
-server.listen(app.get('port'), app.get('ip'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+// Activating the server
+var ip = process.env.APP_IP || 'localhost';
+var port = process.env.APP_PORT || 8080;
+server.listen(port, ip, function(){
+  console.log('Express server listening at ' ip + ':' + port);
 });
 
-io.on('connection', function(kiosk) {
-	console.log('client connected.');
-	kiosk.on('serial', function(data) {
-		console.log(data);
-		io.emit('fromServer', 'The server says:\n' + data);
-	});
-});
+/*
+ * Router Handling
+ */
 
-/**************************************
- *
- *	Server Routes
- *
- **************************************/
 
-app.get('/', function(req, res) {
-	res.sendFile(__dirname + '/public/web/index.html');
-});
+/* Getters for the web interface
+ * 
+ * This portion of /data/XXX is returning a json object
+ * with data on the specific item.
+ * ex: /data/cpu will call the stored procedure 'get_cpu()'
+ * and get all the rows from the Processor table.
+ */
+
 
 app.get('/data/cpu', function(req, res) {
 	var options = "CALL get_cpu();";
@@ -109,6 +122,10 @@ app.get('/data/flash', function(req, res) {
 		res.send(a);
 	});
 });
+
+/* Posts for the web interface
+ * These are when someone submits a form and POSTS the data.
+ */
 
 app.post('/add/cpu', function(req, res) {
 	conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
@@ -197,21 +214,11 @@ app.post('/add/flash', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add_flash_drive.html');
 });
 
+/* Routes for loading pages in the web interface */
 
-// For testing purposes. Will need to be deleted.
-app.get('/testsite', function(req, res) {
-	res.sendFile(__dirname + '/public/web/testsite.html');
+app.get('/', function(req, res) {
+	res.sendFile(__dirname + '/public/web/index.html');
 });
-// For testing purposes. Will need to be deleted.
-app.get('/barcode', function(req, res) {
-	res.sendFile(__dirname + '/public/kiosk/socket.html');
-});
-// For testing purposes. Will need to be deleted.
-app.get('/arrays', function(req, res) {
-	res.sendFile(__dirname + '/public/web/arrays.txt');
-});
-
-
 
 app.get('/add', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add.html');
@@ -233,8 +240,6 @@ app.get('/add/flash', function(req, res) {
 	res.sendFile(__dirname + '/public/web/add_flash_drive.html');
 });
 
-
-
 app.get('/admin', function(req, res) {
 	res.sendFile(__dirname + '/public/web/admin.html');
 });
@@ -243,14 +248,24 @@ app.get('/login', function(req, res) {
 	res.sendFile(__dirname + '/public/web/login.html');
 });
 
+// For testing purposes. Will need to be deleted.
+app.get('/testsite', function(req, res) {
+	res.sendFile(__dirname + '/public/web/testsite.html');
+});
 
 
+/* Routes for loading pages in the kiosk interface */
+app.get('/cart', function(req, res) {
+	res.sendFile(__dirname + '/public/kiosk/cart.html');
+});
 
 app.get('/kiosk', function(req, res) {
 	res.sendFile(__dirname + '/public/kiosk/index.html');
 });
 
-app.get('/kiosk/:serial', function(req, res) {
+/* Getters for json data on items in the kiosk */
+
+app.get('/query/:serial', function(req, res) {
 	var serial = req.params.serial;
 
 	// TODO: Put in Stored Procedure
@@ -271,9 +286,7 @@ app.get('/kiosk/:serial', function(req, res) {
 		});
 });
 
-app.get('/cart', function(req, res) {
-	res.sendFile(__dirname + '/public/kiosk/cart.html');
-});
+/* Posts on the kiosk */
 
 app.post('/kiosk', function(req, res) {
 	// for(var i in body.json.json_val_array) {

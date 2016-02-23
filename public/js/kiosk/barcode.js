@@ -15,11 +15,15 @@ $(document).ready(function() {
         chars.push(String.fromCharCode(e.which));
         if (pressed == false) {
             setTimeout(function(){
+                // If there are ten characters inserted before the timeout
                 if (chars.length >= 10) {
                     var barcode = chars.join("");
-                    // Enter response code here.
+                    // There was an item scanned. Enter response code here.
+                    // TODO: instead of alerting after ajax call, make call to either
+                    //       loading a popup or inline on page... basically something
+                    //       prettier than an alert.
                     var itemInfo = "";
-                    $.get('/kiosk/'+barcode, function(data) {
+                    $.get('/query/'+barcode, function(data) {
                         $.each(data, function(idx, elem) {
                             itemInfo += 'Serial number:\t' + elem.serial_num + '\n';
                             itemInfo += 'Checked out by:\tScott' + '\n';
@@ -36,12 +40,10 @@ $(document).ready(function() {
                         });
                         alert(itemInfo);
                     });
-                    // var barcode contains the serial number.
-                    // alert(barcode);
                 }
                 chars = [];
                 pressed = false;
-            },100);
+            },100); // <-- this is the timeout in milliseconds
         }
         pressed = true;
     });
