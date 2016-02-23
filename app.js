@@ -4,18 +4,13 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var fs = require('fs');
 var mysql = require('mysql');
+var db_creds = require('../tracker_db_creds.js');
 var models = require('./app/models');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true}));
 
 // Database Connections
-var conn = mysql.createConnection({
-	  host : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
-	  port : process.env.OPENSHIFT_MYSQL_DB_PORT || 3307,
-	  user : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'adminla1Z7lq',
-	  password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '8hr7dIZ-NPVQ',
-	  database : 'tracker'	
-  });
+var conn = mysql.createConnection(db_creds);
 
 conn.connect(function(err){
 	if (err) {
@@ -28,8 +23,8 @@ conn.connect(function(err){
 
 app.use(express.static('public'));
 
-app.set('port', process.env.OPENSHIFT_NODEJS_PORT || 8082);
-app.set('ip', process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
+app.set('port', 8080);
+app.set('ip', '127.0.0.1');
 
 // var options = {
 // 	key: fs.readFileSync('server.key'),
