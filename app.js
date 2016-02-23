@@ -53,7 +53,7 @@ app.use(express.static('public'));
 var ip = process.env.APP_IP || 'localhost';
 var port = process.env.APP_PORT || 8080;
 server.listen(port, ip, function(){
-  console.log('Express server listening at ' ip + ':' + port);
+  console.log('Express server listening at ' + ip + ':' + port);
 });
 
 /*
