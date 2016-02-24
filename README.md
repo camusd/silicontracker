@@ -66,4 +66,6 @@ It doesn't matter if you get the stable or the bleeding-edge version. Our app sh
 
 Navigate back to the root folder and in the terminal type `npm install`. This will install any dependencies our program depends on. We use npm for all our packages. It comes installed with Node.js. For more information on npm, visit their website: https://www.npmjs.com/
 
+The main server code can be viewed in `app.js`. This is the file that calls environment variables, sets up the database connections, maps the routes, etc.
+
 After setting up the server and downloading the dependencies, you should be able to start it up with `npm start`. You should be greeted with a message: `Silicon Tracker Server listening at <ip address>:<port>` In your broswer, navigate to that ip address. Don't forget the port! At this point you should be greeted with the Silicon Tracker website. Congratulations!
