@@ -17,7 +17,9 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
 <script src="../js/kiosk/barcode.js"></script>
-      
+<script type="text/javascript" src="../js/kiosk/webcam.min.js"></script>
+<script type="text/javascript" src="../js/kiosk/script.js"></script>
+     
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
@@ -53,8 +55,20 @@
       <div class="12u">
           
          <div data-brackets-id="87" class="camera_wrapper" style="text-align: center;">    
-              <img src="../images/facial.png" style="width:192px;height:192px;border:4;">
+             <div id="my_camera" class = "inner_camera" style="text-align: center;"></div>
           </div>
+          
+          	<!-- Configure and attach camera -->
+	           <script language="JavaScript">
+		          Webcam.set({
+			         width: 320,
+			         height: 240,
+			         image_format: 'jpeg',
+			         jpeg_quality: 90
+		          });
+		          Webcam.attach( '#my_camera' );
+	           </script>
+          
           
         <div class="divider divider-top"></div>
       </div>
