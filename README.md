@@ -34,7 +34,7 @@ There are a few things that need to be done in order to get the database up and 
 All of the database scripts we use are in the dbscripts folder. In a terminal window, navigate to that folder and login to your MySql client as root or as someone with sufficient privileges. `mysql -u root -p`
 
 After logging in, the first step is to create the database: `mysql> CREATE DATABASE tracker;`
-We called the database 'tracker' but you can rename it if you like. Just remember what you decided to call it.
+We called the database 'tracker' but you can rename it if you like. Just remember what you decided to call it. After creating, make sure to select the right database: `mysql> USE tracker;`
 
 Once the database is created, we need a user with the right priviliges to be in charge of the database.
 
