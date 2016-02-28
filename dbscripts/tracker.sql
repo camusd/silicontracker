@@ -223,26 +223,33 @@ END$$
 CREATE PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
  IN item VARCHAR(14))
 BEGIN
-	UPDATE
-		Items JOIN Processor
+  SELECT 
+    @id := Processor.product_id
+  FROM
+    Processor
+  WHERE
+    Processor.serial_num = item;
+
+  SELECT
+    @checked_in := IF(Items.checked_in = 1, 0, 1)
+  FROM
+    Items
+  WHERE
+    Items.id = @id;
+
+  UPDATE
+    Items JOIN Processor
         ON Processor.product_id = Items.id
-	SET 
-		Items.user = IF(checked_in = 1, new_user, ''),
-        Items.checked_in = ~Items.checked_in
+  SET 
+    Items.user = IF(Items.checked_in = 1, new_user, ''),
+        Items.checked_in = IF(Items.checked_in = 1, 0, 1)
     WHERE
-		Processor.serial_num = item;
-	INSERT INTO Log
-		(product_id)
-	SELECT
-		Processor.product_id
-	FROM
-		Processor
-	WHERE
-		Processor.serial_num = item;
-	INSERT INTO Log
-		(user, log_date)
-	VALUES
-		(new_user, NOW());
+    Processor.serial_num = item;
+
+  INSERT INTO Log
+    (product_id, user, log_date, checked_in)
+  VALUES
+    (@id, new_user, NOW(), @checked_in);
 
 END$$
 
@@ -421,8 +428,7 @@ INSERT INTO `Items` (`id`, `item_type`, `user`, `notes`, `checked_in`, `scrapped
 (28, 'cpu', '', '', 1, 0),
 (29, 'cpu', '', '', 1, 0),
 (30, 'cpu', '', '', 1, 0),
-(31, 'cpu', '', '', 1, 0),
-(32, 'cpu', '', 'undefined', 1, 0);
+(31, 'cpu', '', '', 1, 0);
 
 -- --------------------------------------------------------
 

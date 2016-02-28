@@ -289,8 +289,8 @@ app.get('/query/:serial', function(req, res) {
 /* Posts on the kiosk */
 
 app.post('/kiosk', function(req, res) {
-	// for(var i in body.json.json_val_array) {
-	// 	conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
-	// }
+	 for(var i in req.body.val_array) {
+	 	conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
+	 }
 	res.sendFile(__dirname + '/public/kiosk/index.html');
 });
