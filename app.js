@@ -14,7 +14,7 @@
 
 var express = require('express');
 var app = express();
-var server = require('http').createServer(app);
+var https = require('https')
 var fs = require('fs');
 var mysql = require('mysql');
 var models = require('./app/models');
@@ -41,6 +41,16 @@ conn.connect(function(err){
 	console.log('mysql: connected as id ' + conn.threadId);
 });
 
+// Secure Socket Layer (SSL) Credentials
+var options = {
+    key:    fs.readFileSync('ssl/server.key'),
+    cert:   fs.readFileSync('ssl/server.crt'),
+    ca:     fs.readFileSync('ssl/ca.crt'),
+    requestCert:        true,
+    rejectUnauthorized: false,
+    passphrase: process.env.SSL_PASSPHRASE
+};
+
 // All client-side code will be handled in the public folder.
 app.use(express.static('public'));
 
@@ -52,6 +62,7 @@ app.use(express.static('public'));
 // Activating the server
 var ip = process.env.APP_IP || 'localhost';
 var port = process.env.APP_PORT || 8080;
+var server = https.createServer(options, app);
 server.listen(port, ip, function(){
   console.log('Silicon Tracker Server listening at ' + ip + ':' + port);
 });
