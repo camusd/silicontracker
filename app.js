@@ -17,6 +17,7 @@ var app = express();
 var https = require('https')
 var fs = require('fs');
 var mysql = require('mysql');
+var request = require('request');
 var models = require('./app/models');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true}));
@@ -304,4 +305,15 @@ app.post('/kiosk', function(req, res) {
 	 	conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
 	 }
 	res.sendFile(__dirname + '/public/kiosk/index.html');
+});
+
+app.post('/query/loginkiosk', function(req, res) {
+	request.post({url: process.env.CRED_ADDR, form: {'username': req.body.username, 'pass': req.body.pass}},
+		function(error, response, body) {
+			if (error) {
+				console.log(error);
+			}
+			console.log(body);
+			res.sendFile(__dirname + '/public/kiosk/cart.html');
+		});
 });
