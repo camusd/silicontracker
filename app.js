@@ -14,7 +14,7 @@
 
 var express = require('express');
 var app = express();
-var https = require('https')
+var http = require('http')
 var fs = require('fs');
 var mysql = require('mysql');
 var request = require('request');
@@ -63,7 +63,7 @@ app.use(express.static('public'));
 // Activating the server
 var ip = process.env.APP_IP || 'localhost';
 var port = process.env.APP_PORT || 8080;
-var server = https.createServer(options, app);
+var server = http.createServer(app);
 server.listen(port, ip, function(){
   console.log('Silicon Tracker Server listening at ' + ip + ':' + port);
 });
