@@ -135,6 +135,21 @@ app.get('/data/flash', function(req, res) {
 	});
 });
 
+/*
+ *	Gets the dropdown menu items when someone needs to add a new item.
+ */
+ app.get('/dd/:attr', function(req, res) {
+ 	var attr = req.params.attr;
+	conn.query('CALL get_dropdown(\''+attr+'\')',
+		function(error, results, fields){
+			if(error) {
+				throw error;
+			}
+			res.send(results[0]);
+		});
+ });
+
+
 /* Posts for the web interface
  * These are when someone submits a form and POSTS the data.
  */
