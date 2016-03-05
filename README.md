@@ -42,6 +42,8 @@ Once the database is created, we need a user with the right priviliges to be in 
 
 You can change the name of the user if you like, but just remember what you named it.
 
+Next, we have to populate our newly-created database. The create scripts for the tables and stored procedures, as well as insert scripts for our sample data are in the script `tracker.sql` located in the `dbscripts` folder. We will be executing this script: `mysql> \. tracker.sql;`
+
 We will need to add a few permissions to our new user. It needs to select, update, and insert into the tables as well as execute stored procedures. This user will never be deleting rows, so it doesn't get that privilege.
 
 ```
@@ -49,13 +51,12 @@ mysql> GRANT SELECT ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT INSERT ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT UPDATE ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT EXECUTE ON tracker.* TO 'tracker_user'@'localhost';
+mysql> GRANT DELETE ON tracker.Checkout TO 'tracker_user'@localhost';
 
 mysql> FLUSH PRIVILEGES;
 ```
 
 We now have a user!
-
-Last but not least, we have to populate our newly-created database. The create scripts for the tables and stored procedures, as well as insert scripts for our sample data are in the script `tracker.sql` located in the `dbscripts` folder. We will be executing this script: `mysql> \. tracker.sql;`
 
 At this point, we should have our database completely set up!
 
