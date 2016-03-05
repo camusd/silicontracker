@@ -21,9 +21,14 @@ var request = require('request');
 var models = require('./app/models');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true}));
+var nodemailer = require('nodemailer');
+var schedule = require('node-schedule');
 
 // Loading environment variables
 require('./env.js');
+
+// Email templates
+require('./app/templates.js')();
 
 // Database Connections
 var conn = mysql.createConnection({
@@ -332,3 +337,22 @@ app.post('/query/loginkiosk', function(req, res) {
 			res.sendFile(__dirname + '/public/kiosk/cart.html');
 		});
 });
+
+/* Testing some email scheduling */
+
+// TODO: create a stored procedure that gets the
+// email address, owner name, serial number, item type,
+// and amount of time since checkout of an item.
+
+// TODO: don't forget to add cronjob to {}
+
+// var j = schedule.scheduleJob({}, function() {
+// 	var addr = 'thewizard247@gmail.com';
+// 	var name = 'Dylan Camus';
+// 	var item_serial = 'FIJ39GLK30SD';
+// 	var item_type = 'cpu';
+// 	var days = '30';
+// 	console.log("Sending reminder email to "+name+"...");
+// 	reminderTemplate(addr, name, item_serial, item_type, days);
+// });
+

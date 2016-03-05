@@ -51,6 +51,35 @@ LOCK TABLES `Board` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `Checkout`
+--
+
+DROP TABLE IF EXISTS `Checkout`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Checkout` (
+  `product_id` int(11) unsigned NOT NULL,
+  `user` varchar(8) NOT NULL,
+  `checkout_date` datetime NOT NULL,
+  PRIMARY KEY (`product_id`),
+  UNIQUE KEY `id_UNIQUE` (`product_id`),
+  KEY `user_INDEX` (`user`),
+  CONSTRAINT `fk_Checkout_Owners1` FOREIGN KEY (`user`) REFERENCES `Owners` (`wwid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Checkout_Items1` FOREIGN KEY (`product_id`) REFERENCES `Items` (`id`) ON DELETE NO ACTION ON UPDATE
+    NO ACTION
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Checkout`
+--
+
+LOCK TABLES `Checkout` WRITE;
+/*!40000 ALTER TABLE `Checkout` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Checkout` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Dropdown_Attributes`
 --
 
@@ -74,38 +103,6 @@ LOCK TABLES `Dropdown_Attributes` WRITE;
 /*!40000 ALTER TABLE `Dropdown_Attributes` DISABLE KEYS */;
 INSERT INTO `Dropdown_Attributes` VALUES (1,'codename','Sandy Bridge'),(2,'codename','Jaketown'),(3,'codename','Haswell'),(4,'codename','Crystal Well'),(5,'codename','Bay Trail'),(6,'codename','Haswell Server'),(7,'codename','Broadwell'),(8,'codename','Skylake');
 /*!40000 ALTER TABLE `Dropdown_Attributes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `Events`
---
-
-DROP TABLE IF EXISTS `Events`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Events` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `cpu_serial_num` varchar(14) NOT NULL,
-  `memory_serial_num` varchar(20) NOT NULL,
-  `ssd_serial_num` varchar(16) NOT NULL,
-  `flash_drive_serial_num` varchar(20) NOT NULL,
-  `modifier_wwid` varchar(8) NOT NULL,
-  `modifier_idsid` varchar(12) NOT NULL,
-  `modifier_ip` varchar(15) NOT NULL,
-  `date` datetime NOT NULL,
-  `action` varchar(50) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `Events`
---
-
-LOCK TABLES `Events` WRITE;
-/*!40000 ALTER TABLE `Events` DISABLE KEYS */;
-/*!40000 ALTER TABLE `Events` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -146,15 +143,12 @@ DROP TABLE IF EXISTS `Items`;
 CREATE TABLE `Items` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `item_type` varchar(30) NOT NULL,
-  `user` varchar(8) NOT NULL DEFAULT '',
   `notes` text NOT NULL,
   `checked_in` tinyint(1) NOT NULL DEFAULT '1',
   `scrapped` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
-  KEY `user_INDEX` (`user`),
-  CONSTRAINT `fk_Items_Owners1` FOREIGN KEY (`user`) REFERENCES `Owners` (`wwid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,7 +157,7 @@ CREATE TABLE `Items` (
 
 LOCK TABLES `Items` WRITE;
 /*!40000 ALTER TABLE `Items` DISABLE KEYS */;
-INSERT INTO `Items` VALUES (17,'cpu','','',1,0),(18,'cpu','','',1,0),(19,'cpu','','',1,0),(20,'cpu','','',1,0),(21,'cpu','','',1,0),(22,'cpu','','',1,0),(23,'cpu','','',1,0),(24,'cpu','','',1,0),(25,'cpu','','',1,0),(26,'cpu','','',1,0),(27,'cpu','','',1,0),(28,'cpu','','',1,0),(29,'cpu','','',1,0),(30,'cpu','','',1,0),(31,'cpu','','',1,0),(32,'cpu','','undefined',1,0),(33,'cpu','','undefined',1,0);
+INSERT INTO `Items` VALUES (1,'cpu','',1,0),(2,'cpu','',1,0),(3,'cpu','',1,0),(4,'cpu','',1,0),(5,'cpu','',1,0),(6,'cpu','',1,0),(7,'cpu','',1,0),(8,'cpu','',1,0),(9,'cpu','',1,0),(10,'cpu','',1,0),(11,'cpu','',1,0),(12,'cpu','',1,0),(13,'cpu','',1,0),(14,'cpu','',1,0),(15,'cpu','',1,0);
 /*!40000 ALTER TABLE `Items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -253,7 +247,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('','','',''),('1','1','test_user','test_user');
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user');
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -291,7 +285,7 @@ CREATE TABLE `Processor` (
 
 LOCK TABLES `Processor` WRITE;
 /*!40000 ALTER TABLE `Processor` DISABLE KEYS */;
-INSERT INTO `Processor` VALUES (17,'2V127163B0897','SR02U','910244','2.5','D2',3,2,'Sandy Bridge','Mobile','Core i5-2510E','Sandy Bridge'),(18,'35127210J0054','SR02T','910243','2.1','D2',6,4,'Sandy Bridge','Mobile','Core i7-2710QE','Sandy Bridge'),(19,'35127210J0084','SR1XV','935852','2.2','M1',30,12,'Haswell Server','EP','Xeon E5-2658 v3','Haswell'),(20,'2V127163B0110','SR195','929620','1.8','C0',6,4,'Crystal Well','Mobile','Core i7-4860EQ','Haswell'),(21,'35127210J0092','SR0KQ','919841','2','C2',20,8,'Jaketown','EP','Xeon E5-2650','Sandy Bridge'),(22,'2V127163B0675','SR2F1','944341','2.6','D1',4,2,'Skylake','ULT','Core i7-6600U','Skylake'),(23,'35125272R0021','SR2E8','944076','2.7','G1',6,4,'Broadwell','Mobile','Core i7-5850EQ','Broadwell'),(24,'2V127163B0804','SR1W5','934898','1.58','C0',1,2,'Bay Trail','Atom','Celeron N2807','Silvermont'),(25,'35127210J0029','SR2E9','944077','1.8','G1',6,4,'Broadwell','Mobile','Xeon E3-1258L v4','Broadwell'),(26,'35127210J0062','SR268','939656','1.8','F0',3,2,'Broadwell','ULT','Core i5-5350U','Broadwell'),(27,'2V127163B0872','SR268','939656','1.8','F0',3,2,'Broadwell','ULT','Core i5-5350U','Broadwell'),(28,'2V127163B0686','SR2E7','944075','2','G1',6,4,'Broadwell','Mobile','Xeon E3-1278L v4','Broadwell'),(29,'35127210J0078','SR180','929227','2.4','C0',4,2,'Haswell','Desktop','Core i3-4330TE','Haswell'),(30,'35127210J0055','SR17N','929207','2.4','C0',3,2,'Haswell','Mobile','Core i3-4100E','Haswell'),(31,'35127210J0083','SR17N','929207','2.4','C0',3,2,'Haswell','Mobile','Core i3-4100E','Haswell');
+INSERT INTO `Processor` VALUES (1,'2V127163B0897','SR02U','910244','2.5','D2',3,2,'Sandy Bridge','Mobile','Core i5-2510E','Sandy Bridge'),(2,'35127210J0054','SR02T','910243','2.1','D2',6,4,'Sandy Bridge','Mobile','Core i7-2710QE','Sandy Bridge'),(3,'35127210J0084','SR1XV','935852','2.2','M1',30,12,'Haswell Server','EP','Xeon E5-2658 v3','Haswell'),(4,'2V127163B0110','SR195','929620','1.8','C0',6,4,'Crystal Well','Mobile','Core i7-4860EQ','Haswell'),(5,'35127210J0092','SR0KQ','919841','2','C2',20,8,'Jaketown','EP','Xeon E5-2650','Sandy Bridge'),(6,'2V127163B0675','SR2F1','944341','2.6','D1',4,2,'Skylake','ULT','Core i7-6600U','Skylake'),(7,'35125272R0021','SR2E8','944076','2.7','G1',6,4,'Broadwell','Mobile','Core i7-5850EQ','Broadwell'),(8,'2V127163B0804','SR1W5','934898','1.58','C0',1,2,'Bay Trail','Atom','Celeron N2807','Silvermont'),(9,'35127210J0029','SR2E9','944077','1.8','G1',6,4,'Broadwell','Mobile','Xeon E3-1258L v4','Broadwell'),(10,'35127210J0062','SR268','939656','1.8','F0',3,2,'Broadwell','ULT','Core i5-5350U','Broadwell'),(11,'2V127163B0872','SR268','939656','1.8','F0',3,2,'Broadwell','ULT','Core i5-5350U','Broadwell'),(12,'2V127163B0686','SR2E7','944075','2','G1',6,4,'Broadwell','Mobile','Xeon E3-1278L v4','Broadwell'),(13,'35127210J0078','SR180','929227','2.4','C0',4,2,'Haswell','Desktop','Core i3-4330TE','Haswell'),(14,'35127210J0055','SR17N','929207','2.4','C0',3,2,'Haswell','Mobile','Core i3-4100E','Haswell'),(15,'35127210J0083','SR17N','929207','2.4','C0',3,2,'Haswell','Mobile','Core i3-4100E','Haswell');
 /*!40000 ALTER TABLE `Processor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -533,10 +527,11 @@ CREATE PROCEDURE `get_board`()
 BEGIN
 	SELECT
 		Board.serial_num, fpga, bios, mac, fab,
-		Board.track_id, Items.user, checked_in, notes
+		Board.track_id, Checkout.user, checked_in, notes
 	FROM 
 		Board INNER JOIN Items
-        ON Board.product_id = Items.id
+        ON Board.product_id = Items.id JOIN Checkout
+        ON Checkout.product_id = Items.id
     WHERE
 		scrapped = 0
         AND Items.item_type = 'board';
@@ -561,11 +556,12 @@ CREATE PROCEDURE `get_cpu`()
 BEGIN
 	SELECT
 		Processor.serial_num, spec, mm, frequency, stepping, 
-        llc, cores, codename, cpu_class, external_name,
-		architecture, Items.user, checked_in, notes
+      llc, cores, codename, cpu_class, external_name,
+		  architecture, Checkout.user checked_in, notes
 	FROM 
 		Processor INNER JOIN Items
-        ON Processor.product_id = Items.id
+        ON Processor.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
     WHERE
 		scrapped = 0
         AND Items.item_type = 'cpu';
@@ -611,10 +607,11 @@ CREATE PROCEDURE `get_flash_drive`()
 BEGIN
 	SELECT
 		Flash_Drive.serial_num, manufacturer, capacity,
-        Items.user, checked_in, notes
+        Checkout.user, checked_in, notes
 	FROM 
 		Flash_Drive INNER JOIN Items
-        ON Flash_Drive.product_id = Items.id
+        ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
     WHERE
 		scrapped = 0
         AND Items.item_type = 'flash_drive';
@@ -640,10 +637,11 @@ BEGIN
 	SELECT
 		RAM.serial_num, manufacturer, physical_size,
         memory_type, capacity, speed, ecc, ranks,
-        Items.user, checked_in, notes
+        Checkout.user, checked_in, notes
 	FROM 
 		RAM INNER JOIN Items
-        ON RAM.product_id = Items.id
+        ON RAM.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
     WHERE
 		scrapped = 0
 		AND Items.item_type = 'memory';
@@ -668,10 +666,11 @@ CREATE PROCEDURE `get_ssd`()
 BEGIN
 	SELECT
 		SSD.serial_num, manufacturer, model,
-        capacity, Items.user, checked_in, notes
+        capacity, Checkout.user, checked_in, notes
 	FROM 
 		SSD INNER JOIN Items
-        ON SSD.product_id = Items.id
+        ON SSD.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
     WHERE
 		scrapped = 0
         AND Items.item_type = 'ssd';
@@ -864,26 +863,36 @@ DELIMITER ;;
 CREATE PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
  IN item VARCHAR(14))
 BEGIN
+  SELECT 
+    @id := Processor.product_id
+  FROM
+    Processor
+  WHERE
+    Processor.serial_num = item;
+
+  SELECT
+    @checked_in := IF(Items.checked_in = 1, 0, 1)
+  FROM
+    Items
+  WHERE
+    Items.id = @id;
+
 	UPDATE
 		Items JOIN Processor
         ON Processor.product_id = Items.id
-	SET 
-		Items.user = IF(checked_in = 1, new_user, ''),
-        Items.checked_in = ~Items.checked_in
+  SET 
+    Items.checked_in = IF(Items.checked_in = 1, 0, 1)
     WHERE
-		Processor.serial_num = item;
-	INSERT INTO Log
-		(product_id)
-	SELECT
-		Processor.product_id
-	FROM
-		Processor
-	WHERE
-		Processor.serial_num = item;
-	INSERT INTO Log
-		(user, log_date)
-	VALUES
-		(new_user, NOW());
+    Processor.serial_num = item;
+
+  INSERT INTO Log
+    (product_id, user, log_date, checked_in)
+  VALUES
+    (@id, new_user, NOW(), @checked_in);
+
+  IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
+  ELSE CALL delete_checkout(@id);
+  END IF; 
 
 END ;;
 DELIMITER ;
@@ -904,26 +913,35 @@ DELIMITER ;;
 CREATE PROCEDURE `scan_flash_drive`(IN new_user VARCHAR(8),
  IN item VARCHAR(20))
 BEGIN
+  SELECT 
+    @id := Flash_Drive.product_id
+  FROM
+    Flash_Drive
+  WHERE
+    Flash_Drive.serial_num = item;
+
+  SELECT
+    @checked_in := IF(Items.checked_in = 1, 0, 1)
+  FROM
+    Items
+  WHERE
+    Items.id = @id;
+
 	UPDATE
 		Items JOIN Flash_Drive
         ON Flash_Drive.product_id = Items.id
 	SET 
-		Items.user = IF(checked_in = 1, new_user, ''),
-        Items.checked_in = ~Items.checked_in
+    Items.checked_in = IF(Items.checked_in = 1, 0, 1)
     WHERE
 		Flash_Drive.serial_num = item;
 	INSERT INTO Log
-		(product_id)
-	SELECT
-		Flash_Drive.product_id
-	FROM
-		Flash_Drive
-	WHERE
-		Flash_Drive.serial_num = item;
-	INSERT INTO Log
-		(user, log_date)
+		(product_id, user, log_date, checked_in)
 	VALUES
-		(new_user, NOW());
+		(@id, new_user, NOW(), @checked_in);
+
+  IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
+  ELSE CALL delete_checkout(@id);
+  END IF; 
         
 END ;;
 DELIMITER ;
@@ -944,26 +962,35 @@ DELIMITER ;;
 CREATE PROCEDURE `scan_memory`(IN new_user VARCHAR(8),
  IN item VARCHAR(20))
 BEGIN
+  SELECT 
+    @id := Memory.product_id
+  FROM
+    Memory
+  WHERE
+    Memory.serial_num = item;
+
+  SELECT
+    @checked_in := IF(Items.checked_in = 1, 0, 1)
+  FROM
+    Items
+  WHERE
+    Items.id = @id;
+
 	UPDATE
 		Items JOIN RAM
         ON RAM.product_id = Items.id
 	SET 
-		Items.user = IF(checked_in = 1, new_user, ''),
-        Items.checked_in = ~Items.checked_in
+    Items.checked_in = IF(Items.checked_in = 1, 0 ,1)
     WHERE
 		RAM.serial_num = item;
 	INSERT INTO Log
-		(product_id)
-	SELECT
-		RAM.product_id
-	FROM
-		RAM
-	WHERE
-		RAM.serial_num = item;
-	INSERT INTO Log
-		(user, log_date)
+		(product_id, user, log_date, checked_in)
 	VALUES
-		(new_user, NOW());
+		(@id, new_user, NOW(), @checked_in);
+
+  IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
+  ELSE CALL delete_checkout(@id);
+  END IF; 
 
 END ;;
 DELIMITER ;
@@ -984,26 +1011,79 @@ DELIMITER ;;
 CREATE PROCEDURE `scan_ssd`(IN new_user VARCHAR(8),
  IN item VARCHAR(20))
 BEGIN
+  SELECT 
+    @id := SSD.product_id
+  FROM
+    SSD
+  WHERE
+    SSD.serial_num = item;
+
+  SELECT
+    @checked_in := IF(Items.checked_in = 1, 0, 1)
+  FROM
+    Items
+  WHERE
+    Items.id = @id;
+
 	UPDATE
 		Items JOIN SSD
         ON SSD.product_id = Items.id
 	SET 
-		Items.user = IF(checked_in = 1, new_user, ''),
-        Items.checked_in = ~Items.checked_in
+    Items.checked_in = IF(Items.checked_in = 1, 0, 1)
     WHERE
 		SSD.serial_num = item;
 	INSERT INTO Log
-		(product_id)
-	SELECT
-		SSD.product_id
-	FROM
-		SSD
-	WHERE
-		SSD.serial_num = item;
-	INSERT INTO Log
-		(user, log_date)
+		(product_id, user, log_date, checked_in)
 	VALUES
-		(new_user, NOW());
+		(@id, new_user, NOW(), @checked_in);
+
+  IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
+  ELSE CALL delete_checkout(@id);
+  END IF; 
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `put_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `put_checkout`(IN item INT(11),
+ IN new_user VARCHAR(8))
+BEGIN
+  INSERT INTO Checkout
+    (product_id, user, checkout_date)
+  VALUES
+    (item, new_user, NOW());
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `delete_checkout`(IN item INT(11))
+BEGIN 
+  DELETE FROM Checkout WHERE Checkout.product_id = item;
 
 END ;;
 DELIMITER ;
