@@ -364,13 +364,15 @@ app.use('/kiosk/login', function(req, res, next) {
  		});
 }, function(req,res,next) {
 	// We know at this point we have a wwid, so let's try to get the user from our DB.
-	conn.query('CALL get_user_by_wwid('+req.session.wwid+')', function(error, results, fields) {
+	conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+			if (error) {
+				throw error;
+			}
 			if (results[0].length === 1) {
  				req.session.last_name = results[0][0].last_name;
  				req.session.first_name = results[0][0].first_name;
  				req.session.is_admin = results[0][0].is_admin;
  				req.session.save();
-
 			} else {
 				// Got no results
 				res.redirect('/kiosk');
@@ -382,6 +384,14 @@ app.use('/kiosk/login', function(req, res, next) {
 app.post('/kiosk/login', function(req, res) {
 	// If we made it this far through the middleware,
 	// It must mean success. Send them to the cart!
+
+	//TEST LOGS
+	if (process.env.ENV === 'dev') {
+		console.log(req.session.wwid);
+		console.log(req.session.last_name);
+		console.log(req.session.first_name);
+	}
+	
 	res.redirect('/cart');
 });
 /* Testing some email scheduling */
