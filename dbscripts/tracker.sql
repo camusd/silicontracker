@@ -248,7 +248,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user'),('123','123','Hayes','Brett',1),('222','222','User','NonAdmin',0),('456','456','Camus','Dylan',1),('789','789','Cronise','Joseph',1);
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user',0),('123','123','Hayes','Brett',1),('222','222','User','NonAdmin',0),('456','456','Camus','Dylan',1),('789','789','Cronise','Joseph',1);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
