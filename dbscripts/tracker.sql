@@ -235,6 +235,7 @@ CREATE TABLE `Owners` (
   `idsid` varchar(12) NOT NULL,
   `last_name` varchar(30) NOT NULL,
   `first_name` varchar(30) NOT NULL,
+  `is_admin` tinyint(1) unsigned DEFAULT '0',
   PRIMARY KEY (`wwid`),
   UNIQUE KEY `wwid_UNIQUE` (`wwid`),
   UNIQUE KEY `idsid_UNIQUE` (`idsid`)
@@ -247,7 +248,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user');
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user'),('123','123','Hayes','Brett',1),('222','222','User','NonAdmin',0),('456','456','Camus','Dylan',1),('789','789','Cronise','Joseph',1);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -676,6 +677,27 @@ BEGIN
         AND Items.item_type = 'ssd';
 
 
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_user_from_wwid` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_user_from_wwid`(IN pwwid VARCHAR(20))
+BEGIN
+  SELECT last_name, first_name, is_admin
+    FROM Owners
+    WHERE wwid = pwwid;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

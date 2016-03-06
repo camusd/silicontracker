@@ -364,7 +364,7 @@ app.use('/kiosk/login', function(req, res, next) {
  		});
 }, function(req,res,next) {
 	// We know at this point we have a wwid, so let's try to get the user from our DB.
-	conn.query('CALL get_user_by_wwid(123)', function(error, results, fields) {
+	conn.query('CALL get_user_by_wwid('+req.session.wwid+')', function(error, results, fields) {
 			if (results[0].length === 1) {
  				req.session.last_name = results[0][0].last_name;
  				req.session.first_name = results[0][0].first_name;
