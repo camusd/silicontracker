@@ -101,56 +101,68 @@ server.listen(port, ip, function(){
 
 
 app.get('/data/cpu', function(req, res) {
- 	var options = "CALL get_cpu();";
- 	conn.query(options, function(error, results, fields){
- 		var a = [];
- 		for (var i in results[0]) {
- 			a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
- 				results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
- 				results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
- 				results[0][i].user, results[0][i].checked_in, results[0][i].notes));
- 		}
- 		res.send(a);
- 	});
+	var options = "CALL get_cpu();";
+	conn.query(options, function(error, results, fields){
+		if(error) {
+			throw error;
+		}
+		var a = [];
+		for (var i in results[0]) {
+			a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
+				results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
+				results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
+				results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+		}
+		res.send(a);
+	});
 });
 
 app.get('/data/ssd', function(req, res) {
- 	var options = "CALL get_ssd();";
- 	conn.query(options, function(error, results, fields){
- 		var a = [];
- 		for (var i in results[0]) {
- 			a.push(new models.SSD(results[0][i].serial_num, results[0][i].manufacturer, 
- 				results[0][i].model, results[0][i].capacity, results[0][i].user,
- 				results[0][i].checked_in, results[0][i].notes));
- 		}
- 		res.send(a);
- 	});
+	var options = "CALL get_ssd();";
+	conn.query(options, function(error, results, fields){
+		if(error) {
+			throw error;
+		}
+		var a = [];
+		for (var i in results[0]) {
+			a.push(new models.SSD(results[0][i].serial_num, results[0][i].manufacturer, 
+				results[0][i].model, results[0][i].capacity, results[0][i].user,
+				results[0][i].checked_in, results[0][i].notes));
+		}
+		res.send(a);
+	});
 });
 
 app.get('/data/memory', function(req, res) {
- 	var options = "CALL get_memory();";
- 	conn.query(options, function(error, results, fields){
- 		var a = [];
- 		for (var i in results[0]) {
- 			a.push(new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
- 				results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
- 				results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
- 				results[0][i].checked_in, results[0][i].notes));
- 		}
- 		res.send(a);
- 	});
+	var options = "CALL get_memory();";
+	conn.query(options, function(error, results, fields){
+		if(error) {
+			throw error;
+		}
+		var a = [];
+		for (var i in results[0]) {
+			a.push(new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
+				results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
+				results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
+				results[0][i].checked_in, results[0][i].notes));
+		}
+		res.send(a);
+	});
 });
 
 app.get('/data/flash', function(req, res) {
- 	var options = "CALL get_flash_drive();";
- 	conn.query(options, function(error, results, fields){
- 		var a = [];
- 		for (var i in results[0]) {
- 			a.push(new models.Flash_Drive(results[0][i].serial_num, results[0][i].manufacturer,
- 				results[0][i].capacity, results[0][i].user, results[0][i].checked_in, results[0][i].notes));
- 		}
- 		res.send(a);
- 	});
+	var options = "CALL get_flash_drive();";
+	conn.query(options, function(error, results, fields){
+		if(error) {
+			throw error;
+		}
+		var a = [];
+		for (var i in results[0]) {
+			a.push(new models.Flash_Drive(results[0][i].serial_num, results[0][i].manufacturer,
+				results[0][i].capacity, results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+		}
+		res.send(a);
+	});
 });
 
 /*
@@ -402,12 +414,21 @@ app.post('/kiosk/login', function(req, res) {
 
 // TODO: don't forget to add cronjob to {}
 
-// var j = schedule.scheduleJob({}, function() {
-// 	var addr = 'thewizard247@gmail.com';
-// 	var name = 'Dylan Camus';
-// 	var item_serial = 'FIJ39GLK30SD';
-// 	var item_type = 'cpu';
-// 	var days = '30';
-// 	console.log("Sending reminder email to "+name+"...");
-// 	reminderTemplate(addr, name, item_serial, item_type, days);
-// });
+var j = schedule.scheduleJob({}, function() {
+	conn.query("CALL get_checkout();",
+		function(error, results, fields) {
+			if(error) {
+				throw error;
+			}
+			for(var i in results[0]) {
+				var addr = results[0][i].email_address;
+				var first_name = results[0][i].first_name;
+				var last_name = results[0][i].last_name;
+				var item_serial = results[0][i].serial_num;
+				var item_type = results[0][i].item_type;
+				var days = results[0][i].days;
+				console.log("Sending reminder email to "+addr+"...");
+				reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
+			}
+		});
+});

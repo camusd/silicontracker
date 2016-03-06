@@ -2,7 +2,7 @@ var nodemailer = require('nodemailer');
 require('../env.js');
 
 module.exports = function() {
-	this.reminderTemplate = function(addr, name, item_serial, item_type, time) {
+	this.reminderTemplate = function(addr, frst_name, last_name, item_serial, item_type, time) {
 		var transporter = nodemailer.createTransport({
 			service: 'Gmail',
 			auth: {
@@ -10,7 +10,7 @@ module.exports = function() {
 				pass: process.env.EMAIL_PASSWORD
 			}
 		});
-		var text = "Hello "+name+",\n\n"
+		var text = "Hello "+first_name+" "+last_name+",\n\n"
 		          +"This is an automated message from the Silicon Tracker"
 		          +" Service informing you that you have had the "+item_type
 		          +" with serial number: "+item_serial+" checked out for "+time+" days."
