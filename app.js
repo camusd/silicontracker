@@ -14,7 +14,6 @@ var express = require('express');
 var app = express();
 var http = require('http')
 var fs = require('fs');
-var request = require('request');
 var session = require('express-session');
 var models = require('./app/models');
 var bodyParser = require('body-parser');
