@@ -15,9 +15,9 @@ var app = express();
 var http = require('http')
 var fs = require('fs');
 var session = require('express-session');
-var models = require('./app/models');
 var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
+var templates = require('./app/templates');
 
 // Loading environment variables
 require('./env.js');
@@ -86,3 +86,30 @@ require('./app/routes/web')(app, conn);
 
 // Load the routes for the kiosk
 require('./app/routes/kiosk')(app, conn);
+
+/* Testing some email scheduling */
+
+// TODO: create a stored procedure that gets the
+// email address, owner name, serial number, item type,
+// and amount of time since checkout of an item.
+
+// TODO: don't forget to add cronjob to {}
+
+var j = schedule.scheduleJob({}, function() {
+	conn.query("CALL get_checkout();",
+		function(error, results, fields) {
+			if(error) {
+				throw error;
+			}
+			for(var i in results[0]) {
+				var addr = results[0][i].email_address;
+				var first_name = results[0][i].first_name;
+				var last_name = results[0][i].last_name;
+				var item_serial = results[0][i].serial_num;
+				var item_type = results[0][i].item_type;
+				var days = results[0][i].days;
+				console.log("Sending reminder email to "+addr+"...");
+				templates.reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
+			}
+		});
+});

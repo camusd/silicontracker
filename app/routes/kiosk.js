@@ -1,6 +1,7 @@
 var schedule = require('node-schedule');
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
+var templates = require('../templates');
 
 module.exports = function(app, conn) {
 		 /* Routes for loading pages in the kiosk interface */
@@ -120,7 +121,7 @@ module.exports = function(app, conn) {
 					var item_type = results[0][i].item_type;
 					var days = results[0][i].days;
 					console.log("Sending reminder email to "+addr+"...");
-					reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
+					templates.reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
 				}
 			});
 	});
