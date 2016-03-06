@@ -8,16 +8,15 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
 
-// { username, isAdminFlag}
 var users = [
 	{'user': 'brett',
-	 'isAdmin': 1},
+	 'wwid': '123'},
 	{'user': 'joseph',
-	 'isAdmin': 1},
+	 'wwid': '234'},
 	{'user': 'dylan',
-	 'isAdmin': 1},
+	 'wwid': '456'},
 	{'user': 'nonadminuser',
-	 'isAdmin': 0}
+	 'wwid': '1'}
 ]
 
 var ip = process.env.APP_IP || 'localhost';
@@ -27,16 +26,21 @@ server.listen(port, ip, function(){
   console.log('Credentials Server listening at ' + ip + ':' + port);
 });
 
+
+/*
+ * 	If the username entered was in our mock credentials server, send back the wwid.
+ *	If there were no users, send back empty string.
+ */
 app.post('/', function(req, res) {
 	var userExists = 0;
+	var sendData = '';
 	username = req.body.username;
+	password = req.body.pass; // currently does nothing with the password.
 	for (var i = 0; i < users.length; i++) {
-		if (users[i].user == username) {
-			res.json(users[i]);
-			userExists = 1;
+		if (users[i].user === username) {
+			sendData = users[i].wwid;
+			break;
 		}
 	}
-	if (!userExists) {
-		res.send('no users');		
-	}
+	res.send(sendData);		
 });

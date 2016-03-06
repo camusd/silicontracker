@@ -23,7 +23,7 @@ $(document).ready(function() {
                     //       loading a popup or inline on page... basically something
                     //       prettier than an alert.
                     var itemInfo = "";
-                    $.get('/query/'+barcode, function(data) {
+                    $.get('/serial/'+barcode, function(data) {
                         $.each(data, function(idx, elem) {
                             itemInfo += 'Serial number:\t' + elem.serial_num + '\n';
                             itemInfo += 'Checked out by:\tScott' + '\n';

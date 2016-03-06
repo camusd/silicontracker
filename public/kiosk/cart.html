@@ -53,8 +53,8 @@ $(document).ready(function() {
 <script>
   function submitData(val_array) {
     var user = 1;
-    $.post("/kiosk", {val_array, user});
-    window.location="/kiosk";
+    $.post("/kiosk/submit", {val_array, user});
+    window.location="/kiosk/submit";
   };
 </script>
     
