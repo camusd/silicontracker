@@ -86,4 +86,4 @@ require('./app/routes/data')(app, conn);
 require('./app/routes/web')(app, conn);
 
 // Load the routes for the kiosk
-require('./app/routes/kiosk')(app);
+require('./app/routes/kiosk')(app, conn);
