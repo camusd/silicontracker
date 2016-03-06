@@ -235,6 +235,7 @@ CREATE TABLE `Owners` (
   `idsid` varchar(12) NOT NULL,
   `last_name` varchar(30) NOT NULL,
   `first_name` varchar(30) NOT NULL,
+  `email_address` varchar(60) NOT NULL,
   PRIMARY KEY (`wwid`),
   UNIQUE KEY `wwid_UNIQUE` (`wwid`),
   UNIQUE KEY `idsid_UNIQUE` (`idsid`)
@@ -247,7 +248,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user');
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com');
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,6 +543,35 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_checkout`()
+BEGIN
+  SELECT
+    email_address, first_name, last_name, serial_num, item_type,
+    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) AS days
+  FROM
+    Owners JOIN Checkout
+      ON Checkout.user = Owners.wwid LEFT JOIN Processor
+      ON Processor.product_id = Checkout.product_id LEFT JOIN Items
+      ON Items.id = Processor.product_id
+  WHERE
+    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 1;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_cpu` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -562,7 +592,7 @@ BEGIN
 		Processor INNER JOIN Items
         ON Processor.product_id = Items.id LEFT JOIN Checkout
         ON Checkout.product_id = Items.id
-    WHERE
+  WHERE
 		scrapped = 0
         AND Items.item_type = 'cpu';
 
@@ -585,8 +615,8 @@ DELIMITER ;;
 CREATE PROCEDURE `get_dropdown`(IN attr VARCHAR(20))
 BEGIN
 	SELECT 	attr_value
-    FROM	Dropdown_Attributes
-    WHERE	lcase(attr_type) = attr;
+  FROM	Dropdown_Attributes
+  WHERE	lcase(attr_type) = attr;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -612,7 +642,7 @@ BEGIN
 		Flash_Drive INNER JOIN Items
         ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
         ON Checkout.product_id = Items.id
-    WHERE
+  WHERE
 		scrapped = 0
         AND Items.item_type = 'flash_drive';
 
@@ -642,9 +672,9 @@ BEGIN
 		RAM INNER JOIN Items
         ON RAM.product_id = Items.id LEFT JOIN Checkout
         ON Checkout.product_id = Items.id
-    WHERE
+  WHERE
 		scrapped = 0
-		AND Items.item_type = 'memory';
+        AND Items.item_type = 'memory';
 
 END ;;
 DELIMITER ;
@@ -671,7 +701,7 @@ BEGIN
 		SSD INNER JOIN Items
         ON SSD.product_id = Items.id LEFT JOIN Checkout
         ON Checkout.product_id = Items.id
-    WHERE
+  WHERE
 		scrapped = 0
         AND Items.item_type = 'ssd';
 
