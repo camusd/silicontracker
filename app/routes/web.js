@@ -1,4 +1,5 @@
 var rootdir = process.env.ROOT_DIR;
+var request = require('request');
 
 module.exports = function(app, conn) {
 	/* Posts for the web interface
@@ -122,13 +123,73 @@ module.exports = function(app, conn) {
 	 	res.sendFile(rootdir + '/public/web/admin.html');
 	});
 
+	 // For testing purposes. Will need to be deleted.
+	app.get('/testsite', function(req, res) {
+	 	res.sendFile(rootdir + '/public/web/testsite.html');
+	});
+
 	app.get('/login', function(req, res) {
 	 	res.sendFile(rootdir + '/public/web/login.html');
 	});
 
-	 // For testing purposes. Will need to be deleted.
-	app.get('/testsite', function(req, res) {
-	 	res.sendFile(rootdir + '/public/web/testsite.html');
+	/* 
+	 * Middleware for logging into the web interface. We need a few things done in sequential order.
+	 *
+	 * 1. Go to Intel's Active Directory Server, get WWID back.
+	 * 2. Check our database for user information using the WWID as a key.
+	 *
+	 * After that, we have the user's name and wwid stored in session, and can allow them into the cart.
+	 */
+	app.use('/login/login', function(req, res, next) {
+		request.post({url: process.env.CRED_ADDR, form: {'username': req.body.username, 'pass': req.body.pass}},
+	 		function(error, response, body) {
+	 			if (error) {
+	 				console.log(error);
+	 			}
+	 			console.log('got here');
+
+	 			// Checking if the user exists in AD.
+	 			if (body !== '') {
+	 				// We have a user in the AD system. Parse out the wwid.
+	 				req.session.wwid = body;
+	 			} else {
+	 				// No wwid found, erase current session and create new session for user.
+	 				req.session.regenerate();
+	 				res.redirect('/login');
+	 			}
+	 			next();
+	 		});
+	}, function(req,res,next) {
+		// We know at this point we have a wwid, so let's try to get the user from our DB.
+		conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+				if (error) {
+					throw error;
+				}
+				if (results[0].length === 1) {
+	 				req.session.last_name = results[0][0].last_name;
+	 				req.session.first_name = results[0][0].first_name;
+	 				req.session.is_admin = results[0][0].is_admin;
+	 				req.session.save();
+				} else {
+					// Got no results
+					res.redirect('/login');
+				}
+				next();
+	 		});
+	});
+
+	app.post('/login/login', function(req, res) {
+		// If we made it this far through the middleware,
+		// It must mean success. Send them to the cart!
+
+		//TEST LOGS
+		if (process.env.ENV === 'dev') {
+			console.log(req.session.wwid);
+			console.log(req.session.last_name);
+			console.log(req.session.first_name);
+		}
+		
+		res.redirect('/');
 	});
 
 };
