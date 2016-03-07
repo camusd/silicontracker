@@ -36,8 +36,7 @@ $(document).ready(function() {
     
 <script>
   function submitData(val_array) {
-    var user = 1;
-    $.post("/kiosk/submit", {val_array, user});
+    $.post("/kiosk/submit", {val_array});
     window.location="/kiosk/";
   };
 </script>

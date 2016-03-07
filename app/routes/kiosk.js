@@ -49,9 +49,8 @@ module.exports = function(app, conn) {
 
 	/* Posts on the kiosk */
 	app.post('/kiosk/submit', function(req, res) {
-		// console.log(req.body.val_array);
 		for(var i in req.body.val_array) {
-			conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
+			conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');")
 		}
 		res.redirect('/kiosk');
 	});
