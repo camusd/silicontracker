@@ -14,19 +14,38 @@ module.exports = function(app, conn) {
 
 
 	app.get('/data/cpu', function(req, res) {
-		var options = "CALL get_cpu();";
-		conn.query(options, function(error, results, fields){
+		var jsonToSend = {};
+		conn.query("CALL get_scrapped_status();", function(error, results, fields) {
 			if(error) {
 				throw error;
 			}
-			var a = [];
-			for (var i in results[0]) {
-				a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
-					results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
-					results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
-					results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+
+			jsonToSend.num_scrapped =  results[0][0].num_scrapped;
+			jsonToSend.num_active = results[0][0].num_active;
+			jsonToSend.num_total = jsonToSend.num_scrapped + jsonToSend.num_active;
+
+			if (req.session.wwid) {
+				jsonToSend.is_admin = req.session.is_admin;
+			} else {
+				jsonToSend.is_admin = 0;
 			}
-			res.send(a);
+
+			conn.query("CALL get_cpu();", function(error, results, fields){
+				if(error) {
+					throw error;
+				}
+
+				var a = [];
+				for (var i in results[0]) {
+					a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
+						results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
+						results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
+						results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+				}
+				jsonToSend.items = a;
+
+				res.json(jsonToSend);
+			});
 		});
 	});
 
