@@ -557,15 +557,19 @@ DELIMITER ;;
 CREATE PROCEDURE `get_checkout`()
 BEGIN
   SELECT
-    email_address, first_name, last_name, serial_num, item_type,
-    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) AS days
+    email_address, 
+    first_name, 
+    last_name, 
+    serial_num, 
+    item_type,
+    TIMESTAMPDIFF(DAY, Checkout.checkout_date, NOW()) AS days
   FROM
     Owners JOIN Checkout
       ON Checkout.user = Owners.wwid LEFT JOIN Processor
       ON Processor.product_id = Checkout.product_id LEFT JOIN Items
       ON Items.id = Processor.product_id
   WHERE
-    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 1;
+      TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 1;
 
 END ;;
 DELIMITER ;

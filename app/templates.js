@@ -2,7 +2,7 @@ var nodemailer = require('nodemailer');
 require('../env.js');
 
 module.exports = function() {
-	this.reminderTemplate = function(addr, frst_name, last_name, item_serial, item_type, time) {
+	this.reminderTemplate = function(addr, first_name, last_name, item_serial, item_type, time) {
 		var transporter = nodemailer.createTransport({
 			service: 'Gmail',
 			auth: {

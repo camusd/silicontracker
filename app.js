@@ -17,7 +17,8 @@ var fs = require('fs');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
-var templates = require('./app/templates');
+var schedule = require('node-schedule');
+require('./app/templates')();
 
 // Loading environment variables
 require('./env.js');
@@ -89,10 +90,6 @@ require('./app/routes/kiosk')(app, conn);
 
 /* Testing some email scheduling */
 
-// TODO: create a stored procedure that gets the
-// email address, owner name, serial number, item type,
-// and amount of time since checkout of an item.
-
 // TODO: don't forget to add cronjob to {}
 
 var j = schedule.scheduleJob({}, function() {
@@ -109,7 +106,7 @@ var j = schedule.scheduleJob({}, function() {
 				var item_type = results[0][i].item_type;
 				var days = results[0][i].days;
 				console.log("Sending reminder email to "+addr+"...");
-				templates.reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
+				reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
 			}
 		});
 });

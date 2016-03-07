@@ -1,4 +1,3 @@
-var schedule = require('node-schedule');
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 var templates = require('../templates');
@@ -17,6 +16,7 @@ module.exports = function(app, conn) {
 	app.get('/serial/:serial', function(req, res) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
+	 	// and JOIN with necessary tables
 	 	conn.query('SELECT * FROM Processor WHERE Processor.serial_num = \'' + serial + '\'',
 	 		function(error, results, fields){
 	 			if(error) {
@@ -33,12 +33,27 @@ module.exports = function(app, conn) {
 	 		});
 	});
 
+	 /* Getters for json data on items in the cart */
+	app.get('/cart/serial/:serial', function(req, res) {
+	 	var serial = req.params.serial;
+	 	// TODO: Put in Stored Procedure
+	 	conn.query('SELECT checked_in FROM Items JOIN Processor ON Processor.product_id = Items.id WHERE Processor.serial_num = \'' + serial + '\'',
+	 		function(error, results, fields){
+	 			if(error) {
+	 				throw error;
+	 			}
+	 			console.log(results[0]);
+	 			res.send(results[0]);
+	 		});
+	});
+
 	/* Posts on the kiosk */
 	app.post('/kiosk/submit', function(req, res) {
-	 	 for(var i in req.body.val_array) {
-	 	 	conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
-	 	 }
-	 	res.redirect('/kiosk');
+		// console.log(req.body.val_array);
+		for(var i in req.body.val_array) {
+			conn.query("CALL scan_cpu('"+req.body.user+"','"+req.body.val_array[i]+"');")
+		}
+		res.redirect('/kiosk');
 	});
 
 
