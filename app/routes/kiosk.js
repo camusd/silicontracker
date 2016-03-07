@@ -42,7 +42,10 @@ module.exports = function(app, conn) {
 	 			if(error) {
 	 				throw error;
 	 			}
-	 			console.log(results[0]);
+	 			if (process.env.ENV == 'dev')
+	 				console.log(results[0]);
+	 			
+
 	 			res.send(results[0]);
 	 		});
 	});
