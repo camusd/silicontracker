@@ -30,6 +30,14 @@ module.exports = function(app, conn) {
 				jsonToSend.is_admin = 0;
 			}
 
+			if (req.session.first_name) {
+				jsonToSend.first_name = req.session.first_name;
+			}
+
+			if (req.session.last_name) {
+				jsonToSend.last_name = req.session.last_name;
+			}
+
 			conn.query("CALL get_cpu();", function(error, results, fields){
 				if(error) {
 					throw error;
