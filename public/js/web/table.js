@@ -47,5 +47,6 @@ $(document).ready(function() {
 				   .draw();
 			});
 		});
+		$('#totals').append("<span><strong>Total Items </strong>: "+jsonData.num_active+" active + "+jsonData.num_scrapped+" scrapped = "+jsonData.num_total+"</span>");
 	});
 });

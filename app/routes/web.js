@@ -27,7 +27,7 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add_cpu.html');
+	 	res.sendFile(rootdir + '/public/web/add.html');
 	});
 
 	app.post('/add/ssd', function(req, res) {
@@ -48,7 +48,7 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add_ssd.html');
+	 	res.sendFile(rootdir + '/public/web/add.html');
 	});
 
 	app.post('/add/memory', function(req, res) {
@@ -70,7 +70,7 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add_memory.html');
+	 	res.sendFile(rootdir + '/public/web/add.html');
 	});
 
 	app.post('/add/flash', function(req, res) {
@@ -90,7 +90,7 @@ module.exports = function(app, conn) {
 	 					});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add_flash_drive.html');
+	 	res.sendFile(rootdir + '/public/web/add.html');
 	});
 
 	/* Routes for loading pages in the web interface */
