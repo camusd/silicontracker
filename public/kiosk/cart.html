@@ -7,6 +7,10 @@
     
  
 </noscript>
+<script>
+  var val_array = [];
+</script>
+
 <script src="../css/5grid/jquery.js"></script>
 <script src="../css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=60&amp;mobileUI.openerWidth=52"></script>
 <!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css"><![endif]-->
@@ -30,43 +34,20 @@ $(document).ready(function() {
     
 </script>   
     
-<script language="JavaScript" type="Text/JavaScript">
-           
-    
-        var val_array = []
-    
-        function addItem(){
- 
-        var t = $('#Check_Out').DataTable();
-        var theInput = document.getElementById('Barcode_id').value;
-
-        val_array.push(theInput);
-       // alert(val_array);
-        t.row.add([theInput]).draw();
-        $('#Barcode_id').val('');
-            
-     // document.getElementById("Barcode_id").reset();
-        }
-    
- </script>
-    
 <script>
   function submitData(val_array) {
-    var user = 1;
-    $.post("/kiosk", {val_array, user});
-    window.location="/kiosk";
+    $.post("/kiosk/submit", {val_array});
+    window.location="/kiosk/";
   };
 </script>
-    
 
-
-    
+<script src="../js/kiosk/cart_barcode.js"></script>    
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.10/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet" href="../css/kiosk/custom.css">
 </head>
-    
+
     
 <body>
 <!-- Header -->
@@ -96,27 +77,7 @@ $(document).ready(function() {
                                                         margin-left: auto;
                                                         margin-right: auto;
                                                         ">	
-<form class="form-inline" onsubmit="addItem(); return false;">
-<fieldset>
-    
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4 control-label" for="Barcode">Barcode</label>  
-  <div class="col-md-4">
-  <input id="Barcode_id" name="Barcode" placeholder="Barcode" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
 
-<!-- Button -->
-<div class="form-group">
-  <div class="col-md-4">
-    <button id="addrow" name="submitbutton" class="btn btn-primary">Submit</button>
-  </div>
-</div>
-
-</fieldset>
-</form>
           </div>
     <!-- Divider -->
     <div class="row">

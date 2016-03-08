@@ -51,7 +51,7 @@ mysql> GRANT SELECT ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT INSERT ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT UPDATE ON tracker.* TO 'tracker_user'@'localhost';
 mysql> GRANT EXECUTE ON tracker.* TO 'tracker_user'@'localhost';
-mysql> GRANT DELETE ON tracker.Checkout TO 'tracker_user'@localhost';
+mysql> GRANT DELETE ON tracker.Checkout TO 'tracker_user'@'localhost';
 
 mysql> FLUSH PRIVILEGES;
 ```

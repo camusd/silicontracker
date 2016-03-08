@@ -7,7 +7,11 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "express": "latest",
+    "express-session": "^1.13.0",
     "mysql": "latest",
-    "request": "^2.69.0"
+    "node-schedule": "^1.0.0",
+    "nodemailer": "^2.2.1",
+    "request": "^2.69.0",
+    "session-file-store": "^0.2.0"
   }
 }

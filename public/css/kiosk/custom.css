@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto);
+    @import url(http://fonts.googleapis.com/css?family=Roboto);
 
 .col-md-4-c {
     width: 100%;
@@ -29,7 +29,7 @@
 }
 
 .dataTables_filter {
-    dislay: none;
+    display: none;
 }
 
 #inner_camera {
