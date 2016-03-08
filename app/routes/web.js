@@ -146,7 +146,6 @@ module.exports = function(app, conn) {
 	 			if (error) {
 	 				console.log(error);
 	 			}
-	 			console.log('got here');
 
 	 			// Checking if the user exists in AD.
 	 			if (body !== '') {

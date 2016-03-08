@@ -15,6 +15,7 @@ var app = express();
 var http = require('http')
 var fs = require('fs');
 var session = require('express-session');
+var FileStore = require('session-file-store')(session);
 var bodyParser = require('body-parser');
 var nodemailer = require('nodemailer');
 var schedule = require('node-schedule');
@@ -48,14 +49,17 @@ conn.connect(function(err){
 // };
 
 // Setting up Session environment
+
 var sessOptions = {
+	name: 'tracker-cookie',
+	store: new FileStore,
 	secret: process.env.SESSION_SECRET,
 	cookie: {},
 	resave: false,
-	saveUninitialized: true
+	saveUninitialized: false
 };
 if (process.env.ENV === 'prod') {
-	app.use('trust proxy', 1);
+	app.enable('trust proxy');
 	sessOptions.cookie.secure = true;
 }
 app.use(session(sessOptions));
