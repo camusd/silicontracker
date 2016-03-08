@@ -249,7 +249,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com',1),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1);
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com',1),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
