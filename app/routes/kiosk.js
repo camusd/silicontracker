@@ -77,12 +77,11 @@ module.exports = function(app, conn) {
 	 			if (body !== '') {
 	 				// We have a user in the AD system. Parse out the wwid.
 	 				req.session.wwid = body;
+	 				next();
 	 			} else {
-	 				// No wwid found, erase current session and create new session for user.
-	 				req.session.regenerate();
+	 				// No wwid found, send user back to login page.
 	 				res.redirect('/kiosk');
 	 			}
-	 			next();
 	 		});
 	}, function(req,res,next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
