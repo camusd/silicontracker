@@ -15,7 +15,7 @@ var users = [
 	 'wwid': '234'},
 	{'user': 'dylan',
 	 'wwid': '456'},
-	{'user': 'scott'},
+	{'user': 'scott',
 	 'wwid': '282'},
 	{'user': 'nonadminuser',
 	 'wwid': '1'}
