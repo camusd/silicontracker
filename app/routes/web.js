@@ -119,7 +119,7 @@ module.exports = function(app, conn) {
 	 	res.sendFile(rootdir + '/public/web/add_flash_drive.html');
 	});
 
-	app.get('/admin', function(req, res) {
+	app.get('/admin', enforceLogin, function(req, res) {
 	 	res.sendFile(rootdir + '/public/web/admin.html');
 	});
 
@@ -192,3 +192,11 @@ module.exports = function(app, conn) {
 	});
 
 };
+
+function enforceLogin(req, res, next) {
+	if (req.session.wwid) {
+		next();
+	} else {
+		res.redirect('/login');
+	}
+}

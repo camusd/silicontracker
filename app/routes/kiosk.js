@@ -4,7 +4,7 @@ var templates = require('../templates');
 
 module.exports = function(app, conn) {
 		 /* Routes for loading pages in the kiosk interface */
-	app.get('/cart', function(req, res) {
+	app.get('/cart', enforceLogin, function(req, res) {
 	 	res.sendFile(rootdir + '/public/kiosk/cart.html');
 	});
 
@@ -116,3 +116,11 @@ module.exports = function(app, conn) {
 		res.redirect('/cart');
 	});
 };
+
+function enforceLogin(req, res, next) {
+	if (req.session.wwid) {
+		next();
+	} else {
+		res.redirect('/kiosk');
+	}
+}
