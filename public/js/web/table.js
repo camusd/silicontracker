@@ -39,10 +39,6 @@ $(document).ready(function() {
 			cpu_table.column(-1).visible(true);
 		}
 
-		if (jsonData.first_name) {
-			$('#infoBanner').prepend('<div>Welcome ' + jsonData.first_name + '.</div>');
-		}
-
 		// Apply the search
 		$('#filterCols th').each(function (idx){
 			var col = cpu_table.column(idx);
@@ -51,9 +47,5 @@ $(document).ready(function() {
 				   .draw();
 			});
 		});
-		$('#infoBanner').append('<span><strong>Total Items </strong>: '+
-								jsonData.num_active+' active + '+
-								jsonData.num_scrapped+' scrapped = '+
-								jsonData.num_total+'</span>');
 	});
 });

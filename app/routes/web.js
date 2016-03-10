@@ -123,6 +123,16 @@ module.exports = function(app, conn) {
 	 	res.sendFile(rootdir + '/public/web/admin.html');
 	});
 
+	app.get('/admin/attributes', enforceLogin, function(req, res) {
+		res.sendFile(rootdir + '/public/web/edit_dropdowns.html');
+	});
+
+	// TODO: Add new attributes to the database
+	app.post('/admin/attributes', enforceLogin, function(req, res) {
+		console.log(req.body);
+		res.send({redirect: '/admin'});
+	});
+
 	 // For testing purposes. Will need to be deleted.
 	app.get('/testsite', function(req, res) {
 	 	res.sendFile(rootdir + '/public/web/testsite.html');
