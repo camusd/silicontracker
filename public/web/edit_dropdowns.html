@@ -42,7 +42,7 @@
                 submitAttrs.attr_vals.push($(this).val());              
             }
         });
-        $.post('/admin/attributes', submitAttrs, function(data) {
+        $.post('/settings/admin/attributes', submitAttrs, function(data) {
             // After success, redirect to route specified by server.
             window.location = data.redirect;
         });
@@ -107,7 +107,7 @@
             <li><a href="/">Database</a></li>
             <li><a href="/add">Add Item</a></li>
             <li><a href="/login">Login</a></li>
-            <li class="current_page_item"><a href="/admin">Admin</a></li>
+            <li class="current_page_item"><a href="/settings">Settings</a></li>
           </ul>
         </nav>
       </div>

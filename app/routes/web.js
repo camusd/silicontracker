@@ -119,18 +119,18 @@ module.exports = function(app, conn) {
 	 	res.sendFile(rootdir + '/public/web/add_flash_drive.html');
 	});
 
-	app.get('/admin', enforceLogin, function(req, res) {
-	 	res.sendFile(rootdir + '/public/web/admin.html');
+	app.get('/settings', enforceLogin, function(req, res) {
+	 	res.sendFile(rootdir + '/public/web/settings.html');
 	});
 
-	app.get('/admin/attributes', enforceLogin, function(req, res) {
+	app.get('/settings/attributes', enforceAdminLogin, function(req, res) {
 		res.sendFile(rootdir + '/public/web/edit_dropdowns.html');
 	});
 
 	// TODO: Add new attributes to the database
-	app.post('/admin/attributes', enforceLogin, function(req, res) {
+	app.post('/settings/attributes', enforceAdminLogin, function(req, res) {
 		console.log(req.body);
-		res.send({redirect: '/admin'});
+		res.send({redirect: '/settings'});
 	});
 
 	 // For testing purposes. Will need to be deleted.
@@ -205,6 +205,14 @@ module.exports = function(app, conn) {
 
 function enforceLogin(req, res, next) {
 	if (req.session.wwid) {
+		next();
+	} else {
+		res.redirect('/login');
+	}
+}
+
+function enforceAdminLogin(req, res, next) {
+	if (req.session.wwid && req.session.is_admin) {
 		next();
 	} else {
 		res.redirect('/login');

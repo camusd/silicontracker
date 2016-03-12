@@ -16,6 +16,13 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 <link rel="stylesheet" href="../css/custom.css">
 <!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css"><![endif]-->
+<script>
+  $.get('/data/stats', function(data) {
+    if (data.is_admin) {
+      $('#settings_options').append('<li><a href="/settings/attributes">Edit Dropdowns</a></li>');
+    }
+  });
+</script>
 </head>
 <body>
 <!-- Header -->
@@ -33,7 +40,7 @@
             <li><a href="/">Database</a></li>
             <li><a href="/add">Add Item</a></li>
             <li><a href="/login">Login</a></li>
-            <li class="current_page_item"><a href="/admin">Admin</a></li>
+            <li class="current_page_item"><a href="/settings">Settings</a></li>
           </ul>
         </nav>
       </div>
@@ -47,10 +54,9 @@
       <div class="3u">
         <!-- Sidebar -->
         <section>
-          <ul class="link-list">
+          <ul id="settings_options" class="link-list">
             <li><a href="#">Edit Profile</a></li>
             <li><a href="#">Email Settings</a></li>
-            <li><a href="/admin/attributes">Edit Dropdowns</a></li>
             <li><a href="#">Setup Facial Recognition</a></li>
           </ul>
         </section>
