@@ -12,8 +12,7 @@ module.exports = function(app, conn) {
 	 * and get all the rows from the Processor table.
 	 */
 
-
-	app.get('/data/cpu', function(req, res) {
+	app.get('/data/stats', function(req, res) {
 		var jsonToSend = {};
 		conn.query("CALL get_scrapped_status();", function(error, results, fields) {
 			if(error) {
@@ -30,22 +29,43 @@ module.exports = function(app, conn) {
 				jsonToSend.is_admin = 0;
 			}
 
-			conn.query("CALL get_cpu();", function(error, results, fields){
-				if(error) {
-					throw error;
-				}
+			if (req.session.first_name) {
+				jsonToSend.first_name = req.session.first_name;
+			}
 
-				var a = [];
-				for (var i in results[0]) {
-					a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
-						results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
-						results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
-						results[0][i].user, results[0][i].checked_in, results[0][i].notes));
-				}
-				jsonToSend.items = a;
+			if (req.session.last_name) {
+				jsonToSend.last_name = req.session.last_name;
+			}
 
-				res.json(jsonToSend);
-			});
+			res.json(jsonToSend);
+		});
+	});
+
+	app.get('/data/cpu', function(req, res) {
+		var jsonToSend = {};
+		conn.query("CALL get_cpu();", function(error, results, fields){
+			if(error) {
+				throw error;
+			}
+
+			// We send admin stats for the table because there are admin-specific
+			// elements to the table.
+			if (req.session.wwid) {
+				jsonToSend.is_admin = req.session.is_admin;
+			} else {
+				jsonToSend.is_admin = 0;
+			}
+
+			var a = [];
+			for (var i in results[0]) {
+				a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
+					results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
+					results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
+					results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+			}
+			jsonToSend.items = a;
+
+			res.json(jsonToSend);
 		});
 	});
 
@@ -97,8 +117,19 @@ module.exports = function(app, conn) {
 		});
 	});
 
+	/* Gets all the different column names that are dropdown menus. */
+	app.get('/dd/keys', function(req, res) {
+		conn.query('CALL get_dropdown_keys()',
+			function(error, results, fields) {
+				if (error) {
+					throw error;
+				}
+				res.send(results[0]);
+			});
+	});
+
 	/* Gets the dropdown menu items when someone needs to add a new item. */
-	app.get('/dd/:attr', function(req, res) {
+	app.get('/dd/values/:attr', function(req, res) {
 		var attr = req.params.attr;
 		conn.query('CALL get_dropdown(\''+attr+'\')',
 			function(error, results, fields){

@@ -101,7 +101,7 @@ CREATE TABLE `Dropdown_Attributes` (
 
 LOCK TABLES `Dropdown_Attributes` WRITE;
 /*!40000 ALTER TABLE `Dropdown_Attributes` DISABLE KEYS */;
-INSERT INTO `Dropdown_Attributes` VALUES (1,'codename','Sandy Bridge'),(2,'codename','Jaketown'),(3,'codename','Haswell'),(4,'codename','Crystal Well'),(5,'codename','Bay Trail'),(6,'codename','Haswell Server'),(7,'codename','Broadwell'),(8,'codename','Skylake');
+INSERT INTO `Dropdown_Attributes` VALUES (1,'codename','Sandy Bridge'),(2,'codename','Jaketown'),(3,'codename','Haswell'),(4,'codename','Crystal Well'),(5,'codename','Bay Trail'),(6,'codename','Haswell Server'),(7,'codename','Broadwell'),(8,'codename','Skylake'),(9,'cpu class','Mobile'),(10,'cpu class','EP'),(11,'cpu class','Desktop'),(12,'cpu class','Atom'),(13,'cpu class','ULT');
 /*!40000 ALTER TABLE `Dropdown_Attributes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -249,7 +249,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com',1),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1);
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com',1),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -622,6 +622,26 @@ BEGIN
 	SELECT 	attr_value
   FROM	Dropdown_Attributes
   WHERE	lcase(attr_type) = attr;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_dropdown_keys` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_dropdown_keys`()
+BEGIN
+  SELECT DISTINCT attr_type
+  FROM  Dropdown_Attributes;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

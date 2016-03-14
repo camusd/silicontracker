@@ -3,8 +3,11 @@ $(document).ready(function() {
     $('#filterCols th').each( function () {
         var title = $(this).text();
         var width = $(this).width();
-        $(this).html( '<input type="text" style="width: '+(width+14)+'px;" placeholder="'+title+'" />' );
-        // The 14 represents the additional amount of space for the column sorting
+
+        if (this.id !== 'colBtn') {
+        	$(this).html( '<input type="text" style="width: '+(width+14)+'px;" placeholder="'+title+'" />' );
+        	// The 14 represents the additional amount of space for the column sorting
+        }
     } );
 
     $.get('/data/cpu', function(jsonData) {
@@ -44,6 +47,5 @@ $(document).ready(function() {
 				   .draw();
 			});
 		});
-		$('#totals').append("<span><strong>Total Items </strong>: "+jsonData.num_active+" active + "+jsonData.num_scrapped+" scrapped = "+jsonData.num_total+"</span>");
 	});
 });

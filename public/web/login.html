@@ -26,7 +26,7 @@
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
 <script src="../js/web/script1.js" type="text/javascript"></script>
-      
+<script src="../../js/stats.js"></script>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
@@ -44,11 +44,11 @@
       <div class="12u">
         <div class="mobileUI-site-name" id="logo">
            <a href="/">
-               <img src="../images/intel-logo.png" alt="Home" style="width:128px;height:84px;border:0;">
+               <img src="../images/client-logo_intel-197x140.png" alt="Home" style="width:147.75px;height:105px;border:0;">
             </a> 
         </div>
         <nav class="mobileUI-site-nav" id="site-nav">
-          <ul>
+          <ul id="navlist">
             <li><a href="/">Database</a></li>
             <li><a href="/add">Add Item</a></li>
             <li class="current_page_item"><a href="/login">Login</a></li>
@@ -81,12 +81,12 @@
                                                         margin-right: auto;
                                                         ">	
             
-	   <form data-brackets-id="88" class="form-signin">
+	   <form data-brackets-id="88" class="form-signin" method="post" action="/login/login">
         <h2 data-brackets-id="89" class="form-signin-heading">Please sign in</h2>
         <label data-brackets-id="90" for="inputUser" class="sr-only">Username</label>
-        <input data-brackets-id="91" type="text" id="inputEmail" class="form-control" placeholder="Username" required="" autofocus="">
+        <input data-brackets-id="91" type="text" id="username" name="username" class="form-control" placeholder="Username" required="" autofocus="">
         <label data-brackets-id="92" for="inputPassword" class="sr-only">Password</label>
-        <input data-brackets-id="93" type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+        <input data-brackets-id="93" type="password" id="pass" name="pass" class="form-control" placeholder="Password" required="">
         <div data-brackets-id="94" class="checkbox">
         </div>
         <button data-brackets-id="95" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

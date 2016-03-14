@@ -12,9 +12,11 @@ var users = [
 	{'user': 'brett',
 	 'wwid': '123'},
 	{'user': 'joseph',
-	 'wwid': '234'},
+	 'wwid': '789'},
 	{'user': 'dylan',
 	 'wwid': '456'},
+	{'user': 'scott',
+	 'wwid': '282'},
 	{'user': 'nonadminuser',
 	 'wwid': '1'}
 ]

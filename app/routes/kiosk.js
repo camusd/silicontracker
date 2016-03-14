@@ -4,7 +4,7 @@ require('../templates')();
 
 module.exports = function(app, conn) {
 		 /* Routes for loading pages in the kiosk interface */
-	app.get('/cart', function(req, res) {
+	app.get('/cart', enforceLogin, function(req, res) {
 	 	res.sendFile(rootdir + '/public/kiosk/cart.html');
 	});
 
@@ -42,7 +42,10 @@ module.exports = function(app, conn) {
 	 			if(error) {
 	 				throw error;
 	 			}
-	 			console.log(results[0]);
+	 			if (process.env.ENV == 'dev')
+	 				console.log(results[0]);
+	 			
+
 	 			res.send(results[0]);
 	 		});
 	});
@@ -91,12 +94,11 @@ module.exports = function(app, conn) {
 	 			if (body !== '') {
 	 				// We have a user in the AD system. Parse out the wwid.
 	 				req.session.wwid = body;
+	 				next();
 	 			} else {
-	 				// No wwid found, erase current session and create new session for user.
-	 				req.session.regenerate();
+	 				// No wwid found, send user back to login page.
 	 				res.redirect('/kiosk');
 	 			}
-	 			next();
 	 		});
 	}, function(req,res,next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
@@ -131,3 +133,11 @@ module.exports = function(app, conn) {
 		res.redirect('/cart');
 	});
 };
+
+function enforceLogin(req, res, next) {
+	if (req.session.wwid) {
+		next();
+	} else {
+		res.redirect('/kiosk');
+	}
+}

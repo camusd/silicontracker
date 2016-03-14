@@ -16,13 +16,32 @@ The node.js app uses environment variables, and they are not included on the rep
 
 The file should look like the following, with your own settings to replace the ones here:
 ```
+
+// dev  = development environment
+// prod = production environment - needs to use https! 
+process.env.ENV				= 'dev';
+
+// Database variables
 process.env.DB_HOST			= 'localhost';
 process.env.DB_USER			= 'tracker_user'; 
 process.env.DB_PASSWORD		= 'your_own_password_here';
 process.env.DB 				= 'tracker';
 
+// Server app variables
 process.env.APP_IP 			= '127.0.0.1';
 process.env.APP_PORT 		= 8080;
+process.env.SSL_PASSPHRASE	= 'myLittleSecret';
+
+// Credential server variables
+process.env.CRED_PORT		= 8082;
+process.env.CRED_ADDR		= 'http://localhost:' + process.env.CRED_PORT;
+
+// Session secret
+process.env.SESSION_SECRET	= 'iamasecret';
+
+// Email variables
+process.env.EMAIL_USER = 'test@gmail.com';
+process.env.EMAIL_PASSWORD = 'test123';
 ```
 
 ## Database Script
@@ -69,4 +88,6 @@ Navigate back to the root folder and in the terminal type `npm install`. This wi
 
 The main server code can be viewed in `app.js`. This is the file that calls environment variables, sets up the database connections, maps the routes, etc.
 
-After setting up the server and downloading the dependencies, you should be able to start it up with `npm start`. You should be greeted with a message: `Silicon Tracker Server listening at <ip address>:<port>` In your broswer, navigate to that ip address. Don't forget the port! At this point you should be greeted with the Silicon Tracker website. Congratulations!
+We also have a second app that we have created to mock the credential login system at Intel. It's a very simplified version of their credential system (It's not actually how Intel deals with security. Our code is more of a placeholder). You will need to run this app if you plan on logging in as a user. open up a separate terminal window and go to the `cred/` folder. There you will see a single file `cred.js`. Run this app with `node cred.js`.
+
+After setting up the server and downloading the dependencies, you should be able to start it up with `npm start`. Make sure you are in the root folder for the project before you run that command. You should be greeted with a message: `Silicon Tracker Server listening at <ip address>:<port>` In your broswer, navigate to that ip address. Don't forget the port! At this point you should be greeted with the Silicon Tracker website. Congratulations!
