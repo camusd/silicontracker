@@ -1,6 +1,6 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
-var templates = require('../templates');
+require('../templates')();
 
 module.exports = function(app, conn) {
 		 /* Routes for loading pages in the kiosk interface */
@@ -49,8 +49,25 @@ module.exports = function(app, conn) {
 
 	/* Posts on the kiosk */
 	app.post('/kiosk/submit', function(req, res) {
+		var item_serial = [];
+		var item_type = [];
+		var status = [];
 		for(var i in req.body.val_array) {
-			conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');")
+			conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');",
+				function(error, results, fields) {
+					if(error) {
+						throw error;
+					}
+					var addr = results[0][0].email_address;
+					var first_name = results[0][0].first_name;
+					var last_name = results[0][0].last_name;
+					item_serial[i] = results[0][0].serial_num;
+					item_type[i] = results[0][0].item_type;
+					status[i] = results[0][0].status;
+					var date = results[0][0].order_date;
+				});
+				console.log("Sending cart email to "+addr+"...");
+				cartTemplate(addr, first_name, last_name, item_serial, item_type, status, order_date);
 		}
 		res.redirect('/kiosk');
 	});

@@ -569,7 +569,7 @@ BEGIN
       ON Processor.product_id = Checkout.product_id LEFT JOIN Items
       ON Items.id = Processor.product_id
   WHERE
-      TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 1;
+      TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 30;
 
 END ;;
 DELIMITER ;
@@ -971,7 +971,16 @@ BEGIN
 
   IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
   ELSE CALL delete_checkout(@id);
-  END IF; 
+  END IF;
+
+  SELECT
+    email_address, first_name, last_name, Processor.serial_num, item_type, checked_in, CURDATE() AS order_date
+  FROM
+    Items JOIN Processor
+        ON Processor.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = new_user
+  WHERE
+    Processor.serial_num = item;
 
 END ;;
 DELIMITER ;
@@ -1020,7 +1029,16 @@ BEGIN
 
   IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
   ELSE CALL delete_checkout(@id);
-  END IF; 
+  END IF;
+
+  SELECT
+    email_address, first_name, last_name, Flash_Drive.serial_num, item_type, checked_in, CURDATE() AS order_date
+  FROM
+    Items JOIN Flash_Drive
+        ON Flash_Drive.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = new_user
+  WHERE
+    Flash_Drive.serial_num = item;
         
 END ;;
 DELIMITER ;
@@ -1069,7 +1087,16 @@ BEGIN
 
   IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
   ELSE CALL delete_checkout(@id);
-  END IF; 
+  END IF;
+
+  SELECT
+    email_address, first_name, last_name, RAM.serial_num, item_type, checked_in, CURDATE() AS order_date
+  FROM
+    Items JOIN RAM
+        ON RAM.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = new_user
+  WHERE
+    RAM.serial_num = item;
 
 END ;;
 DELIMITER ;
@@ -1118,7 +1145,16 @@ BEGIN
 
   IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
   ELSE CALL delete_checkout(@id);
-  END IF; 
+  END IF;
+
+  SELECT
+    email_address, first_name, last_name, SSD.serial_num, item_type, checked_in, CURDATE() AS order_date
+  FROM
+    Items JOIN SSD
+        ON SSD.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = new_user
+  WHERE
+    SSD.serial_num = item;
 
 END ;;
 DELIMITER ;

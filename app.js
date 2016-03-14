@@ -88,11 +88,8 @@ require('./app/routes/web')(app, conn);
 // Load the routes for the kiosk
 require('./app/routes/kiosk')(app, conn);
 
-/* Testing some email scheduling */
-
-// TODO: don't forget to add cronjob to {}
-
-var j = schedule.scheduleJob({}, function() {
+// Send emails for overdue items
+var j = schedule.scheduleJob('00 00 * * 0', function() {
 	conn.query("CALL get_checkout();",
 		function(error, results, fields) {
 			if(error) {
