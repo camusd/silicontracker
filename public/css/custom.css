@@ -20,27 +20,6 @@ color:#fff;
     width:100%;
 }
 
-.navbar {
-    margin-bottom: 0;
-    border-radius: 0 !important;
-
-}
-
-.navbar-intel {
-    background: #003c71;
-}
-
-.navbar-brand
-{
-    margin: 0;
-    padding: 0;
-}
-
-.navbar-brand img
-{
-    max-height: 100%;
-}
-
 .panel-intel {
     background-color: #003c71;
     border-radius: 0;
