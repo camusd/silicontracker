@@ -2,10 +2,11 @@ $(document).ready(function() {
 	$.get('/data/stats', function(data) {
 		// If the user is logged in, they will have a first name.
 		if (data.first_name) {
-			$('#navlist').append('<li><a href="/settings">Settings</a></li>');
+			$('#login').replaceWith('<li id="settings"><a href="/settings">Settings</a></li><li id="');
+			$('#navbar-right').append('<li><a href="#">Logout</a></li>');
 
 			if (window.location.pathname === '/') {
-				$('#infoBanner').prepend('<div>Welcome ' + data.first_name + '.</div>');
+				$('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
 			}
 		}
 

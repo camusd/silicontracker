@@ -2,195 +2,125 @@
 <html>
 <head>
 <title>Silicon Tracker</title>
-<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="../css/5grid/jquery.js"></script>
-<script src="../css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=60&amp;mobileUI.openerWidth=52"></script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-        <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="../css/custom.css">
-<!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css"><![endif]-->
+<link rel="stylesheet" href="../css/navbar.css">
+
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="../js/stats.js"></script>
 </head>
+
 <body>
-<!-- Header -->
-<div id="header-wrapper">
-  <header class="5grid-layout" id="site-header">
-    <div class="row">
-      <div class="12u">
-        <div class="mobileUI-site-name" id="logo">
-           <a href="/">
-              <img src="../images/client-logo_intel-197x140.png" alt="Home" style="width:147.75px;height:105px;border:0;">
-            </a> 
+
+<!-- Navbar -->
+<nav class="navbar navbar-intel">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" 
+                    data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">
+                <img src="../images/client-logo_intel-197x140.png">
+            </a>
         </div>
-        <nav class="mobileUI-site-nav" id="site-nav">
-          <ul id="navlist">
-            <li><a href="/">Database</a></li>
-            <li class="current_page_item"><a href="/add">Add Item</a></li>
-            <li><a href="/login">Login</a></li>
-          </ul>
-        </nav>
-      </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav" id="navbar-left">
+                <li><a href="/">Home</a></li>
+                <li class="active"><a href="/add">Add Item</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" id="navbar-right">
+                <li id="login"><a href="/login">Login</a></li>
+            </ul>
+        </div>
     </div>
-  </header>
-</div>
-<!-- Main -->
-<div id="main-wrapper" class="subpage">
-  <div class="5grid-layout">
-    <div class="row">
-      <div class="3u">
-        <!-- Sidebar -->
-        <section>
-          <h3>Item Type</h3>
-          <ul class="link-list">
-            <li><a href="/add/cpu">Add CPU</a></li>
-            <li><a href="/add/ssd">Add SSD</a></li>
-            <li><a href="/add/memory">Add Memory</a></li>
-            <li><a href="/add/flash">Add Flash Drive</a></li>
-          </ul>
-        </section>
-      </div>
-     
-         
-        <!-- Content -->
-          <form action="/add/memory" method="post" id="Memory">
-               <div class="4u">
+</nav>
 
+<div class="container-fluid">
+  <div class="row">
 
-<!-- Form Name -->
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="serial_input">Serial Number</label>  
-  <div class="col-md-4-c">
-  <textarea class="form-control" id="serial_input" name="serial_input" placeholder="" class="form-control input-md" required="" type="text"></textarea>
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="spec_input">Manufacturer</label>  
-  <div class="col-md-4-c">
-  <input id="Manufacturer_input" name="Manufacturer_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="mm_input">Physical Size</label>  
-  <div class="col-md-4-c">
-  <input id="size_input" name="size_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="codename_input">ECC</label>  
-  <div class="col-md-4-c">
-  <input id="ECC_input" name="ECC_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
-
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="codename_input">Ranks</label>  
-  <div class="col-md-4-c">
-  <input id="Ranks_input" name="Ranks_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
-
-            <!-- Button -->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="submit"></label>
-  <div class="col-md-4-c">
-    <button id="submit" name="submit" class="btn btn-primary">Submit</button>
-  </div>
-</div>
-
-
-      </div>
-    <div class="4u">
-        <!-- Sidebar -->
+    <!-- Sidebar -->
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="/add/cpu">Add CPU</a></li>
+        <li><a href="/add/ssd">Add SSD</a></li>
+        <li><a href="/add/memory">Add Memory</a></li>
+        <li><a href="/add/flash">Add Flash Drive</a></li>
+      </ul>
+    </div>
+      
+    <!-- Main Content -->
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+      <form action="/add/memory" method="post" id="Memory">
             
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="freq_input">Type</label>  
-  <div class="col-md-4-c">
-  <input id="Type_input" name="Type_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
-            
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="cores_input">Capacity</label>  
-  <div class="col-md-4-c">
-  <input id="Capacity_input" name="Capacity_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="serial_input">Serial Number</label>
+          <textarea id="serial_input" name="serial_input" class="form-control" required="" type="text"></textarea>
+        </div>
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="codename_input">Speed</label>  
-  <div class="col-md-4-c">
-  <input id="Speed_input" name="Speed_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="manufacturer_input">Manufacturer</label>  
+          <input id="manufacturer_input" name="manufacturer_input" class="form-control" required="" type="text">
+        </div>
+        
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="size_input">Physical Size</label>  
+          <input id="size_input" name="size_input" class="form-control" required="" type="text">
+        </div>
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="codename_input">Owner</label>  
-  <div class="col-md-4-c">
-  <input id="Owner_input" name="Owner_input" placeholder="" class="form-control input-md" required="" type="text">
-    
-  </div>
-</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="ecc_input">ECC</label>  
+          <input id="ecc_input" name="ecc_input" class="form-control" required="" type="text">
+        </div>
 
-<!-- Text input-->
-<div class="form-group">
-  <label class="col-md-4-c control-label" for="serial_input">Notes</label>  
-  <div class="col-md-4-c">
- <textarea class="form-control" id="serial_input" name="serial_input" placeholder="" class="form-control input-md" required="" type="text"></textarea>
-    
-  </div>
-</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="ranks_input">Ranks</label>  
+          <input id="ranks_input" name="ranks_input" class="form-control" required="" type="text">
+        </div>
 
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="type_input">Type</label>  
+          <input id="type_input" name="type_input" class="form-control" required="" type="text">
+        </div>
 
-      </div>
-</form>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="capacity_input">Capacity</label>  
+          <input id="capacity_input" name="capacity_input" class="form-control" required="" type="text">
+        </div>
 
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="speed_input">Speed</label>  
+          <input id="speed_input" name="speed_input" class="form-control" required="" list="dd_codename">
+          <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
+        </div>
 
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="notes_input">Notes</label>  
+          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" required="" type="text"></textarea>
+        </div>
+
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="submit"></label>
+          <button id="submit" name="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+      </form>
     </div>
   </div>
 </div>
+
 <!-- Footer -->
-<div id="footer-wrapper">
-  <footer class="5grid-layout" id="site-footer">
-
-    <div class="row">
-      <div class="12u">
-        <div class="divider"></div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="12u">
-        <div id="copyright"> &copy; Untitled. All rights reserved. | Design: <a target="_blank" href="http://html5up.net">HTML5 Up!</a> | Images: <a target="_blank" href="http://hdwallpapers.in">hdwallpapers</a> </div>
-      </div>
-    </div>
-  </footer>
+<div class="footer footer-intel">
+  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
+
 </body>
 </html>
