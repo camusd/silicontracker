@@ -1,22 +1,112 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto);
-
-.col-md-4-c {
-    width: 100%;
+html {
+  position: relative;
+  min-height: 100%;
 }
 
-button_wrapper {
-    text-align:center;
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 50px;
+    background: #ececec;
 }
 
-login_wrapper {
+.footer {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 50px;
+color:#fff;
+background-color: #f5f5f5;
+} 
+
+.footer-intel {
+  background-color: #003c71;
+  border-color: #fff;
+}
+
+#banner-img {
+    width:100%;
+}
+
+.panel-intel {
+    background-color: #003c71;
+    border-radius: 0;
+    color: #fff;
+    text-align: center;
+}
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+@media (min-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 52px;
+        bottom: 50px;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        border-right: 1px solid #eee;
+    }
+}
+
+.nav-sidebar {
+    margin-right: -21px; /* 20px padding + 1px border */
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+.nav-sidebar > li > a {
+    padding-right: 20px;
+    padding-left: 20px;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}
+
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+
+
+/*.login_wrapper {
     width: 50%;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
 
-textarea{
-	max-width: 100%;
-	max-height: 100%;
-	resize: vertical;
+.barcode_wrapper {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.camera_wrapper {
+    width: 50%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}*/
+
+.dataTables_filter {
+    display: none;
+}
+
+#inner_camera {
+  display: inline-block;
 }
