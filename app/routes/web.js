@@ -27,7 +27,9 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add.html');
+	 	res.statusCode = 302;
+	 	res.setHeader("Location", "/")
+	 	res.end();
 	});
 
 	app.post('/add/ssd', function(req, res) {
@@ -39,8 +41,7 @@ module.exports = function(app, conn) {
 	 			if(results[0].length == 0) {
 	 				conn.query("CALL put_ssd('"+req.body.serial_input+"','"
 	 					+req.body.manufacturer_input+"','"+req.body.model_input+"','"
-	 					+req.body.capacity_input+"','"+req.body.user_input+"','"
-	 					+req.body.notes_input+"');",
+	 					+req.body.capacity_input+"','"+req.body.notes_input+"');",
 	 				function(error, results, fields){
 	 					if(error) {
 	 						throw error;
@@ -48,7 +49,9 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add.html');
+	 	res.statusCode = 302;
+	 	res.setHeader("Location", "/")
+	 	res.end();
 	});
 
 	app.post('/add/memory', function(req, res) {
@@ -62,7 +65,7 @@ module.exports = function(app, conn) {
 	 					+req.body.manufacturer_input+"','"+req.body.physical_size_input+"','"
 	 					+req.body.memory_type_input+"','"+req.body.capacity_input+"','"
 	 					+req.body.speed_input+"','"+req.body.ecc_input+"','"
-	 					+req.body.rank_input+"','"+req.body.notes_input+"');",
+	 					+req.body.ranks_input+"','"+req.body.notes_input+"');",
 	 				function(error, results, fields){
 	 					if(error) {
 	 						throw error;
@@ -70,7 +73,9 @@ module.exports = function(app, conn) {
 	 				});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add.html');
+	 	res.statusCode = 302;
+	 	res.setHeader("Location", "/")
+	 	res.end();
 	});
 
 	app.post('/add/flash', function(req, res) {
@@ -90,7 +95,9 @@ module.exports = function(app, conn) {
 	 					});
 	 			}
 	 		});
-	 	res.sendFile(rootdir + '/public/web/add.html');
+	 	res.statusCode = 302;
+	 	res.setHeader("Location", "/")
+	 	res.end();
 	});
 
 	/* Routes for loading pages in the web interface */

@@ -31,7 +31,7 @@ module.exports = {
 		self.notes = notes;
 	},
 
-	Memory: function(serial_num, manufacturer, physical_size, memory_type, capacity, speed, ecc, rank, user, checked_in, notes) {
+	Memory: function(serial_num, manufacturer, physical_size, memory_type, capacity, speed, ecc, ranks, user, checked_in, notes) {
 		var self = this;
 		
 		self.serial_num = serial_num;
@@ -41,7 +41,7 @@ module.exports = {
 		self.capacity = capacity;
 		self.speed = speed;
 		self.ecc = ecc;
-		self.rank = rank;
+		self.ranks = ranks;
 		self.user = user;
 		self.checked_in = checked_in;
 		self.notes = notes;

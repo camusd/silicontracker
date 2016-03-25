@@ -18,47 +18,43 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-intel">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" 
-                    data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">
-                <img src="../images/client-logo_intel-197x140.png">
-            </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav" id="navbar-left">
-                <li><a href="/">Home</a></li>
-                <li class="active"><a href="/add">Add Item</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right" id="navbar-right">
-                <li id="login"><a href="/login">Login</a></li>
-            </ul>
-        </div>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand">
+        <img src="../images/client-logo_intel-197x140.png">
+      </a>
     </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav" id="navbar-left">
+        <li><a href="/">Home</a></li>
+        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
+            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" id="navbar-right">
+        <li id="login"><a href="/login">Login</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <div class="container-fluid">
   <div class="row">
 
-    <!-- Sidebar -->
-    <div class="col-sm-3 col-md-2 sidebar">
-      <ul class="nav nav-sidebar">
-        <li><a href="/add/cpu">Add CPU</a></li>
-        <li><a href="/add/ssd">Add SSD</a></li>
-        <li><a href="/add/memory">Add Memory</a></li>
-        <li><a href="/add/flash">Add Flash Drive</a></li>
-      </ul>
-    </div>
-      
     <!-- Main Content -->
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="main">
       <form action="/add/memory" method="post" id="Memory">
             
         <div class="col-md-6 form-group">
@@ -72,8 +68,8 @@
         </div>
         
         <div class="col-md-6 form-group">
-          <label class="control-label" for="size_input">Physical Size</label>  
-          <input id="size_input" name="size_input" class="form-control" required="" type="text">
+          <label class="control-label" for="physical_size_input">Physical Size</label>  
+          <input id="physical_size_input" name="physical_size_input" class="form-control" required="" type="text">
         </div>
 
         <div class="col-md-6 form-group">
@@ -87,8 +83,8 @@
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="type_input">Type</label>  
-          <input id="type_input" name="type_input" class="form-control" required="" type="text">
+          <label class="control-label" for="memory_type_input">Type</label>  
+          <input id="memory_type_input" name="memory_type_input" class="form-control" required="" type="text">
         </div>
 
         <div class="col-md-6 form-group">

@@ -2,33 +2,16 @@
 <html>
 <head>
 <title>Silicon Tracker</title>
-<meta charset="utf-8">
-<noscript>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    
-</noscript>
-
-<style>
-  .dataTables_filter {
-    display: none; 
-  }
-</style>    
-
-<script src="../css/5grid/jquery.js"></script>
-<script src="../css/5grid/init.js?use=mobile,desktop,1000px&amp;mobileUI=1&amp;mobileUI.theme=none&amp;mobileUI.titleBarHeight=60&amp;mobileUI.openerWidth=52"></script>
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-        <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="../css/custom.css">
-<!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css"><![endif]-->
+<link rel="stylesheet" href="../css/navbar.css">
 
-
+<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="../js/stats.js"></script>
 <script>
 	$(document).ready(function() {
 		var current_attr = "";
@@ -86,94 +69,77 @@
 	});
 </script>
 </head>
+
 <body>
-<!-- Header -->
-<div id="header-wrapper">
-  <header class="5grid-layout" id="site-header">
-    <div class="row">
-      <div class="12u">
-        <div class="mobileUI-site-name" id="logo">
-           <a href="/">
-              <img src="../images/client-logo_intel-197x140.png" alt="Home" style="width:147.75px;height:105px;border:0;">
-            </a> 
-        </div>
-        <nav class="mobileUI-site-nav" id="site-nav">
-          <ul>
-            <li><a href="/">Database</a></li>
-            <li><a href="/add">Add Item</a></li>
-            <li><a href="/login">Login</a></li>
-            <li class="current_page_item"><a href="/settings">Settings</a></li>
-          </ul>
-        </nav>
-      </div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-intel">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand">
+        <img src="../images/client-logo_intel-197x140.png">
+      </a>
     </div>
-  </header>
-</div>
-<!-- Main -->
-<div id="main-wrapper" class="subpage">
-  <div class="5grid-layout">
-    <div class="row">
-      <div class="3u">
-        <!-- Sidebar -->
-        <section>
-          <ul class="link-list">
-            <li><a href="#">Edit Profile</a></li>
-            <li><a href="#">Email Settings</a></li>
-            <li><a href="#">Edit Dropdowns</a></li>
-            <li><a href="#">Setup Facial Recognition</a></li>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav" id="navbar-left">
+        <li><a href="/">Home</a></li>
+        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
+            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
           </ul>
-        </section>
-      </div>
-      <div class="9u mobileUI-main-content">
-        <!-- Content -->
-        <!-- Text input-->
-        <div class="form-group">
-          <label class="col-md-4-c control-label" for="choose_attr">Attribute</label>  
-          <div class="col-md-4">
-            <select id="dd_attr">
-              <option></option> <!-- Attributes get loaded using ajax and jQuery -->
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="9u mobileUI-main-content">
-        <div class="col-md-6">
-          <table id="attr_table">
-            <thead>
-              <tr>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot></tfoot>
-          </table>
-          <button class="btn btn-primary" id="submitAttributes">Submit</button>
-          <button class="btn btn-default" id="addAttribute">Add New</button>
-        </div>
-
-      </div>  
-
-
-
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" id="navbar-right">
+        <li id="login"><a href="/login">Login</a></li>
+      </ul>
     </div>
   </div>
-</div>
-<!-- Footer -->
-<div id="footer-wrapper">
-  <footer class="5grid-layout" id="site-footer">
+</nav>
 
-    <div class="row">
-      <div class="12u">
-        <div class="divider"></div>
+<!-- Main -->
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Content -->
+    <div class="form-group">
+      <label class="control-label" for="choose_attr">Attribute</label>  
+      <div>
+        <select id="dd_attr">
+          <option></option> <!-- Attributes get loaded using ajax and jQuery -->
+        </select>
       </div>
-    </div>
-    <div class="row">
-      <div class="12u">
-        <div id="copyright"> &copy; Untitled. All rights reserved. | Design: <a target="_blank" href="http://html5up.net">HTML5 Up!</a> | Images: <a target="_blank" href="http://hdwallpapers.in">hdwallpapers</a> </div>
+      <div>
+        <table id="attr_table">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+        <button class="btn btn-primary" id="submitAttributes">Submit</button>
+        <button class="btn btn-default" id="addAttribute">Add New</button>
       </div>
-    </div>
-  </footer>
+    </div>  
+  </div>
 </div>
+
+<!-- Footer -->
+<div class="footer footer-intel">
+  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+</div>
+
 </body>
 </html>

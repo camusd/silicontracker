@@ -592,7 +592,7 @@ BEGIN
 	SELECT
 		Processor.serial_num, spec, mm, frequency, stepping, 
       llc, cores, codename, cpu_class, external_name,
-		  architecture, Checkout.user checked_in, notes
+		  architecture, Checkout.user, checked_in, notes
 	FROM 
 		Processor INNER JOIN Items
         ON Processor.product_id = Items.id LEFT JOIN Checkout
