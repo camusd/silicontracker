@@ -15,57 +15,57 @@
 <script>
 	$(document).ready(function() {
 		var current_attr = "";
-    
-    // Submitting the edited attributs. When invoked, it will create an
-    // object with the attribute type, and the values within the type.
-    $('#submitAttributes').click(function() {
-        var submitAttrs = {attr_type: current_attr, attr_vals: []}
-        $('#attr_table tbody tr td input').each(function() {
-            if ($(this).val() !== ""){
-                submitAttrs.attr_vals.push($(this).val());              
-            }
-        });
-        $.post('/settings/admin/attributes', submitAttrs, function(data) {
-            // After success, redirect to route specified by server.
-            window.location = data.redirect;
-        });
-    });
-    // Adding a new text field to the list of attributes.
-    $('#addAttribute').click(function() {
-        if (current_attr) {
-          $('#attr_table tbody').append(
-                '<tr><td>' +
-                '<input type="text">' +
-                '</td><td><button class="del btn btn-link">delete</button></td></tr>');
-        }
-    });
-    // Gets all the attribute types and places them in the dropdown menu.
+		
+		// Submitting the edited attributs. When invoked, it will create an
+		// object with the attribute type, and the values within the type.
+		$('#submitAttributes').click(function() {
+				var submitAttrs = {attr_type: current_attr, attr_vals: []}
+				$('#attr_table tbody tr td input').each(function() {
+						if ($(this).val() !== ""){
+								submitAttrs.attr_vals.push($(this).val());              
+						}
+				});
+				$.post('/settings/admin/attributes', submitAttrs, function(data) {
+						// After success, redirect to route specified by server.
+						window.location = data.redirect;
+				});
+		});
+		// Adding a new text field to the list of attributes.
+		$('#addAttribute').click(function() {
+				if (current_attr) {
+					$('#attr_table tbody').append(
+								'<tr><td>' +
+								'<input type="text">' +
+								'</td><td><button class="del btn btn-link">delete</button></td></tr>');
+				}
+		});
+		// Gets all the attribute types and places them in the dropdown menu.
 		$.get('/dd/keys', function(data) {
 			$.each(data, function(idx, elem) {
 				$('#dd_attr').append('<option value="'+elem.attr_type+'">'+elem.attr_type+'</option>');
 			});
-      // Invoked when a new dropdown item is chosen. It gets all the attributes of that type
-      // and puts them in a table for editing.
-      $('#dd_attr').change(function(e) {
-          current_attr = e.target.options[e.target.selectedIndex].text;
-          // Clearing out the current table.
-          $('#attr_table tbody tr').remove();
-          // Getting the list of attributes and putting them in the table.
-          $.get('/dd/values/'+current_attr, function(data) {
-              $.each(data, function(idx, elem) {
-                  $('#attr_table tbody').append(
-                      '<tr><td>' +
-                      '<input type="text" value="' +elem.attr_value+ '">' +
-                      '</td><td><button class="del btn btn-link">delete</button></td></tr>');
-              });
-              // Setting up the delete button for each row.
-              $('#attr_table tbody tr').on('click', '.del', function() {
-                  var attrToRemove = $(this).parent().parent();
-                  attrToRemove.remove();
-              });
-          });
-      });
-    });
+			// Invoked when a new dropdown item is chosen. It gets all the attributes of that type
+			// and puts them in a table for editing.
+			$('#dd_attr').change(function(e) {
+					current_attr = e.target.options[e.target.selectedIndex].text;
+					// Clearing out the current table.
+					$('#attr_table tbody tr').remove();
+					// Getting the list of attributes and putting them in the table.
+					$.get('/dd/values/'+current_attr, function(data) {
+							$.each(data, function(idx, elem) {
+									$('#attr_table tbody').append(
+											'<tr><td>' +
+											'<input type="text" value="' +elem.attr_value+ '">' +
+											'</td><td><button class="del btn btn-link">delete</button></td></tr>');
+							});
+							// Setting up the delete button for each row.
+							$('#attr_table tbody tr').on('click', '.del', function() {
+									var attrToRemove = $(this).parent().parent();
+									attrToRemove.remove();
+							});
+					});
+			});
+		});
 	});
 </script>
 </head>
@@ -74,71 +74,71 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-intel">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand">
-        <img src="../images/client-logo_intel-197x140.png">
-      </a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav" id="navbar-left">
-        <li><a href="/">Home</a></li>
-        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
-          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
-            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
-            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
-            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
-            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right" id="navbar-right">
-        <li id="login"><a href="/login">Login</a></li>
-      </ul>
-    </div>
-  </div>
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand">
+				<img src="../images/client-logo_intel-197x140.png">
+			</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav" id="navbar-left">
+				<li><a href="/">Home</a></li>
+				<li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+					<ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+						<li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+						<li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+						<li role="presentation"><a href="/add/memory">Add Memory</a></li>
+						<li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right" id="navbar-right">
+				<li id="login"><a href="/login">Login</a></li>
+			</ul>
+		</div>
+	</div>
 </nav>
 
 <!-- Main -->
 <div class="container-fluid">
-  <div class="row">
+	<div class="row">
 
-    <!-- Content -->
-    <div class="form-group">
-      <label class="control-label" for="choose_attr">Attribute</label>  
-      <div>
-        <select id="dd_attr">
-          <option></option> <!-- Attributes get loaded using ajax and jQuery -->
-        </select>
-      </div>
-      <div>
-        <table id="attr_table">
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-          <tfoot></tfoot>
-        </table>
-        <button class="btn btn-primary" id="submitAttributes">Submit</button>
-        <button class="btn btn-default" id="addAttribute">Add New</button>
-      </div>
-    </div>  
-  </div>
+		<!-- Content -->
+		<div class="form-group">
+			<label class="control-label" for="choose_attr">Attribute</label>  
+			<div>
+				<select id="dd_attr">
+					<option></option> <!-- Attributes get loaded using ajax and jQuery -->
+				</select>
+			</div>
+			<div>
+				<table id="attr_table">
+					<thead>
+						<tr>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+					<tfoot></tfoot>
+				</table>
+				<button class="btn btn-primary" id="submitAttributes">Submit</button>
+				<button class="btn btn-default" id="addAttribute">Add New</button>
+			</div>
+		</div>  
+	</div>
 </div>
 
 <!-- Footer -->
 <div class="footer footer-intel">
-  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+	<p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
 
 </body>

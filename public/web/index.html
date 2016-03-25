@@ -24,59 +24,59 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-intel">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand">
-        <img src="../images/client-logo_intel-197x140.png">
-      </a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav" id="navbar-left">
-        <li class="active"><a href="/">Home</a></li>
-        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
-          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
-            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
-            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
-            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
-            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right" id="navbar-right">
-        <li id="login"><a href="/login">Login</a></li>
-      </ul>
-    </div>
-  </div>
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand">
+				<img src="../images/client-logo_intel-197x140.png">
+			</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav" id="navbar-left">
+				<li class="active"><a href="/">Home</a></li>
+				<li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+					<ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+						<li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+						<li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+						<li role="presentation"><a href="/add/memory">Add Memory</a></li>
+						<li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right" id="navbar-right">
+				<li id="login"><a href="/login">Login</a></li>
+			</ul>
+		</div>
+	</div>
 </nav>
 
 <!-- Banner -->
 <img id="banner-img" src="../images/banner.jpg" class="img-responsive hidden-xs">
 <div class="panel panel-intel">
-  <h3 id="infoBanner"></h3>
+	<h3 id="infoBanner"></h3>
 </div>
 <div class="container-fluid">
 
-  <!-- Highlight Box -->
-  <div class="row">
-    <div class="col-xs-12">
-      <ul class="nav nav-tabs" role="tablist">
+	<!-- Highlight Box -->
+	<div class="row">
+		<div class="col-xs-12">
+			<ul class="nav nav-tabs" role="tablist">
 				<li class="active">
 					<a href="#tab-table1" data-toggle="tab">CPU</a>
 				</li>
 				<li>
 					<a href="#tab-table2" data-toggle="tab">SSD</a>
 				</li>
-        <li>
+				<li>
 					<a href="#tab-table3" data-toggle="tab">Memory</a>
 				</li>
-        <li>
+				<li>
 					<a href="#tab-table4" data-toggle="tab">Flash Drives</a>
 				</li>        
 			</ul>
@@ -85,121 +85,121 @@
 					<table id="cpu_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
 						<thead>
 							<tr id="filterCols">
-                <th>Serial Number</th>
-                <th>Spec</th>
-                <th>MM</th>
-                <th>Freq</th>
-                <th>Step</th>
-                <th>LLC</th>
-                <th>Cores</th>
-                <th>Codename</th>
-                <th>CPU Class</th>
-                <th>External Name</th>
-                <th>Architecture</th>
-                <th>Notes</th>
-                <th id="colBtn"></th>
+								<th>Serial Number</th>
+								<th>Spec</th>
+								<th>MM</th>
+								<th>Freq</th>
+								<th>Step</th>
+								<th>LLC</th>
+								<th>Cores</th>
+								<th>Codename</th>
+								<th>CPU Class</th>
+								<th>External Name</th>
+								<th>Architecture</th>
+								<th>Notes</th>
+								<th id="colBtn"></th>
 							</tr>
-              <tr>
-                <th>Serial Number</th>
-                <th>Spec</th>
-                <th>MM</th>
-                <th>Freq</th>
-                <th>Step</th>
-                <th>LLC</th>
-                <th>Cores</th>
-                <th>Codename</th>
-                <th>CPU Class</th>
-                <th>External Name</th>
-                <th>Architecture</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
+							<tr>
+								<th>Serial Number</th>
+								<th>Spec</th>
+								<th>MM</th>
+								<th>Freq</th>
+								<th>Step</th>
+								<th>LLC</th>
+								<th>Cores</th>
+								<th>Codename</th>
+								<th>CPU Class</th>
+								<th>External Name</th>
+								<th>Architecture</th>
+								<th>Notes</th>
+								<th></th>
+							</tr>
 						</thead>
-            <tfoot></tfoot>
-				  </table>
-        </div>
-    		<div class="tab-pane" id="tab-table2">
-    			<table id="ssd_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
-    				<thead>
-  						<tr id="filterCols">
-  							<th>Serial Number</th>
-  							<th>Capacity</th>
-  							<th>Manufacturer</th>
-  							<th>Model</th>
-  							<th>Notes</th>
-  							<th id="colBtn"></th>
-  						</tr>
-              <tr>
-                <th>Serial Number</th>
-                <th>Capacity</th>
-                <th>Manufacturer</th>
-                <th>Model</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tfoot></tfoot>
-          </table>
-    		</div>
-    		<div class="tab-pane" id="tab-table3">
-  				<table id="memory_table" class="table table-striped table-bordered" cellspacing="0" width="100%" heigh="100%">
-            <thead>
-              <tr id="filterCols">
-                <th>Serial Number</th>
-                <th>Manufacturer</th>
-                <th>Physical Size</th>
-                <th>EEC</th>
-                <th>Ranks</th>
-                <th>Type</th>
-                <th>Capacity</th>
-                <th>Speed</th>
-                <th>Notes</th>
-                <th id="colBtn"></th>
-              </tr>
-              <tr>
-                <th>Serial Number</th>
-                <th>Manufacturer</th>
-                <th>Physical Size</th>
-                <th>EEC</th>
-                <th>Ranks</th>
-                <th>Type</th>
-                <th>Capacity</th>
-                <th>Speed</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tfoot></tfoot>
-          </table>
-        </div>
-  			<div class="tab-pane" id="tab-table4">
-  				<table id="flash_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-            <thead>
-              <tr id="filterCols">
-                <th>Serial Number</th>
-                <th>Capacity</th>
-                <th>Manufacturer</th>
-                <th>Notes</th>
-                <th id="colBtn"></th>
-              </tr>
-              <tr>
-                <th>Serial Number</th>
-                <th>Capacity</th>
-                <th>Manufacturer</th>
-                <th>Notes</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tfoot></tfoot>
-          </table>
-  		  </div>
-      </div>
-    </div>
-  </div>
+						<tfoot></tfoot>
+					</table>
+				</div>
+				<div class="tab-pane" id="tab-table2">
+					<table id="ssd_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
+						<thead>
+							<tr id="filterCols">
+								<th>Serial Number</th>
+								<th>Capacity</th>
+								<th>Manufacturer</th>
+								<th>Model</th>
+								<th>Notes</th>
+								<th id="colBtn"></th>
+							</tr>
+							<tr>
+								<th>Serial Number</th>
+								<th>Capacity</th>
+								<th>Manufacturer</th>
+								<th>Model</th>
+								<th>Notes</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tfoot></tfoot>
+					</table>
+				</div>
+				<div class="tab-pane" id="tab-table3">
+					<table id="memory_table" class="table table-striped table-bordered" cellspacing="0" width="100%" heigh="100%">
+						<thead>
+							<tr id="filterCols">
+								<th>Serial Number</th>
+								<th>Manufacturer</th>
+								<th>Physical Size</th>
+								<th>EEC</th>
+								<th>Ranks</th>
+								<th>Type</th>
+								<th>Capacity</th>
+								<th>Speed</th>
+								<th>Notes</th>
+								<th id="colBtn"></th>
+							</tr>
+							<tr>
+								<th>Serial Number</th>
+								<th>Manufacturer</th>
+								<th>Physical Size</th>
+								<th>EEC</th>
+								<th>Ranks</th>
+								<th>Type</th>
+								<th>Capacity</th>
+								<th>Speed</th>
+								<th>Notes</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tfoot></tfoot>
+					</table>
+				</div>
+				<div class="tab-pane" id="tab-table4">
+					<table id="flash_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+						<thead>
+							<tr id="filterCols">
+								<th>Serial Number</th>
+								<th>Capacity</th>
+								<th>Manufacturer</th>
+								<th>Notes</th>
+								<th id="colBtn"></th>
+							</tr>
+							<tr>
+								<th>Serial Number</th>
+								<th>Capacity</th>
+								<th>Manufacturer</th>
+								<th>Notes</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tfoot></tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="footer footer-intel">
-  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+	<p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
 </body>
 </html>

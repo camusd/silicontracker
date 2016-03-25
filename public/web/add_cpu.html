@@ -13,14 +13,14 @@
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="../js/stats.js"></script>
 <script>
-  $(document).ready(function() {
-    // Codename Dropdown    
-    $.get('/dd/values/codename', function(data) {
-      $.each(data, function(idx, elem) {
-        $('#dd_codename').append('<option value="'+elem.attr_value+'">');
-      });
-    });
-  });
+	$(document).ready(function() {
+		// Codename Dropdown    
+		$.get('/dd/values/codename', function(data) {
+			$.each(data, function(idx, elem) {
+				$('#dd_codename').append('<option value="'+elem.attr_value+'">');
+			});
+		});
+	});
 </script>
 </head>
 
@@ -28,119 +28,119 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-intel">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand">
-        <img src="../images/client-logo_intel-197x140.png">
-      </a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav" id="navbar-left">
-        <li><a href="/">Home</a></li>
-        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
-          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
-            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
-            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
-            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
-            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right" id="navbar-right">
-        <li id="login"><a href="/login">Login</a></li>
-      </ul>
-    </div>
-  </div>
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand">
+				<img src="../images/client-logo_intel-197x140.png">
+			</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav" id="navbar-left">
+				<li><a href="/">Home</a></li>
+				<li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+					<ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+						<li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+						<li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+						<li role="presentation"><a href="/add/memory">Add Memory</a></li>
+						<li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right" id="navbar-right">
+				<li id="login"><a href="/login">Login</a></li>
+			</ul>
+		</div>
+	</div>
 </nav>
 
 <div class="container-fluid">
-  <div class="row">
-      
-    <!-- Main Content -->
-    <div class="main">
-      <form action="/add/cpu" method="post" id="CPU">
-              
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="serial_input">Serial Number</label>
-          <textarea id="serial_input" name="serial_input" class="form-control" required="" type="text"></textarea>
-        </div>
+	<div class="row">
+			
+		<!-- Main Content -->
+		<div class="main">
+			<form action="/add/cpu" method="post" id="CPU">
+							
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="serial_input">Serial Number</label>
+					<textarea id="serial_input" name="serial_input" class="form-control" required="" type="text"></textarea>
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="spec_input">Spec</label>  
-          <input id="spec_input" name="spec_input" class="form-control" required="" type="text">
-        </div>
-        
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="mm_input">MM</label>  
-          <input id="mm_input" name="mm_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="spec_input">Spec</label>  
+					<input id="spec_input" name="spec_input" class="form-control" required="" type="text">
+				</div>
+				
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="mm_input">MM</label>  
+					<input id="mm_input" name="mm_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="freq_input">Frequency</label>  
-          <input id="freq_input" name="freq_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="freq_input">Frequency</label>  
+					<input id="freq_input" name="freq_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="step_input">Stepping</label>  
-          <input id="step_input" name="step_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="step_input">Stepping</label>  
+					<input id="step_input" name="step_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="llc_input">LLC (MB)</label>  
-          <input id="llc_input" name="llc_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="llc_input">LLC (MB)</label>  
+					<input id="llc_input" name="llc_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="cores_input">Cores</label>  
-          <input id="cores_input" name="cores_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="cores_input">Cores</label>  
+					<input id="cores_input" name="cores_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="codename_input">Codename</label>  
-          <input id="codename_input" name="codename_input" class="form-control" required="" list="dd_codename">
-          <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="codename_input">Codename</label>  
+					<input id="codename_input" name="codename_input" class="form-control" required="" list="dd_codename">
+					<datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="class_input">Class</label>  
-          <input id="class_input" name="class_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="class_input">Class</label>  
+					<input id="class_input" name="class_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="external_input">External Name</label>  
-          <input id="external_input" name="external_input" class="form-control" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="external_input">External Name</label>  
+					<input id="external_input" name="external_input" class="form-control" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="arch_input">Architecture</label>  
-          <input id="arch_input" name="arch_input" class="form-control" required="" type="text">
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="arch_input">Architecture</label>  
+					<input id="arch_input" name="arch_input" class="form-control" required="" type="text">
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="notes_input">Notes</label>  
-          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" required="" type="text"></textarea>
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="notes_input">Notes</label>  
+					<textarea id="notes_input" name="notes_input" class="form-control" class="form-control" required="" type="text"></textarea>
+				</div>
 
-        <div class="col-md-6 form-group">
-          <label class="control-label" for="submit"></label>
-          <button id="submit" name="submit" class="btn btn-primary">Submit</button>
-        </div>
+				<div class="col-md-6 form-group">
+					<label class="control-label" for="submit"></label>
+					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
 
-      </form>
-    </div>
-  </div>
+			</form>
+		</div>
+	</div>
 </div>
 
 <!-- Footer -->
 <div class="footer footer-intel">
-  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+	<p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
 
 </body>
