@@ -18,82 +18,82 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-intel">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand">
-				<img src="../images/client-logo_intel-197x140.png">
-			</a>
-		</div>
-		<div id="navbar" class="navbar-collapse collapse">
-			<ul class="nav navbar-nav" id="navbar-left">
-				<li><a href="/">Home</a></li>
-				<li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
-					<ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
-						<li role="presentation"><a href="/add/cpu">Add CPU</a></li>
-						<li role="presentation"><a href="/add/ssd">Add SSD</a></li>
-						<li role="presentation"><a href="/add/memory">Add Memory</a></li>
-						<li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
-					</ul>
-				</li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right" id="navbar-right">
-				<li id="login"><a href="/login">Login</a></li>
-			</ul>
-		</div>
-	</div>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand">
+        <img src="../images/client-logo_intel-197x140.png">
+      </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav" id="navbar-left">
+        <li><a href="/">Home</a></li>
+        <li class="dropdown"><a href="#" id="drop-add" data-toggle="dropdown" class="dropdown-toggle" role="button">Add Item <b class="caret"></b></a>
+          <ul role="menu" class="dropdown-menu" aria-labelledby="drop-add">
+            <li role="presentation"><a href="/add/cpu">Add CPU</a></li>
+            <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
+            <li role="presentation"><a href="/add/memory">Add Memory</a></li>
+            <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" id="navbar-right">
+        <li id="login"><a href="/login">Login</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <div class="container-fluid">
-	<div class="row">
-	
-		<!-- Main Content -->
-		<div class="main">
-			<form action="/add/ssd" method="post" id="SSD">
-						
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="serial_input">Serial Number</label>
-					<textarea id="serial_input" name="serial_input" class="form-control" required="" type="text"></textarea>
-				</div>
+  <div class="row">
+  
+    <!-- Main Content -->
+    <div class="main">
+      <form action="/add/ssd" method="post" id="SSD">
+            
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="serial_input">Serial Number</label>
+          <textarea id="serial_input" name="serial_input" class="form-control" required="" type="text"></textarea>
+        </div>
 
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="capacity_input">Capacity</label>  
-					<input id="capacity_input" name="capacity_input" class="form-control" required="" type="text">
-				</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="capacity_input">Capacity</label>  
+          <input id="capacity_input" name="capacity_input" class="form-control" required="" type="text">
+        </div>
 
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="manufacturer_input">Manufacturer</label>  
-					<input id="manufacturer_input" name="manufacturer_input" class="form-control" required="" type="text">
-				</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="manufacturer_input">Manufacturer</label>  
+          <input id="manufacturer_input" name="manufacturer_input" class="form-control" required="" type="text">
+        </div>
 
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="model_input">Model</label>  
-					<input id="model_input" name="model_input" class="form-control" required="" type="text">
-				</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="model_input">Model</label>  
+          <input id="model_input" name="model_input" class="form-control" required="" type="text">
+        </div>
 
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="notes_input">Notes</label>  
-					<textarea id="notes_input" name="notes_input" class="form-control" required="" type="text"></textarea>
-				</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="notes_input">Notes</label>  
+          <textarea id="notes_input" name="notes_input" class="form-control" required="" type="text"></textarea>
+        </div>
 
-				<div class="col-md-6 form-group">
-					<label class="control-label" for="submit"></label>
-					<button id="submit" name="submit" class="btn btn-primary">Submit</button>
-				</div>
-			</form>
-		</div>
-	</div>
+        <div class="col-md-6 form-group">
+          <label class="control-label" for="submit"></label>
+          <button id="submit" name="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- Footer -->
 <div class="footer footer-intel">
-	<p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+  <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
 
 </body>
