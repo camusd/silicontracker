@@ -9,7 +9,7 @@
 }
 
 .navbar-intel {
-  background-color: #003c71;
+  background-color: rgb(0, 113, 197);
 }
 .navbar-intel .navbar-brand {
   color: #fcfeff;
@@ -32,7 +32,7 @@
   background-color: #005dae;
 }
 .navbar-intel .navbar-nav > li > .dropdown-menu {
-  background-color: #003c71;
+  background-color: rgb(0, 113, 197);
 }
 .navbar-intel .navbar-nav > li > .dropdown-menu > li > a {
   color: #fcfeff;

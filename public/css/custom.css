@@ -19,7 +19,7 @@ background-color: #f5f5f5;
 } 
 
 .footer-intel {
-  background-color: #003c71;
+  background-color: rgb(0, 113, 197);
   border-color: #fff;
 }
 
@@ -28,7 +28,7 @@ background-color: #f5f5f5;
 }
 
 .panel-intel {
-    background-color: #003c71;
+    background-color: rgb(0, 113, 197);
     border-radius: 0;
     color: #fff;
     text-align: center;
