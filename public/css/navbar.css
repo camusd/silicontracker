@@ -45,6 +45,9 @@
 .navbar-intel .navbar-nav > li > .dropdown-menu > li > .divider {
   background-color: #005dae;
 }
+.dropdown-header {
+  color: #bbb;
+}
 .navbar-intel .navbar-nav .open .dropdown-menu > .active > a,
 .navbar-intel .navbar-nav .open .dropdown-menu > .active > a:hover,
 .navbar-intel .navbar-nav .open .dropdown-menu > .active > a:focus {

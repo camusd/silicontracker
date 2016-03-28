@@ -56,7 +56,8 @@ var sessOptions = {
 	secret: process.env.SESSION_SECRET,
 	cookie: {},
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	name: 'my.tracker.sid'
 };
 if (process.env.ENV === 'prod') {
 	app.enable('trust proxy');

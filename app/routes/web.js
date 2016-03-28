@@ -126,10 +126,6 @@ module.exports = function(app, conn) {
     res.sendFile(rootdir + '/public/web/add_flash_drive.html');
   });
 
-  app.get('/settings', enforceLogin, function(req, res) {
-    res.sendFile(rootdir + '/public/web/settings.html');
-  });
-
   app.get('/settings/attributes', enforceAdminLogin, function(req, res) {
     res.sendFile(rootdir + '/public/web/edit_dropdowns.html');
   });
@@ -147,6 +143,16 @@ module.exports = function(app, conn) {
 
   app.get('/login', function(req, res) {
     res.sendFile(rootdir + '/public/web/login.html');
+  });
+
+  app.get('/logout', function(req, res) {
+    req.session.destroy(function (err) {
+      if (err) {
+        console.log(err)
+      };
+    });
+    res.clearCookie('my.tracker.sid');
+    res.redirect('/');
   });
 
   /* 
