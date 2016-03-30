@@ -1,6 +1,7 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 var models = require(rootdir + '/app/models');
+
 require('../templates')();
 
 module.exports = function(app, conn) {
@@ -74,6 +75,12 @@ module.exports = function(app, conn) {
 					cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
 				});
 		}
+		req.session.destroy(function (err) {
+	    	if (err) {
+	    		console.log(err)
+    		};
+	    });
+	    res.clearCookie('my.tracker.sid');
 		res.redirect('/kiosk');
 	});
 
