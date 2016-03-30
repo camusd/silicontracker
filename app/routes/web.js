@@ -4,7 +4,7 @@ var request = require('request');
 module.exports = function(app, conn) {
   
   // Middleware: Enforce admin privileges to add items.
-  app.use('/add/*', enforceAdminLogin, function(req, res) {});
+  //app.use('/add/*', enforceAdminLogin, function(req, res) {});
 
   /* Posts for the web interface
    * These are when someone submits 
