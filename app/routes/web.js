@@ -2,9 +2,14 @@ var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 
 module.exports = function(app, conn) {
+  
+  // Middleware: Enforce admin privileges to add items.
+  app.use('/add/*', enforceAdminLogin, function(req, res) {});
+
   /* Posts for the web interface
    * These are when someone submits 
    * a form and POSTS the data. */
+
 
   app.post('/add/cpu', function(req, res) {
     conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
@@ -104,10 +109,6 @@ module.exports = function(app, conn) {
 
   app.get('/', function(req, res) {
     res.sendFile(rootdir + '/public/web/index.html');
-  });
-
-  app.get('/add', function(req, res) {
-    res.sendFile(rootdir + '/public/web/add.html');
   });
 
   app.get('/add/cpu', function(req, res) {

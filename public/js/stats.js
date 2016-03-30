@@ -14,6 +14,8 @@ $(document).ready(function() {
       if (data.is_admin) {
         $('#settings-list').append('<li class="dropdown-header">Admin Settings</li>\
                                     <li><a href="/settings/attributes">Edit Dropdowns</a></li>');
+
+        $('#drop-add').css('visibility', 'visible');
       }
       $('#settings-list').append('<li role="separator" class="divider"></li> \
                                    <li role="presentation"><a href="/logout">Logout</a></li>');
