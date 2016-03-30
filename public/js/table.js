@@ -1,4 +1,12 @@
+var form = '<form id="form-notes">\
+              <div class="form-group">\
+                <textarea rows="4" cols="80" id="notes" placeholder="Add Notes Here"></textarea>\
+              </div>\
+              <button class="btn btn-primary" id="save-notes">Save</button>\
+            </form>';
+
 $(document).ready(function() {
+  var cpu_table;
   // Datatable
   $('#filterCols th').each( function () {
     var title = $(this).text();
@@ -11,9 +19,16 @@ $(document).ready(function() {
   });
 
   $.get('/data/cpu', function(jsonData) {
-    var cpu_table = $('#cpu_table').DataTable({
+    cpu_table = $('#cpu_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'notes-control',
+        "orderable": false,
+        "data": null,
+        "defaultContent": '',
+        "visible": false
+      },
       {"data" : "serial_num"},
       {"data" : "spec"},
       {"data" : "mm"},
@@ -25,8 +40,13 @@ $(document).ready(function() {
       {"data" : "cpu_class"},
       {"data" : "external_name"},
       {"data" : "architecture"},
-      {"data" : "notes"},
-      {"defaultContent": "<button class=\"scrap_btn\">Scrap</button>", "visible": false}
+      {"defaultContent": '<button class=\"btn btn-link\"><i class=\"fa fa-lg fa-file-o\"></i></button>',
+        "orderable": false,
+        "className": "btn-notes"},
+      {"defaultContent": '<button class=\"btn btn-link\"><i class=\"fa fa-lg fa-pencil-square-o\"></i></button>',
+        "orderable": false,
+        "className": "btn-edit",
+        "visible": false}
     ],
     "scrollX"     : true,
     "paging"      : true,
@@ -35,7 +55,8 @@ $(document).ready(function() {
     "fixedHeader" : {
          "header" : true,
          "footer" : false
-      }
+    },
+    "order": [[1, 'asc']]
     });
     if (jsonData.is_admin === 1) {
       cpu_table.column(-1).visible(true);
@@ -45,6 +66,28 @@ $(document).ready(function() {
       var col = cpu_table.column(idx);
       $('input', this).on( 'keyup change', function () {
         col.search( this.value ).draw();
+      });
+    });
+
+    // Add event listener for opening and closing details
+    cpu_table.on('click', '.btn-notes', function () {
+      var tr = $(this).closest('tr');
+      var row = cpu_table.row(tr);
+      var serial = {serial: row.data().serial_num};
+      $.ajax({
+        type: 'GET',
+        url: '/data/notes',
+        data: serial,
+        dataType: 'json',
+        success: function(result) {
+          if (row.child.isShown()) {
+              // This row is already open - close it
+              row.child.hide();
+          } else {
+            // Open this row
+            row.child(form).show();
+          }    
+        }
       });
     });
   });
@@ -57,7 +100,6 @@ $(document).ready(function() {
       {"data" : "capacity"},
       {"data" : "manufacturer"},
       {"data" : "model"},
-      {"data" : "notes"},
       {"defaultContent": "<button class=\"scrap_btn\">Scrap</button>", "visible": false}
     ],
     "scrollX"     : true,
@@ -93,7 +135,6 @@ $(document).ready(function() {
       {"data" : "memory_type"},
       {"data" : "capacity"},
       {"data" : "speed"},
-      {"data" : "notes"},
       {"defaultContent": "<button class=\"scrap_btn\">Scrap</button>", "visible": false}
     ],
     "scrollX"     : true,
@@ -124,7 +165,6 @@ $(document).ready(function() {
       {"data" : "serial_num"},
       {"data" : "capacity"},
       {"data" : "manufacturer"},
-      {"data" : "notes"},
       {"defaultContent": "<button class=\"scrap_btn\">Scrap</button>", "visible": false}
     ],
     "scrollX"     : true,

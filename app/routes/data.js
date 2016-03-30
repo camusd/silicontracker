@@ -61,6 +61,22 @@ module.exports = function(app, conn) {
     });
   });
 
+
+  // WORK IN PROGRESS:
+  // Still needs work to be complete.
+  // Currently not being referenced anywhere.
+  app.get('/data/notes', function(req, res) {
+    var serial = req.params.serial;
+    conn.query('SELECT i.notes FROM Items i JOIN Processor p ON i.id = p.product_id WHERE p.serial_num = \''+serial+'\';',
+      function(error, results, fields) {
+      if (error) {
+        throw error;
+      }
+      console.log(results[0]);
+      res.send(results[0]);
+    });
+  });
+
   app.get('/data/ssd', function(req, res) {
     var jsonToSend = {};
     conn.query("CALL get_ssd();", function(error, results, fields){

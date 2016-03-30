@@ -10,6 +10,10 @@ module.exports = function(app, conn) {
    * These are when someone submits 
    * a form and POSTS the data. */
 
+  app.post('/update/cpu', function(req, res) {
+    console.log('updated.');
+    res.json({data: 'TODO: send cpu notes'});
+  });
 
   app.post('/add/cpu', function(req, res) {
     conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
