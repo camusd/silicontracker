@@ -62,16 +62,17 @@ module.exports = function(app, conn) {
 					if(error) {
 						throw error;
 					}
-					addr = results[0][0].email_address;
-					first_name = results[0][0].first_name;
-					last_name = results[0][0].last_name;
-					item_serial[i] = results[0][0].serial_num;
-					item_type[i] = results[0][0].item_type;
-					status[i] = results[0][0].status;
-					date = results[0][0].order_date;
+					addr = results[2][0].email_address;
+					first_name = results[2][0].first_name;
+					last_name = results[2][0].last_name;
+					item_serial[i] = results[2][0].serial_num;
+					item_type[i] = results[2][0].item_type;
+					status[i] = results[2][0].status;
+					date = results[2][0].order_date;
+					
+					console.log("Sending cart email to "+addr+"...");
+					cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
 				});
-				console.log("Sending cart email to "+addr+"...");
-				cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
 		}
 		res.redirect('/kiosk');
 	});
