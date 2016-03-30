@@ -1,8 +1,16 @@
 $(document).ready(function() {
     var pressed = false; 
     var chars = [];
-    var t_out = $('#Check_Out').DataTable();
-    var t_in = $('#Check_In').DataTable();
+    var t_out = $('#Check_Out').DataTable( {
+      bPaginate: false,
+      bLengthChange: false,
+      retrieve: true
+    });
+    var t_in = $('#Check_In').DataTable( {
+      bPaginate: false,
+      bLengthChange: false,
+      retrieve: true
+    });
     $(window).keypress(function(e) {
         chars.push(String.fromCharCode(e.which));
         if (pressed == false) {

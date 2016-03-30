@@ -16,23 +16,15 @@
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
-<script src="../js/barcode.js"></script>
+<script src="../js/cart_barcode.js"></script>
 
 <script type="text/javascript" class="init">
 var val_array = [];
 
-$(document).ready(function() {
-    $('#Check_Out').DataTable( {
-      "bPaginate": false
-    } );
-    $('#Check_In').DataTable( {
-      "bPaginate": false
-    });
-} );
-
 function submitData(val_array) {
+  console.log(val_array);
   $.post("/kiosk/submit", {val_array});
-  window.location="/kiosk/";
+  //window.location="/kiosk/";
 };
 </script>
 </head>

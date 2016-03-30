@@ -1,5 +1,6 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
+var models = require(rootdir + '/app/models');
 require('../templates')();
 
 module.exports = function(app, conn) {
@@ -55,21 +56,22 @@ module.exports = function(app, conn) {
 		var item_type = [];
 		var status = [];
 		for(var i in req.body.val_array) {
+			var addr, first_name, last_name, date;
 			conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');",
 				function(error, results, fields) {
 					if(error) {
 						throw error;
 					}
-					var addr = results[0][0].email_address;
-					var first_name = results[0][0].first_name;
-					var last_name = results[0][0].last_name;
+					addr = results[0][0].email_address;
+					first_name = results[0][0].first_name;
+					last_name = results[0][0].last_name;
 					item_serial[i] = results[0][0].serial_num;
 					item_type[i] = results[0][0].item_type;
 					status[i] = results[0][0].status;
-					var date = results[0][0].order_date;
+					date = results[0][0].order_date;
 				});
 				console.log("Sending cart email to "+addr+"...");
-				cartTemplate(addr, first_name, last_name, item_serial, item_type, status, order_date);
+				cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
 		}
 		res.redirect('/kiosk');
 	});
