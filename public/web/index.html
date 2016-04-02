@@ -13,8 +13,6 @@
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script> 
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
@@ -198,6 +196,83 @@
 
 <div class="footer footer-intel">
   <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+</div>
+
+<!-- Modals -->
+<div id="editCPUModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit CPU</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="row">
+	        <form>
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="spec_input">Spec</label>  
+		          <input id="spec_input" name="spec_input" class="form-control" required="" type="text">
+		        </div>
+		        
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="mm_input">MM</label>  
+		          <input id="mm_input" name="mm_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="freq_input">Frequency</label>  
+		          <input id="freq_input" name="freq_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="step_input">Stepping</label>  
+		          <input id="step_input" name="step_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="llc_input">LLC (MB)</label>  
+		          <input id="llc_input" name="llc_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="cores_input">Cores</label>  
+		          <input id="cores_input" name="cores_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="codename_input">Codename</label>  
+		          <input id="codename_input" name="codename_input" class="form-control" required="" list="dd_codename">
+		          <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="class_input">Class</label>  
+		          <input id="class_input" name="class_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="external_input">External Name</label>  
+		          <input id="external_input" name="external_input" class="form-control" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="arch_input">Architecture</label>  
+		          <input id="arch_input" name="arch_input" class="form-control" required="" type="text">
+		        </div>
+
+		        <div class="col-md-6 form-group">
+		          <label class="control-label" for="notes_input">Notes</label>  
+		          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" required="" type="text"></textarea>
+		        </div>
+      		</form>
+      	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="editCPUSave" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>

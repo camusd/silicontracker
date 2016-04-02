@@ -10,6 +10,22 @@ module.exports = function(app, conn) {
    * These are when someone submits 
    * a form and POSTS the data. */
 
+  app.post('/update/cpu', function(req, res) {
+    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
+      +req.body.spec+"','"+req.body.mm+"','"
+      +req.body.frequency+"','"+req.body.stepping+"','"
+      +req.body.llc+"','"+req.body.cores+"','"
+      +req.body.codename+"','"+req.body.cpu_class+"','"
+      +req.body.external_name+"','"+req.body.architecture+"','"
+      +req.body.notes+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
   app.post('/update/cpu/notes', function(req, res) {
     conn.query("CALL update_cpu_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
       function(error, results, fields) {
