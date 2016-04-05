@@ -13,6 +13,6 @@
     "nodemailer": "^2.2.1",
     "request": "^2.69.0",
     "session-file-store": "^0.2.0",
-    "validate.js": "^0.9.0",
+    "validate.js": "^0.9.0"
   }
 }
