@@ -1,5 +1,6 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
+var validate = require('../validators');
 
 module.exports = function(app, conn) {
   
@@ -37,29 +38,36 @@ module.exports = function(app, conn) {
   });
 
   app.post('/add/cpu', function(req, res) {
-    conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-        if(results[0].length == 0) {
-          conn.query("CALL put_cpu('"+req.body.serial_input+"','"
-            +req.body.spec_input+"','"+req.body.mm_input+"','"
-            +req.body.freq_input+"','"+req.body.step_input+"','"
-            +req.body.llc_input+"','"+req.body.cores_input+"','"
-            +req.body.codename_input+"','"+req.body.class_input+"','"
-            +req.body.external_input+"','"+req.body.arch_input+"','"
-            +req.body.notes_input+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-          });
-        }
-      });
-    res.statusCode = 302;
-    res.setHeader("Location", "/")
-    res.end();
+    var verrors = validate.CPU(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors)
+    } else {
+      conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          if(results[0].length == 0) {
+            conn.query("CALL put_cpu('"+req.body.serial_input+"','"
+              +req.body.spec_input+"','"+req.body.mm_input+"','"
+              +req.body.freq_input+"','"+req.body.step_input+"','"
+              +req.body.llc_input+"','"+req.body.cores_input+"','"
+              +req.body.codename_input+"','"+req.body.class_input+"','"
+              +req.body.external_input+"','"+req.body.arch_input+"','"
+              +req.body.notes_input+"');",
+            function(error, results, fields){
+              if(error) {
+                throw error;
+              }
+            });
+          }
+        });
+      res.statusCode = 302;
+      res.setHeader("Location", "/")
+      res.send();
+    }
+    
   });
 
   app.post('/add/ssd', function(req, res) {
