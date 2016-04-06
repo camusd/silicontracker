@@ -592,7 +592,7 @@ BEGIN
 	SELECT
 		Processor.serial_num, spec, mm, frequency, stepping, 
       llc, cores, codename, cpu_class, external_name,
-		  architecture, Checkout.user, checked_in, notes
+		  architecture, Checkout.user, checked_in, notes, scrapped
 	FROM 
 		Processor INNER JOIN Items
         ON Processor.product_id = Items.id LEFT JOIN Checkout
@@ -1192,7 +1192,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `update_cpu`(IN `the_serial_num` VARCHAR(14), IN `new_spec` VARCHAR(5), IN `new_mm` VARCHAR(7), IN `new_frequency` VARCHAR(5), IN `new_stepping` VARCHAR(6), IN `new_llc` FLOAT, IN `new_cores` INT(4), IN `new_codename` VARCHAR(25), IN `new_cpu_class` VARCHAR(10), IN `new_external_name` VARCHAR(25), IN `new_architecture` VARCHAR(25), IN `new_notes` TEXT)
+CREATE PROCEDURE `update_cpu`(IN `the_serial_num` VARCHAR(14), IN `new_spec` VARCHAR(5), IN `new_mm` VARCHAR(7), IN `new_frequency` VARCHAR(5), IN `new_stepping` VARCHAR(6), IN `new_llc` FLOAT, IN `new_cores` INT(4), IN `new_codename` VARCHAR(25), IN `new_cpu_class` VARCHAR(10), IN `new_external_name` VARCHAR(25), IN `new_architecture` VARCHAR(25), IN `new_notes` TEXT, IN `new_scrapped` TINYINT(1))
 BEGIN
   DECLARE processor_id INT;
   SET processor_id := 
@@ -1202,7 +1202,8 @@ BEGIN
     );
 
   UPDATE  Items i
-  SET     i.notes = new_notes
+  SET     i.notes = new_notes,
+          i.scrapped = new_scrapped
   WHERE   i.id = processor_id;
     
   UPDATE  Processor
