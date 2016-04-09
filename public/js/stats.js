@@ -2,6 +2,7 @@ $(document).ready(function() {
   $.get('/data/stats', function(data) {
     // If the user is logged in, they will have a first name.
     if (data.first_name && data.last_name) {
+      $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
       $('#login').replaceWith('<li class="dropdown"> \
                                  <a href="#" id="drop-settings" data-toggle="dropdown" class="dropdown-toggle" \
                                  role="button">' + data.first_name + ' ' + data.last_name + ' ' + '<b class="caret"></b></a> \
@@ -17,14 +18,13 @@ $(document).ready(function() {
       }
       $('#settings-list').append('<li role="separator" class="divider"></li> \
                                    <li role="presentation"><a href="/logout">Logout</a></li>');
+    }
 
-      if (window.location.pathname === '/') {
-        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-        $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                data.num_active + ' active + ' +
-                                data.num_scrapped + ' scrapped = ' +
-                                data.num_total + '</span>');
-      }
+    if (window.location.pathname === '/') {
+      $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                              data.num_active + ' active + ' +
+                              data.num_scrapped + ' scrapped = ' +
+                              data.num_total + '</span>');
     }
   });
 });
