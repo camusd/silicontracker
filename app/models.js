@@ -1,6 +1,6 @@
 module.exports = {
 
-  CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores, codename, cpu_class, external_name, architecture, user, checked_in, notes) {
+  CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores, codename, cpu_class, external_name, architecture, user, checked_in, notes, scrapped) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -17,6 +17,7 @@ module.exports = {
     self.user = user;
     self.checked_in = checked_in;
     self.notes = notes;
+    self.scrapped = scrapped;
   },
 
   SSD: function(serial_num, manufacturer, model, capacity, user, checked_in, notes) {

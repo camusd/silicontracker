@@ -33,6 +33,13 @@ $(document).ready(function() {
         "defaultContent": '',
         "visible": false
       },
+      {
+        "className": 'scrap-control',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "scrapped",
+        "visible": false
+      },
       {"data" : "serial_num"},
       {"data" : "spec"},
       {"data" : "mm"},
@@ -44,18 +51,22 @@ $(document).ready(function() {
       {"data" : "cpu_class"},
       {"data" : "external_name"},
       {"data" : "architecture"},
-      {"defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
+      {
+        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,
-        "className": "btn-notes"},
-      {"defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-pencil-square-o"></i></button>',
+        "className": "btn-notes"
+      },
+      {
+        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-pencil-square-o"></i></button>',
         "orderable": false,
         "className": "btn-edit",
-        "visible": false}
+        "visible": false
+      },
     ],
     "scrollX"     : true,
     "paging"      : true,
     "pagingType"  : "simple_numbers",
-    "pageLength"  : 10,
+    "pageLength"  : 50,
     "fixedHeader" : {
          "header" : true,
          "footer" : false
@@ -122,7 +133,8 @@ $(document).ready(function() {
         cpu_class: row.data().cpu_class,
         external_name: row.data().external_name,
         architecture: row.data().architecture,
-        notes: row.data().notes
+        notes: row.data().notes,
+        scrapped: row.data().scrapped
       };
       $('#editCPUModal').modal('show');
     });
@@ -141,7 +153,7 @@ $(document).ready(function() {
     "scrollX"     : true,
     "paging"      : true,
     "pagingType"  : "simple_numbers",
-    "pageLength"  : 10,
+    "pageLength"  : 50,
     "fixedHeader" : {
          "header" : true,
          "footer" : false
@@ -176,7 +188,7 @@ $(document).ready(function() {
     "scrollX"     : true,
     "paging"      : true,
     "pagingType"  : "simple_numbers",
-    "pageLength"  : 10,
+    "pageLength"  : 50,
     "fixedHeader" : {
          "header" : true,
          "footer" : false
@@ -206,7 +218,7 @@ $(document).ready(function() {
     "scrollX"     : true,
     "paging"      : true,
     "pagingType"  : "simple_numbers",
-    "pageLength"  : 10,
+    "pageLength"  : 50,
     "fixedHeader" : {
          "header" : true,
          "footer" : false
@@ -239,6 +251,11 @@ $(document).ready(function() {
     modal.find('#external_input').val(cpu_data.external_name);
     modal.find('#arch_input').val(cpu_data.architecture);
     modal.find('#notes_input').val(cpu_data.notes);
+    if(modal.find('#scrap_input').val(cpu_data.scrapped) == 1) {
+      modal.find('#scrap_input').prop('checked', true);
+    } else {
+      modal.find('#scrap_input').prop('checked', false);
+    };
   });
   $('#editCPUSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -253,12 +270,30 @@ $(document).ready(function() {
     cpu_data.external_name = form.find('#external_input').val();
     cpu_data.architecture = form.find('#arch_input').val();
     cpu_data.notes = form.find('#notes_input').val();
-
+    if(document.getElementById('scrap_input').checked) {
+      cpu_data.scrapped = 1;
+    } else {
+      cpu_data.scrapped = 0;
+    };
     $.post('/update/cpu', cpu_data, function(data, status, jqXHR) {
       if (status !== 'success') {
         alert('CPU item did not update!');
       } else {
-        cpu_table.row(cpu_data.index).data(cpu_data).draw();
+        if(cpu_data.scrapped == 1) {
+          //Remove scrapped item and update banner to reflect that
+          cpu_table.row(cpu_data.index).remove();
+          $.get('/data/stats', function(data) {
+            $('#infoBanner').empty();
+            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                    data.num_active + ' active + ' +
+                                    data.num_scrapped + ' scrapped = ' +
+                                    data.num_total + '</span>');
+          });
+          cpu_table.draw();
+        } else {
+          cpu_table.row(cpu_data.index).data(cpu_data).draw();
+        };
         $('#editCPUModal').modal('hide');
       }
     });

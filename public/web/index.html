@@ -86,6 +86,7 @@
             <thead>
               <tr id="filterCols">
                 <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Spec</th>
                 <th>MM</th>
@@ -101,6 +102,7 @@
                 <th id="colBtn"></th>
               </tr>
               <tr>
+                <th></th>
                 <th></th>
                 <th>Serial Number</th>
                 <th>Spec</th>
@@ -262,8 +264,12 @@
 
 		        <div class="col-md-6 form-group">
 		          <label class="control-label" for="notes_input">Notes</label>  
-		          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" required="" type="text"></textarea>
+		          <textarea id="notes_input" name="notes_input" class="form-control" required="" type="text"></textarea>
 		        </div>
+
+            <div class="col-md-6 checkbox">
+              <label><input id="scrap_input" name="scrap_input" type="checkbox">Scrap</label>
+            </div>
       		</form>
       	</div>
       </div>

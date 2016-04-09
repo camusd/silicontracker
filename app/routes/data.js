@@ -54,7 +54,7 @@ module.exports = function(app, conn) {
         a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
           results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
           results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
-          results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+          results[0][i].user, results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
       }
       jsonToSend.items = a;
       res.json(jsonToSend);

@@ -14,20 +14,17 @@ $(document).ready(function() {
       if (data.is_admin) {
         $('#settings-list').append('<li class="dropdown-header">Admin Settings</li>\
                                     <li><a href="/settings/attributes">Edit Dropdowns</a></li>');
-
-        $('#drop-add').css('visibility', 'visible');
       }
       $('#settings-list').append('<li role="separator" class="divider"></li> \
                                    <li role="presentation"><a href="/logout">Logout</a></li>');
 
       if (window.location.pathname === '/') {
         $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+        $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                data.num_active + ' active + ' +
+                                data.num_scrapped + ' scrapped = ' +
+                                data.num_total + '</span>');
       }
     }
-
-    $('#infoBanner').append('<span><strong>Total Items </strong>: '+
-                data.num_active+' active + '+
-                data.num_scrapped+' scrapped = '+
-                data.num_total+'</span>');
   });
 });

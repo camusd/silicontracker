@@ -19,7 +19,7 @@ module.exports = function(app, conn) {
       +req.body.llc+"','"+req.body.cores+"','"
       +req.body.codename+"','"+req.body.cpu_class+"','"
       +req.body.external_name+"','"+req.body.architecture+"','"
-      +req.body.notes+"');",
+      +req.body.notes+"','"+req.body.scrapped+"');",
       function(error, results, fields){
         if(error) {
           throw error;
