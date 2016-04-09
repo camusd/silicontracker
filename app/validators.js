@@ -1,9 +1,46 @@
 var validate = require('validate.js');
 module.exports = {
 	CPU: function(cpu) {
-		return validate(cpu, CPUConstraints);
+		var val = validate(cpu, CPUConstraints);
+		var serial = verifyCPUSerial(cpu);
+
+		if (typeof val !== 'undefined' && typeof serial !== 'undefined') {
+			return mergeResults(val, serial);
+		} else if (typeof val === 'undefined') {
+			return serial;
+		} else {
+			return val;
+		}
 	}
 };
+
+// Checks every serial number for the correct formats
+function verifyCPUSerial(cpu) {
+	var results = {};
+	for (var i = 0; i < cpu.serial_input.length; i++) {
+		var c = {serial_input: cpu.serial_input[i]};
+		var v = validate(c, SerialCPUContstraints);
+
+		if (v && results.hasOwnProperty('serial_input')) {
+			results.serial_input.concat(v.serial_input);
+		} else if (v && !results.hasOwnProperty('serial_input')) {
+			results.serial_input = v.serial_input;
+		}
+	}
+
+	if (results.serial_input) {
+		return results;
+	}
+	return;
+}
+
+// Merges two objects together
+function mergeResults(obj1, obj2) {
+	var obj3 = {};
+    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    return obj3;
+}
 
 var attrNames = {
 	// CPU
@@ -41,18 +78,24 @@ validate.prettify = function(str) {
 // Overriding the precense message.
 validate.validators.presence.message = "is required";
 
-var CPUConstraints = {
-	// Serial Number
+
+var SerialCPUContstraints = {
 	serial_input: {
-		presence: true,
 		length: {
 			is: 14,
-			message: '%{value} is the wrong length (should be 14 characters).'
+			message: 'must each be 14 characters in length.'
 		},
 		format: {
 			pattern: /[a-zA-Z0-9]+/,
 			message: 'must be alphanumeric (letters and numbers).'
 		}
+	}
+}
+
+var CPUConstraints = {
+	//Serial Number
+	serial_input: {
+		presence: true
 	},
 	// Spec
 	spec_input: {
@@ -69,6 +112,10 @@ var CPUConstraints = {
 	// MM
 	mm_input: {
 		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 9999
+		},
 		length: {
 			maximum: 7
 		}

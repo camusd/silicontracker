@@ -1,5 +1,6 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
+var scrub = require('../scrubbers');
 var validate = require('../validators');
 
 module.exports = function(app, conn) {
@@ -38,6 +39,7 @@ module.exports = function(app, conn) {
   });
 
   app.post('/add/cpu', function(req, res) {
+    req.body = scrub.CPU(req.body);
     var verrors = validate.CPU(req.body);
 
     if (verrors) {
@@ -63,9 +65,7 @@ module.exports = function(app, conn) {
             });
           }
         });
-      res.statusCode = 302;
-      res.setHeader("Location", "/")
-      res.send();
+      res.status(200).send(req.body);
     }
     
   });

@@ -43,7 +43,7 @@ $(document).ready(function() {
       type: 'POST',
       url: '/add/cpu',
       data: cpuObj,
-      success: function() { 
+      success: function(scrubbedData) { 
         // clear all the fields
         $.each(Object.keys(cpuObj), function(idx, k) {
           key = '#' + k;
@@ -52,7 +52,9 @@ $(document).ready(function() {
 
         // display the success message
         $('#submit-results').html('');
-        $.each(cpuObj, function(key, val) {
+
+        scrubbedData.serial_input = scrubbedData.serial_input.join('\n');
+        $.each(scrubbedData, function(key, val) {
           $('#submit-results').append('<div class="col-sm-3 col-xs-6"><strong>'+attrNames[key]+':</strong></div><div class="col-sm-3 col-xs-6">'+val+'</div>')
         });
         $('#SuccessCPUModal').modal();
