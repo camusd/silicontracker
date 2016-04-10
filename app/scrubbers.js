@@ -20,9 +20,13 @@ function scrubCPU(cpu) {
 	// 2. Split into array based on newline as the delimeter
 	// 3. Trim whitespace
 	if (cpu.hasOwnProperty('serial_input')) {
-		cpu.serial_input = cpu.serial_input.toUpperCase().split(/\n/);
-		for (var i = 0; i < cpu.serial_input.length; i++) {
-			cpu.serial_input[i] = cpu.serial_input[i].trimWords();
+		if (cpu.serial_input !== '') {
+			cpu.serial_input = cpu.serial_input.toUpperCase().split(/\n/);
+			for (var i = 0; i < cpu.serial_input.length; i++) {
+				cpu.serial_input[i] = cpu.serial_input[i].trimWords();
+			}
+		} else {
+			cpu.serial_input = [];
 		}
 	}
 

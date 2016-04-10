@@ -17,6 +17,9 @@ module.exports = {
 // Checks every serial number for the correct formats
 function verifyCPUSerial(cpu) {
 	var results = {};
+	if (cpu.serial_input.length === 0) {
+		results = {serial_input: [attrNames.serial_input + ' is required.']};
+	}
 	for (var i = 0; i < cpu.serial_input.length; i++) {
 		var c = {serial_input: cpu.serial_input[i]};
 		var v = validate(c, SerialCPUContstraints);
