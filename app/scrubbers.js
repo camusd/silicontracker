@@ -1,6 +1,9 @@
 module.exports = {
 	CPU: function(cpu) {
-		return scrubCPU(cpu)
+		return scrubCPU(cpu);
+	},
+	SSD: function(ssd) {
+		return scrubSSD(ssd);
 	}
 };
 
@@ -59,13 +62,14 @@ function scrubCPU(cpu) {
 	}
 
 	// LLC
-	// 1. Trim whitespace
+	// 1. Trim whitespace and trailing zeros
 	if (cpu.hasOwnProperty('llc_input')) {
 		cpu.llc_input = parseFloat(cpu.llc_input);
 	}
 
 	// Cores
 	// 1. Trim whitespace
+	// 2. Convert to int
 	if (cpu.hasOwnProperty('cores_input')) {
 		cpu.cores_input = parseInt(cpu.cores_input.trim());
 	}
@@ -108,4 +112,51 @@ function scrubCPU(cpu) {
 	}
 
 	return cpu;
+}
+
+function scrubSSD(ssd) {
+	// Serial Number
+	// 1. Convert to uppercase
+	// 2. Split into array based on newline as the delimeter
+	// 3. Trim whitespace
+	if (ssd.hasOwnProperty('serial_input')) {
+		if (ssd.serial_input !== '') {
+			ssd.serial_input = ssd.serial_input.toUpperCase().split(/\n/);
+			for (var i = 0; i < ssd.serial_input.length; i++) {
+				ssd.serial_input[i] = ssd.serial_input[i].trimWords();
+			}
+		} else {
+			ssd.serial_input = [];
+		}
+	}
+
+	// Manufacturer
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (ssd.hasOwnProperty('manufacturer_input')) {
+		ssd.manufacturer_input = ssd.manufacturer_input.capitalize().trimWords();
+	}
+
+	// Model
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (ssd.hasOwnProperty('model_input')) {
+		ssd.model_input = ssd.model_input.capitalize().trimWords();
+	}
+
+	// Capacity
+	// 1. Trim whitespace
+	// 2. Convert to int
+	if (ssd.hasOwnProperty('capacity_input')) {
+		ssd.capacity_input = parseInt(ssd.capacity_input.trim());
+	}
+
+	// Notes
+	// 1. Trim leading and trailing whitespace.
+	//    (Don't need to trim between words. Let the user decide how to use notes).
+	if (ssd.hasOwnProperty('notes_input')) {
+		ssd.notes_input = ssd.notes_input.trim();
+	}
+
+	return ssd;
 }
