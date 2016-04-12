@@ -17,14 +17,15 @@ $(document).ready(function() {
       }
       $('#settings-list').append('<li role="separator" class="divider"></li> \
                                    <li role="presentation"><a href="/logout">Logout</a></li>');
-
-      if (window.location.pathname === '/') {
+    }
+    if (window.location.pathname === '/') {
+      if (data.first_name) {
         $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-        $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                data.num_active + ' active + ' +
-                                data.num_scrapped + ' scrapped = ' +
-                                data.num_total + '</span>');
       }
+      $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                              data.num_active + ' active + ' +
+                              data.num_scrapped + ' scrapped = ' +
+                              data.num_total + '</span>');
     }
   });
 });
