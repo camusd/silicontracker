@@ -79,7 +79,7 @@ $(document).ready(function() {
     $('#filterCols th').each(function (idx){
       // The plus 1 is needed because the first column is the 
       // notes field (the child row).
-      var col = cpu_table.column(idx+1);
+      var col = cpu_table.column(idx+2);
       $('input', this).on( 'keyup change', function () {
         col.search( this.value ).draw();
       });
