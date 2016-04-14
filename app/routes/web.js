@@ -38,6 +38,30 @@ module.exports = function(app, conn) {
     res.end();
   });
 
+  app.post('/update/ssd', function(req, res) {
+    conn.query("CALL update_ssd('"+req.body.serial_num+"','"
+      +req.body.capacity+"','"+req.body.manufacturer+"','"
+      +req.body.model+"','"
+      +req.body.notes+"','"+req.body.scrapped+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
+  app.post('/update/ssd/notes', function(req, res) {
+    console.log(req.body);
+    conn.query("CALL update_ssd_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      function(error, results, fields) {
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
   app.post('/add/cpu', function(req, res) {
     req.body = scrub.CPU(req.body);
     var verrors = validate.CPU(req.body);
