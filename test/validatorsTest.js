@@ -187,4 +187,97 @@ describe('validate', function() {
 			done();
 		});
 	});
+	describe('#Memory()', function() {
+		var val;
+		var scrubbed;
+		before(function() {
+			var memory = {
+				serial_input: '12345678901234567890\nabcdefghijklmnopqrst  ',
+				manufacturer_input: '  lexar and intel    why not    ',
+				physical_size_input: '  123   ',
+				ecc_input: '   yes',
+				ranks_input: '  3   ',
+				memory_type_input: '  dDr4    ',
+				capacity_input: '  38   ',
+				speed_input: '  2048   ',
+				notes_input: '   here a  have      some notes!!!     '
+			};
+
+			scrubbed = scrub.Memory(memory);
+			val = validate.Memory(scrubbed);
+		});
+		it('should have no errors', function(done) {
+			expect(val).to.be.undefined;
+
+			done();
+		});
+		it('should complain about serial number length', function(done) {
+			var c = scrubbed;
+			c.serial_input = ['1234567890123456', 'ABCDEFGHIJKLMNOPQRSTU'];
+
+			var v = validate.Memory(c);
+
+			expect(v.serial_input).to.have.length(1);
+			expect(v.serial_input[0]).to.contain('ABCDEFGHIJKLMNOPQRSTU');
+			expect(v.serial_input[0]).to.contain('length');
+
+			done();
+		});
+		it('should complain about serial number format', function(done) {
+			var c = scrubbed;
+			c.serial_input = ['@@@@ABCD@@@@AB', 'ABCDEFGHIJKLMN'];
+
+			var v = validate.Memory(c);
+
+			expect(v.serial_input).to.have.length(1);
+			expect(v.serial_input[0]).to.contain('@@@@ABCD@@@@AB');
+			expect(v.serial_input[0]).to.contain('alphanumeric');
+
+			done();
+		});
+		it('should complain about missing parameters', function(done) {
+			var c = {
+				serial_input: '',
+				manufacturer_input: '',
+				physical_size_input: '',
+				ecc_input: '',
+				ranks_input: '',
+				memory_type_input: '',
+				capacity_input: '',
+				speed_input: '',
+				notes_input: ''
+			};
+
+			var v = validate.Memory(c);
+			expect(v.serial_input).to.be.not.undefined;
+			expect(v.manufacturer_input).to.be.not.undefined;
+			expect(v.physical_size_input).to.be.not.undefined;
+			expect(v.ecc_input).to.be.not.undefined;
+			expect(v.ranks_input).to.be.not.undefined;
+			expect(v.memory_type_input).to.be.not.undefined;
+			expect(v.capacity_input).to.be.not.undefined;
+			expect(v.speed_input).to.be.not.undefined;
+
+			done();
+		});
+
+		it ('should be fine with no values for optional attributes', function(done) {
+			var c = {
+				serial_input: '',
+				manufacturer_input: '',
+				physical_size_input: '',
+				ecc_input: '',
+				ranks_input: '',
+				memory_type_input: '',
+				capacity_input: '',
+				speed_input: '',
+				notes_input: ''
+			};
+
+			var v = validate.Memory(c);
+			expect(v.notes_input).to.be.undefined;
+
+			done();
+		});
+	});
 });

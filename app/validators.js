@@ -1,3 +1,5 @@
+// How to use the validator: validatejs.org
+
 var validate = require('validate.js');
 module.exports = {
 	CPU: function(cpu) {
@@ -55,6 +57,34 @@ module.exports = {
 		}
 
 		return val;
+	},
+	Memory: function(mem) {
+		var val = validate(mem, MemoryConstraints);
+
+		// checking each serial number
+		for (var i = 0; i < mem.serial_input.length; i++) {
+			var toValidate = {serial_input: mem.serial_input[i]}
+			var v = validate(toValidate, MemorySerialConstraints);
+			if (v) {
+				// checking if any errors at all (if undefined or null)
+				if (val != null) {
+					// checking if any errors yet for serial numbers
+					if (val.hasOwnProperty('serial_input')) {
+						// push each serial number error
+						for (var j = 0; j < v.serial_input.length; j++) {
+							val.serial_input.push(v.serial_input[j]);
+						}
+					} else {
+						val.serial_input = v.serial_input;
+					}	
+				} else {
+					// if validate value is undefined, start new set of errors
+					val = v;
+				}
+			}
+		}
+
+		return val;
 	}
 };
 
@@ -77,6 +107,13 @@ var attrNames = {
 	capacity_input: 	'Capacity',
 	manufacturer_input:	'Manufacturer',
 	model_input:		'Model',
+
+	// Memory
+	physical_size_input: 	'Physical Size',
+	memory_type_input: 		'Type',
+	speed_input: 			'Speed',
+	ecc_input: 				'ECC',
+	ranks_input: 			'Ranks',
 	
 	// Other
 	greaterThan: 			'greater than',
@@ -241,6 +278,81 @@ var SSDConstraints = {
 		presence: true,
 		length: {
 			maximum: 15
+		}
+	},
+	// Notes
+	notes_input: {
+
+	}
+};
+
+var MemorySerialConstraints = {
+	serial_input: {
+		length: {
+			maximum: 20,
+			message: '^%{value} must be 20 characters or less in length.'
+		},
+		format: {
+			pattern: /[a-zA-Z0-9]+/,
+			message: '^%{value} must be alphanumeric (letters and numbers).'
+		}
+	}
+};
+
+var MemoryConstraints = {
+	// Serial Number
+	serial_input: {
+		presence: true
+	},
+	// Manufacturer
+	manufacturer_input: {
+		presence: true,
+		length: {
+			maximum: 45
+		}
+	},
+	// Physical Size
+	physical_size_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 0
+		}
+	},
+	// ECC
+	ecc_input: {
+		presence: true,
+		inclusion: {
+			within: ['Yes', 'No']
+		}
+	},
+	// Ranks
+	ranks_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true
+		}
+	},
+	// Memory Type
+	memory_type_input: {
+		presence: true,
+		length: {
+			maximum: 12
+		}
+	},
+	// Capacity
+	capacity_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 0
+		}
+	},
+	// Speed
+	speed_input: {
+		presence: true,
+		numericality: {
+			greaterThan: 0
 		}
 	},
 	// Notes

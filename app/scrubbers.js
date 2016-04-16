@@ -4,6 +4,9 @@ module.exports = {
 	},
 	SSD: function(ssd) {
 		return scrubSSD(ssd);
+	},
+	Memory: function(mem) {
+		return scrubMemory(mem);
 	}
 };
 
@@ -159,4 +162,79 @@ function scrubSSD(ssd) {
 	}
 
 	return ssd;
+}
+
+function scrubMemory(mem) {
+	// Serial Number
+	// 1. Convert to uppercase
+	// 2. Split into array based on newline as the delimeter
+	// 3. Trim whitespace
+	if (mem.hasOwnProperty('serial_input')) {
+		if (mem.serial_input !== '') {
+			mem.serial_input = mem.serial_input.toUpperCase().split(/\n/);
+			for (var i = 0; i < mem.serial_input.length; i++) {
+				mem.serial_input[i] = mem.serial_input[i].trimWords();
+			}
+		} else {
+			mem.serial_input = [];
+		}
+	}
+
+	// Manufacturer
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (mem.hasOwnProperty('manufacturer_input')) {
+		mem.manufacturer_input = mem.manufacturer_input.capitalize().trimWords();
+	}
+
+	// Physical Size
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (mem.hasOwnProperty('physical_size_input')) {
+		mem.physical_size_input = parseInt(mem.physical_size_input.trim());
+	}
+
+	// ECC
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (mem.hasOwnProperty('ecc_input')) {
+		mem.ecc_input = mem.ecc_input.capitalize().trimWords();
+	}
+
+	// Ranks
+	// 1. Trim whitespace
+	// 2. Convert to int
+	if (mem.hasOwnProperty('ranks_input')) {
+		mem.ranks_input = parseInt(mem.ranks_input.trim());
+	}
+
+	// Memory Type
+	// 1. Convert to uppercase
+	// 2. Trim whitespace
+	if (mem.hasOwnProperty('memory_type_input')) {
+		mem.memory_type_input = mem.memory_type_input.toUpperCase().trimWords();
+	}
+
+	// Capacity
+	// 1. Trim whitespace
+	// 2. Convert to int
+	if (mem.hasOwnProperty('capacity_input')) {
+		mem.capacity_input = parseInt(mem.capacity_input.trim());
+	}
+
+	// Speed
+	// 1. Trim whitespace
+	// 2. Convert to int
+	if (mem.hasOwnProperty('speed_input')) {
+		mem.speed_input = parseInt(mem.speed_input.trim());
+	}
+
+	// Notes
+	// 1. Trim leading and trailing whitespace.
+	//    (Don't need to trim between words. Let the user decide how to use notes).
+	if (mem.hasOwnProperty('notes_input')) {
+		mem.notes_input = mem.notes_input.trim();
+	}
+
+	return mem;
 }

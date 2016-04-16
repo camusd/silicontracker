@@ -301,7 +301,7 @@ DROP TABLE IF EXISTS `RAM`;
 CREATE TABLE `RAM` (
   `product_id` int(11) unsigned NOT NULL,
   `serial_num` varchar(20) NOT NULL,
-  `manufacturer` varchar(15) NOT NULL,
+  `manufacturer` varchar(45) NOT NULL,
   `physical_size` varchar(15) NOT NULL,
   `memory_type` varchar(12) NOT NULL,
   `capacity` int(5) NOT NULL,
@@ -1298,6 +1298,67 @@ BEGIN
     ON i.id = ssd.product_id
     SET i.notes = n
     WHERE ssd.serial_num = s;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_memory` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_memory`(IN `the_serial_num` VARCHAR(16), IN `new_manufacturer` VARCHAR(45), IN `new_physical_size` VARCHAR(15), IN `new_memory_type` VARCHAR(12), IN `new_capacity` INT(5), IN `new_speed` INT(5), IN `new_ecc` VARCHAR(12), IN `new_ranks` INT(3), IN `new_notes` TEXT, IN `new_scrapped` TINYINT(1))
+BEGIN
+    DECLARE memory_id INT;
+    SET memory_id := (SELECT product_id 
+            FROM RAM 
+            WHERE serial_num = the_serial_num
+           );
+
+  UPDATE  Items i
+  SET   i.notes = new_notes,
+      i.scrapped = new_scrapped
+    WHERE i.id = memory_id;
+    
+    UPDATE  RAM
+    SET   manufacturer = new_manufacturer,
+      physical_size = new_physical_size,
+            memory_type = new_memory_type,
+            capacity = new_capacity,
+            speed = new_speed,
+            ecc = new_ecc,
+            ranks = new_ranks
+    WHERE product_id = memory_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_memory_notes` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_memory_notes`(IN s varchar(14), IN n text)
+BEGIN
+  UPDATE Items i
+    JOIN RAM ram
+    ON i.id = ram.product_id
+    SET i.notes = n
+    WHERE ram.serial_num = s;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

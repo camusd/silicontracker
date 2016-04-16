@@ -52,8 +52,38 @@ module.exports = function(app, conn) {
   });
 
   app.post('/update/ssd/notes', function(req, res) {
-    console.log(req.body);
     conn.query("CALL update_ssd_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      function(error, results, fields) {
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
+  app.post('/update/memory', function(req, res) {
+    conn.query("CALL update_memory('"+
+      req.body.serial_num+"','"+
+      req.body.manufacturer+"','"+
+      req.body.physical_size+"','"+
+      req.body.ecc+"','"+
+      req.body.ranks+"','"+
+      req.body.memory_type+"','"+
+      req.body.capacity+"','"+
+      req.body.speed+"','"+
+      req.body.notes+"','"+
+      req.body.scrapped+"');",
+      function(error, results, fields){
+        console.log(results);
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
+  app.post('/update/memory/notes', function(req, res) {
+    conn.query("CALL update_memory_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
       function(error, results, fields) {
         if(error) {
           throw error;
@@ -122,27 +152,32 @@ module.exports = function(app, conn) {
   });
 
   app.post('/add/memory', function(req, res) {
-    conn.query("CALL check_serial_memory('"+req.body.serial_input+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-        if(results[0].length == 0) {
-          conn.query("CALL put_memory('"+req.body.serial_input+"','"
-            +req.body.manufacturer_input+"','"+req.body.physical_size_input+"','"
-            +req.body.memory_type_input+"','"+req.body.capacity_input+"','"
-            +req.body.speed_input+"','"+req.body.ecc_input+"','"
-            +req.body.ranks_input+"','"+req.body.notes_input+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-          });
-        }
+    req.body = scrub.Memory(req.body);
+    var verrors = validate.Memory(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL check_serial_memory('"+req.body.serial_input+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          if(results[0].length == 0) {
+            conn.query("CALL put_memory('"+req.body.serial_input+"','"
+              +req.body.manufacturer_input+"','"+req.body.physical_size_input+"','"
+              +req.body.memory_type_input+"','"+req.body.capacity_input+"','"
+              +req.body.speed_input+"','"+req.body.ecc_input+"','"
+              +req.body.ranks_input+"','"+req.body.notes_input+"');",
+            function(error, results, fields){
+              if(error) {
+                throw error;
+              }
+            });
+          }
       });
-    res.statusCode = 302;
-    res.setHeader("Location", "/")
-    res.end();
+      res.status(200).send(req.body);
+    }
   });
 
   app.post('/add/flash', function(req, res) {

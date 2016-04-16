@@ -117,3 +117,8 @@ background-color: #f5f5f5;
 #inner_camera {
   display: inline-block;
 }
+
+table th {
+  white-space: nowrap;
+  overflow: hidden;
+}

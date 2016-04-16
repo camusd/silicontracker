@@ -67,16 +67,16 @@
   <div class="row">
     <div class="col-xs-12">
       <ul class="nav nav-tabs" role="tablist">
-        <li class="active">
+        <li id="cpu-tab" class="active">
           <a href="#tab-table1" data-toggle="tab">CPU</a>
         </li>
-        <li>
+        <li id="ssd-tab">
           <a href="#tab-table2" data-toggle="tab">SSD</a>
         </li>
-        <li>
+        <li id="memory-tab">
           <a href="#tab-table3" data-toggle="tab">Memory</a>
         </li>
-        <li>
+        <li id="flash-tab">
           <a href="#tab-table4" data-toggle="tab">Flash Drives</a>
         </li>        
       </ul>
@@ -150,7 +150,7 @@
           </table>
         </div>
         <div class="tab-pane" id="tab-table3">
-          <table id="memory_table" class="table table-striped table-bordered" cellspacing="0" width="100%" heigh="100%">
+          <table id="memory_table" class="table table-striped table-bordered" cellspacing="0" width="100%" height="100%">
             <thead>
               <tr id="memoryFilterCols">
                 <th></th>
@@ -158,7 +158,7 @@
                 <th>Serial Number</th>
                 <th>Manufacturer</th>
                 <th>Physical Size</th>
-                <th>EEC</th>
+                <th>ECC</th>
                 <th>Ranks</th>
                 <th>Type</th>
                 <th>Capacity</th>
@@ -172,7 +172,7 @@
                 <th>Serial Number</th>
                 <th>Manufacturer</th>
                 <th>Physical Size</th>
-                <th>EEC</th>
+                <th>ECC</th>
                 <th>Ranks</th>
                 <th>Type</th>
                 <th>Capacity</th>
@@ -230,43 +230,43 @@
       	<div class="row">
 	        <form>
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="spec_input">Spec</label>  
+		          <label class="control-label" for="spec_input">Spec <span class="req-field">*</span></label>  
 		          <input id="spec_input" name="spec_input" class="form-control" required="" type="text">
 		        </div>
 		        
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="mm_input">MM</label>  
+		          <label class="control-label" for="mm_input">MM <span class="req-field">*</span></label>  
 		          <input id="mm_input" name="mm_input" class="form-control" required="" type="text">
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="freq_input">Frequency</label>  
+		          <label class="control-label" for="freq_input">Frequency <span class="req-field">*</span></label>  
 		          <input id="freq_input" name="freq_input" class="form-control" required="" type="text">
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="step_input">Stepping</label>  
+		          <label class="control-label" for="step_input">Stepping <span class="req-field">*</span></label>  
 		          <input id="step_input" name="step_input" class="form-control" required="" type="text">
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="llc_input">LLC (MB)</label>  
+		          <label class="control-label" for="llc_input">LLC (MB) <span class="req-field">*</span></label>  
 		          <input id="llc_input" name="llc_input" class="form-control" required="" type="text">
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="cores_input">Cores</label>  
+		          <label class="control-label" for="cores_input">Cores <span class="req-field">*</span></label>  
 		          <input id="cores_input" name="cores_input" class="form-control" required="" type="text">
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="codename_input">Codename</label>  
+		          <label class="control-label" for="codename_input">Codename <span class="req-field">*</span></label>  
 		          <input id="codename_input" name="codename_input" class="form-control" required="" list="dd_codename">
 		          <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="class_input">Class</label>  
+		          <label class="control-label" for="class_input">Class <span class="req-field">*</span></label>  
 		          <input id="class_input" name="class_input" class="form-control" required="" type="text">
 		        </div>
 
@@ -276,7 +276,7 @@
 		        </div>
 
 		        <div class="col-md-6 form-group">
-		          <label class="control-label" for="arch_input">Architecture</label>  
+		          <label class="control-label" for="arch_input">Architecture <span class="req-field">*</span></label>  
 		          <input id="arch_input" name="arch_input" class="form-control" required="" type="text">
 		        </div>
 
@@ -338,6 +338,80 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button id="editSSDSave" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="editMemoryModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit Memory</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <form>
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="manufacturer_input">Manufacturer <span class="req-field">*</span></label>  
+              <input id="manufacturer_input" name="manufacturer_input" class="form-control" type="text">
+              <div id="manufacturer_input_help"></div>
+            </div>
+            
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="physical_size_input">Physical Size <span class="req-field">*</span></label>  
+              <input id="physical_size_input" name="physical_size_input" class="form-control" type="text">
+              <div id="physical_size_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="ecc_input">ECC <span class="req-field">*</span></label>  
+              <select id="ecc_input" name="ecc_input" class="form-control">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+              <div id="ecc_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="ranks_input">Ranks <span class="req-field">*</span></label>
+              <input id="ranks_input" name="ranks_input" class="form-control" type="text">
+              <div id="ranks_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="memory_type_input">Type <span class="req-field">*</span></label>  
+              <input id="memory_type_input" name="memory_type_input" class="form-control" type="text">
+              <div id="memory_type_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="capacity_input">Capacity <span class="req-field">*</span></label>  
+              <input id="capacity_input" name="capacity_input" class="form-control" type="text">
+              <div id="capacity_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="speed_input">Speed <span class="req-field">*</span></label>  
+              <input id="speed_input" name="speed_input" class="form-control" type="text">
+              <div id="speed_input_help"></div>
+            </div>
+
+            <div class="col-md-6 form-group">
+              <label class="control-label" for="notes_input">Notes</label>  
+              <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" type="text"></textarea>
+              <div id="notes_input_help"></div>
+
+            <div class="col-md-6 checkbox">
+              <label><input id="scrap_input" name="scrap_input" type="checkbox">Scrap</label>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="editMemorySave" type="button" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   </div>

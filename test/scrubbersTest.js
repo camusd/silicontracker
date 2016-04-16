@@ -132,4 +132,70 @@ describe('scrub', function() {
 			done();
 		});
 	});
+
+	describe('#Memory()', function() {
+		var scrubMemory;
+		before(function() {
+			var memory = {
+				serial_input: '12345678901234567890\nabcdefghijklmnopqrst  ',
+				manufacturer_input: '  lexar and intel    why not    ',
+				physical_size_input: '  123   ',
+				ecc_input: '   yes',
+				ranks_input: '  3   ',
+				memory_type_input: '  dDr4    ',
+				capacity_input: '  38   ',
+				speed_input: '  2048   ',
+				notes_input: '   here a  have      some notes!!!     '
+			};
+
+			scrubMemory = scrub.Memory(memory);
+		});
+		it('should have correct types', function(done) {
+
+			expect(scrubMemory, 'the whole thing').to.be.an('object');
+			expect(scrubMemory.serial_input, 'serial_input').to.be.an('array');
+			expect(scrubMemory.manufacturer_input, 'manufacturer_input').to.be.a('string');
+			expect(scrubMemory.physical_size_input, 'physical_size_input').to.be.a('number');
+			expect(scrubMemory.ecc_input, 'ecc_input').to.be.a('string');
+			expect(scrubMemory.ranks_input, 'ranks_input').to.be.a('number');
+			expect(scrubMemory.memory_type_input, 'memory_type_input').to.be.a('string');
+			expect(scrubMemory.capacity_input, 'capacity_input').to.be.a('number');
+			expect(scrubMemory.notes_input, 'notes_input').to.be.a('string');
+
+			done();
+		});
+		it('should have two items in the serial_input array', function(done) {
+			expect(scrubMemory.serial_input).to.have.length(2);
+
+			done();
+		});
+		it('should all contain the right lengths', function(done) {
+			expect(scrubMemory.serial_input[0]).to.have.length(20);
+			expect(scrubMemory.serial_input[1]).to.have.length(20);
+			expect(scrubMemory.manufacturer_input).to.have.length(23);
+			expect(scrubMemory.ecc_input).to.have.length(3);
+			expect(scrubMemory.memory_type_input).to.have.length(4);
+			expect(scrubMemory.notes_input).to.have.length(31);
+
+			done();
+		});
+		it('should have the right numbers', function(done) {
+			expect(scrubMemory.physical_size_input).to.equal(123);
+			expect(scrubMemory.ranks_input).to.equal(3);
+			expect(scrubMemory.capacity_input).to.equal(38);
+			expect(scrubMemory.speed_input).to.equal(2048);
+
+			done();
+		});
+		it('should contain correct values', function(done) {
+			expect(scrubMemory.serial_input[0], 'serial_input[0]').to.equal('12345678901234567890');
+			expect(scrubMemory.serial_input[1], 'serial_input[1]').to.equal('ABCDEFGHIJKLMNOPQRST');
+			expect(scrubMemory.manufacturer_input, 'manufacturer_input').to.equal('Lexar And Intel Why Not');
+			expect(scrubMemory.ecc_input, 'ecc_input').to.equal('Yes');
+			expect(scrubMemory.memory_type_input, 'memory_type_input').to.equal('DDR4');
+			expect(scrubMemory.notes_input, 'notes_input').to.equal('here a  have      some notes!!!');
+
+			done();
+		});
+	});
 });
