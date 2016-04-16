@@ -1,46 +1,92 @@
+// How to use the validator: validatejs.org
+
 var validate = require('validate.js');
 module.exports = {
 	CPU: function(cpu) {
 		var val = validate(cpu, CPUConstraints);
-		var serial = verifyCPUSerial(cpu);
 
-		if (typeof val !== 'undefined' && typeof serial !== 'undefined') {
-			return mergeResults(val, serial);
-		} else if (typeof val === 'undefined') {
-			return serial;
-		} else {
-			return val;
+		// checking each serial number
+		for (var i = 0; i < cpu.serial_input.length; i++) {
+			var toValidate = {serial_input: cpu.serial_input[i]}
+			var v = validate(toValidate, CPUSerialConstraints);
+			if (v) {
+				// checking if any errors at all (if undefined or null)
+				if (val != null) {
+					// checking if any errors yet for serial numbers
+					if (val.hasOwnProperty('serial_input')) {
+						// push each serial number error
+						for (var j = 0; j < v.serial_input.length; j++) {
+							val.serial_input.push(v.serial_input[j]);
+						}
+					} else {
+						val.serial_input = v.serial_input;
+					}	
+				} else {
+					// if validate value is undefined, start new set of errors
+					val = v;
+				}
+			}
 		}
+
+		return val;
+	},
+	SSD: function(ssd) {
+		var val = validate(ssd, SSDConstraints);
+
+		// checking each serial number
+		for (var i = 0; i < ssd.serial_input.length; i++) {
+			var toValidate = {serial_input: ssd.serial_input[i]}
+			var v = validate(toValidate, SSDSerialConstraints);
+			if (v) {
+				// checking if any errors at all (if undefined or null)
+				if (val != null) {
+					// checking if any errors yet for serial numbers
+					if (val.hasOwnProperty('serial_input')) {
+						// push each serial number error
+						for (var j = 0; j < v.serial_input.length; j++) {
+							val.serial_input.push(v.serial_input[j]);
+						}
+					} else {
+						val.serial_input = v.serial_input;
+					}	
+				} else {
+					// if validate value is undefined, start new set of errors
+					val = v;
+				}
+			}
+		}
+
+		return val;
+	},
+	Memory: function(mem) {
+		var val = validate(mem, MemoryConstraints);
+
+		// checking each serial number
+		for (var i = 0; i < mem.serial_input.length; i++) {
+			var toValidate = {serial_input: mem.serial_input[i]}
+			var v = validate(toValidate, MemorySerialConstraints);
+			if (v) {
+				// checking if any errors at all (if undefined or null)
+				if (val != null) {
+					// checking if any errors yet for serial numbers
+					if (val.hasOwnProperty('serial_input')) {
+						// push each serial number error
+						for (var j = 0; j < v.serial_input.length; j++) {
+							val.serial_input.push(v.serial_input[j]);
+						}
+					} else {
+						val.serial_input = v.serial_input;
+					}	
+				} else {
+					// if validate value is undefined, start new set of errors
+					val = v;
+				}
+			}
+		}
+
+		return val;
 	}
 };
-
-// Checks every serial number for the correct formats
-function verifyCPUSerial(cpu) {
-	var results = {};
-	for (var i = 0; i < cpu.serial_input.length; i++) {
-		var c = {serial_input: cpu.serial_input[i]};
-		var v = validate(c, SerialCPUContstraints);
-
-		if (v && results.hasOwnProperty('serial_input')) {
-			results.serial_input.concat(v.serial_input);
-		} else if (v && !results.hasOwnProperty('serial_input')) {
-			results.serial_input = v.serial_input;
-		}
-	}
-
-	if (results.serial_input) {
-		return results;
-	}
-	return;
-}
-
-// Merges two objects together
-function mergeResults(obj1, obj2) {
-	var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-    return obj3;
-}
 
 var attrNames = {
 	// CPU
@@ -56,6 +102,18 @@ var attrNames = {
 	external_input:	'External Name',
 	arch_input:		'Architecture',
 	notes_input: 	'Notes',
+
+	// SSD
+	capacity_input: 	'Capacity',
+	manufacturer_input:	'Manufacturer',
+	model_input:		'Model',
+
+	// Memory
+	physical_size_input: 	'Physical Size',
+	memory_type_input: 		'Type',
+	speed_input: 			'Speed',
+	ecc_input: 				'ECC',
+	ranks_input: 			'Ranks',
 	
 	// Other
 	greaterThan: 			'greater than',
@@ -78,16 +136,15 @@ validate.prettify = function(str) {
 // Overriding the precense message.
 validate.validators.presence.message = "is required";
 
-
-var SerialCPUContstraints = {
+var CPUSerialConstraints = {
 	serial_input: {
 		length: {
 			is: 14,
-			message: 'must each be 14 characters in length.'
+			message: '^%{value} must be 14 characters in length.'
 		},
 		format: {
 			pattern: /[a-zA-Z0-9]+/,
-			message: 'must be alphanumeric (letters and numbers).'
+			message: '^%{value} must be alphanumeric (letters and numbers).'
 		}
 	}
 }
@@ -175,6 +232,127 @@ var CPUConstraints = {
 		presence: true,
 		length: {
 			maximum: 25
+		}
+	},
+	// Notes
+	notes_input: {
+
+	}
+};
+
+var SSDSerialConstraints = {
+	serial_input: {
+		length: {
+			maximum: 16,
+			message: '^%{value} must be 16 characters or less in length.'
+		},
+		format: {
+			pattern: /[a-zA-Z0-9]+/,
+			message: '^%{value} must be alphanumeric (letters and numbers).'
+		}
+	}
+}
+
+var SSDConstraints = {
+	// Serial Number
+	serial_input: {
+		presence: true
+	},
+	// Capacity
+	capacity_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 0
+		}
+	},
+	// Manufacturer
+	manufacturer_input: {
+		presence: true,
+		length: {
+			maximum: 45
+		}
+	},
+	// Model
+	model_input: {
+		presence: true,
+		length: {
+			maximum: 15
+		}
+	},
+	// Notes
+	notes_input: {
+
+	}
+};
+
+var MemorySerialConstraints = {
+	serial_input: {
+		length: {
+			maximum: 20,
+			message: '^%{value} must be 20 characters or less in length.'
+		},
+		format: {
+			pattern: /[a-zA-Z0-9]+/,
+			message: '^%{value} must be alphanumeric (letters and numbers).'
+		}
+	}
+};
+
+var MemoryConstraints = {
+	// Serial Number
+	serial_input: {
+		presence: true
+	},
+	// Manufacturer
+	manufacturer_input: {
+		presence: true,
+		length: {
+			maximum: 45
+		}
+	},
+	// Physical Size
+	physical_size_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 0
+		}
+	},
+	// ECC
+	ecc_input: {
+		presence: true,
+		inclusion: {
+			within: ['Yes', 'No']
+		}
+	},
+	// Ranks
+	ranks_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true
+		}
+	},
+	// Memory Type
+	memory_type_input: {
+		presence: true,
+		length: {
+			maximum: 12
+		}
+	},
+	// Capacity
+	capacity_input: {
+		presence: true,
+		numericality: {
+			onlyInteger: true,
+			greaterThan: 0
+		}
+	},
+	// Speed
+	speed_input: {
+		presence: true,
+		numericality: {
+			greaterThan: 0
 		}
 	},
 	// Notes

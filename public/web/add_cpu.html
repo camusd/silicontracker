@@ -28,9 +28,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand">
+      <a class="navbar-brand" href="/">Silicon Tracker</a>
+      <!-- <a class="navbar-brand">
         <img src="../images/client-logo_intel-197x140.png">
-      </a>
+      </a> -->
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav" id="navbar-left">
@@ -59,83 +60,86 @@
       <form action="/add/cpu" method="post" id="CPU">
               
         <div class="col-md-6 form-group">
-          <label class="control-label" for="serial_input">Serial Number</label>
-          <textarea id="serial_input" name="serial_input" class="form-control" type="text"></textarea>
+          <label class="control-label" for="serial_input">Serial Number <span class="req-field">*</span></label>
+          <textarea id="serial_input" name="serial_input" class="form-control" rows="4" tabindex="1" type="text"></textarea>
           <div id="serial_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="spec_input">Spec</label>  
-          <input id="spec_input" name="spec_input" class="form-control"  maxlength="5" type="text">
+          <label class="control-label" for="spec_input">Spec <span class="req-field">*</span></label>  
+          <input id="spec_input" name="spec_input" class="form-control"  maxlength="5" tabindex="2" type="text">
           <div id="spec_input_help"></div>
         </div>
         
         <div class="col-md-6 form-group">
-          <label class="control-label" for="mm_input">MM</label>  
-          <input id="mm_input" name="mm_input" class="form-control" maxlength="7" type="text">
+          <label class="control-label" for="mm_input">MM <span class="req-field">*</span></label>  
+          <input id="mm_input" name="mm_input" class="form-control" maxlength="7" tabindex="3" type="text">
           <div id="mm_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="freq_input">Frequency</label>  
-          <input id="freq_input" name="freq_input" class="form-control" maxlength="5" type="text">
+          <label class="control-label" for="freq_input">Frequency <span class="req-field">*</span></label>  
+          <input id="freq_input" name="freq_input" class="form-control" maxlength="5" tabindex="4" type="text">
           <div id="freq_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="step_input">Stepping</label>  
-          <input id="step_input" name="step_input" class="form-control" maxlength="6" type="text">
+          <label class="control-label" for="step_input">Stepping <span class="req-field">*</span></label>  
+          <input id="step_input" name="step_input" class="form-control" maxlength="6" tabindex="5" type="text">
           <div id="step_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="llc_input">LLC (MB)</label>  
-          <input id="llc_input" name="llc_input" class="form-control" type="text">
+          <label class="control-label" for="llc_input">LLC (MB) <span class="req-field">*</span></label>  
+          <input id="llc_input" name="llc_input" class="form-control" tabindex="6" type="text">
           <div id="llc_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="cores_input">Cores</label>  
-          <input id="cores_input" name="cores_input" class="form-control" maxlength="4" type="text">
+          <label class="control-label" for="cores_input">Cores <span class="req-field">*</span></label>  
+          <input id="cores_input" name="cores_input" class="form-control" maxlength="4" tabindex="7" type="text">
           <div id="cores_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="codename_input">Codename</label>  
-          <input id="codename_input" name="codename_input" class="form-control" maxlength="25" list="dd_codename">
+          <label class="control-label" for="codename_input">Codename <span class="req-field">*</span></label>  
+          <input id="codename_input" name="codename_input" class="form-control" maxlength="25" list="dd_codename" tabindex="8">
           <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
           <div id="codename_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="class_input">Class</label>  
-          <input id="class_input" name="class_input" class="form-control" maxlength="10" type="text">
+          <label class="control-label" for="class_input">Class <span class="req-field">*</span></label>  
+          <input id="class_input" name="class_input" class="form-control" maxlength="10" tabindex="9" type="text">
           <div id="class_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
           <label class="control-label" for="external_input">External Name</label>  
-          <input id="external_input" name="external_input" class="form-control" maxlength="25" type="text">
+          <input id="external_input" name="external_input" class="form-control" maxlength="25" tabindex="10" type="text">
           <div id="external_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="arch_input">Architecture</label>  
-          <input id="arch_input" name="arch_input" class="form-control" maxlength="25" type="text">
+          <label class="control-label" for="arch_input">Architecture <span class="req-field">*</span></label>  
+          <input id="arch_input" name="arch_input" class="form-control" maxlength="25" tabindex="11" type="text">
           <div id="arch_input_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
           <label class="control-label" for="notes_input">Notes</label>  
-          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" type="text"></textarea>
+          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" tabindex="12" type="text"></textarea>
           <div id="notes_input_help"></div>
         </div>
 
         <div class="col-md-12 form-group">
-          <label class="control-label" for="submit"></label>
-          <button id="submit" name="submit" class="btn btn-primary">Submit</button>
+        	<span class="text-muted"><em><span class="req-field">*</span> Indicates required field</em></span>
         </div>
 
+        <div class="col-md-12 form-group">
+          <label class="control-label" for="submit"></label>
+          <button id="submit" name="submit" class="btn btn-primary" tabindex="13">Submit</button>
+        </div>
       </form>
     </div>
   </div>
@@ -147,7 +151,7 @@
 </div>
 
 <!-- Modals -->
-<div id="SuccessCPUModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="SuccessModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
