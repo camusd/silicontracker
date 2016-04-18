@@ -401,30 +401,116 @@ $(document).ready(function() {
     flash_table = $('#flash_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'notes-control',
+        "orderable": false,
+        "data": null,
+        "defaultContent": '',
+        "visible": false
+      },
+      {
+        "className": 'scrap-control',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "scrapped",
+        "visible": false
+      },
       {"data" : "serial_num"},
       {"data" : "capacity"},
       {"data" : "manufacturer"},
-      {"defaultContent": "<button class=\"scrap_btn\">Scrap</button>", "visible": false}
+      {
+        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
+        "orderable": false,
+        "className": "btn-notes",
+      },
+      {
+        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-pencil-square-o"></i></button>',
+        "orderable": false,
+        "className": "btn-edit",
+        "visible": false,
+      },
     ],
-    "scrollX"     : true,
     "paging"      : true,
     "pagingType"  : "simple_numbers",
     "pageLength"  : 50,
     "fixedHeader" : {
          "header" : true,
          "footer" : false
-      }
+    }
     });
     if (jsonData.is_admin === 1) {
       flash_table.column(-1).visible(true);
     }
+
+    // setting the column search bar width
+    $('#flashFilterCols th').each( function (idx) {
+      var title = $(this).text();
+      if (this.id !== 'colBtn') {
+        $(this).html( '<input type="text" style="width: 95%" placeholder="'+title+'" />' );
+      }
+    });
+
     // Apply the search
     $('#flashFilterCols th').each(function (idx){
-      var col = flash_table.column(idx);
+      // The plus 2 is needed because the first two columns are the 
+      // notes field (the child row) and scrapped field.
+      var col = flash_table.column(idx+2);
       $('input', this).on( 'keyup change', function () {
         col.search( this.value ).draw();
       });
     });
+
+    // Add event listener for opening and closing details
+    flash_table.on('click', '.btn-notes', function () {
+      var tr = $(this).closest('tr');
+      var row = flash_table.row(tr);
+      
+      if (row.child.isShown()) {
+          // This row is already open - close it
+          row.child.hide();
+      } else {
+        // Open this row
+        row.child(format(row.data().notes)).show();
+
+        // Setup form listener to send POST Ajax on submit.
+        var childRow = $(tr).next();
+        childRow.find('form').submit(function(e) {
+          e.preventDefault();
+          var newNotes = $(this).find('#notes').val();
+          var dataToSend = {
+            serial_num: row.data().serial_num,
+            notes: newNotes
+          };
+          $.post('/update/flash/notes', dataToSend, function(data, status, jqXHR) {
+            if (status !== 'success') {
+              alert('Error: Could not save notes.');
+            } else {
+              row.data().notes = newNotes;
+              childRow.find('#save-status').text('Time saved: ' + moment().format('hh:mm:ss a'));
+            }
+          });
+        });
+      }
+    });
+    flash_table.on('click', '.btn-edit', function() {
+      var tr = $(this).closest('tr');
+      var row = flash_table.row(tr);
+      flash_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        capacity: row.data().capacity,
+        manufacturer: row.data().manufacturer,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped
+      };
+      $('#editFlashModal').modal('show');
+    });
+
+    // Placing the table in a horizontally scrollable box.
+    // NOTE: Don't try using the scrollX DataTables option.
+    // It messes with the column widths between the table header and body.
+    var tableId = 'flash_table';
+    $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
   });
 
   /* Modals */
@@ -590,6 +676,52 @@ $(document).ready(function() {
           memory_table.row(memory_data.index).data(memory_data).draw();
         };
         $('#editMemoryModal').modal('hide');
+      }
+    });
+  });
+
+  $('#editFlashModal').on('show.bs.modal', function (event) {
+    var modal = $(this);
+    modal.find('#serial_input').val(flash_data.serial_num);
+    modal.find('#capacity_input').val(flash_data.capacity);
+    modal.find('#manufacturer_input').val(flash_data.manufacturer);
+    modal.find('#notes_input').val(flash_data.notes);
+    if(modal.find('#scrap_input').val(flash_data.scrapped) == 1) {
+      modal.find('#scrap_input').prop('checked', true);
+    } else {
+      modal.find('#scrap_input').prop('checked', false);
+    };
+  });
+  $('#editFlashSave').on('click', function() {
+    var form = $(this).closest('.modal-content').find('form');
+    flash_data.capacity = form.find('#capacity_input').val();
+    flash_data.manufacturer = form.find('#manufacturer_input').val();
+    flash_data.notes = form.find('#notes_input').val();
+    if(document.getElementById('scrap_input').checked) {
+      flash_data.scrapped = 1;
+    } else {
+      flash_data.scrapped = 0;
+    };
+    $.post('/update/flash', flash_data, function(data, status, jqXHR) {
+      if (status !== 'success') {
+        alert('Flash Drive item did not update!');
+      } else {
+        if(flash_data.scrapped == 1) {
+          //Remove scrapped item and update banner to reflect that
+          flash_table.row(flash_data.index).remove();
+          $.get('/data/stats', function(data) {
+            $('#infoBanner').empty();
+            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                    data.num_active + ' active + ' +
+                                    data.num_scrapped + ' scrapped = ' +
+                                    data.num_total + '</span>');
+          });
+          flash_table.draw();
+        } else {
+          flash_table.row(flash_data.index).data(flash_data).draw();
+        };
+        $('#editFlashModal').modal('hide');
       }
     });
   });

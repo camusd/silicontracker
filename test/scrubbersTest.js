@@ -198,4 +198,53 @@ describe('scrub', function() {
 			done();
 		});
 	});
+
+	describe('#Flash Drives()', function() {
+		var scrubFlash;
+		before(function() {
+			var flash = {
+				serial_input: '1234567890123456\nabcdefghijklmnop  ',
+				manufacturer_input: '  lexar and intel    why not    ',
+				capacity_input: '  38   ',
+				notes_input: '   here a  have      some notes!!!     '
+			};
+
+			scrubFlash = scrub.Flash(flash);
+		});
+		it('should have correct types', function(done) {
+
+			expect(scrubFlash, 'the whole thing').to.be.an('object');
+			expect(scrubFlash.serial_input, 'serial_input').to.be.an('array');
+			expect(scrubFlash.manufacturer_input, 'manufacturer_input').to.be.a('string');
+			expect(scrubFlash.capacity_input, 'capacity_input').to.be.a('number');
+			expect(scrubFlash.notes_input, 'notes_input').to.be.a('string');
+
+			done();
+		});
+		it('should have two items in the serial_input array', function(done) {
+			expect(scrubFlash.serial_input).to.have.length(2);
+
+			done();
+		});
+		it('should all contain the right lengths', function(done) {
+			expect(scrubFlash.serial_input[0]).to.have.length(16);
+			expect(scrubFlash.serial_input[1]).to.have.length(16);
+			expect(scrubFlash.manufacturer_input).to.have.length(23);
+			expect(scrubFlash.notes_input).to.have.length(31);
+
+			done();
+		});
+		it('should have the right numbers', function(done) {
+			expect(scrubFlash.capacity_input).to.equal(38);
+
+			done();
+		});
+		it('should contain correct values', function(done) {
+			expect(scrubFlash.serial_input[0], 'serial_input[0]').to.equal('1234567890123456');
+			expect(scrubFlash.serial_input[1], 'serial_input[1]').to.equal('ABCDEFGHIJKLMNOP');
+			expect(scrubFlash.notes_input, 'notes_input').to.equal('here a  have      some notes!!!');
+
+			done();
+		});
+	});
 });

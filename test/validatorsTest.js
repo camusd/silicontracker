@@ -280,4 +280,77 @@ describe('validate', function() {
 			done();
 		});
 	});
+	describe('#Flash Drives()', function() {
+		var val;
+		var scrubbed;
+		before(function() {
+			var flash = {
+				serial_input: '1234567890123456\nabcdefghijklmnop  ',
+				manufacturer_input: '  lexar and intel    why not    ',
+				capacity_input: '  38   ',
+				notes_input: '   here a  have      some notes!!!     '
+			};
+
+			scrubbed = scrub.Flash(flash);
+			val = validate.Flash(scrubbed);
+		});
+		it('should have no errors', function(done) {
+			expect(val).to.be.undefined;
+
+			done();
+		});
+		it('should complain about serial number length', function(done) {
+			var c = scrubbed;
+			c.serial_input = ['1234567890123456', 'ABCDEFGHIJKLMNOPQRSTU'];
+
+			var v = validate.Flash(c);
+
+			expect(v.serial_input).to.have.length(1);
+			expect(v.serial_input[0]).to.contain('ABCDEFGHIJKLMNOPQRSTU');
+			expect(v.serial_input[0]).to.contain('length');
+
+			done();
+		});
+		it('should complain about serial number format', function(done) {
+			var c = scrubbed;
+			c.serial_input = ['@@@@ABCD@@@@AB', 'ABCDEFGHIJKLMN'];
+
+			var v = validate.Flash(c);
+
+			expect(v.serial_input).to.have.length(1);
+			expect(v.serial_input[0]).to.contain('@@@@ABCD@@@@AB');
+			expect(v.serial_input[0]).to.contain('alphanumeric');
+
+			done();
+		});
+		it('should complain about missing parameters', function(done) {
+			var c = {
+				serial_input: '',
+				manufacturer_input: '',
+				capacity_input: '',
+				notes_input: ''
+			};
+
+			var v = validate.Flash(c);
+			expect(v.serial_input).to.be.not.undefined;
+			expect(v.manufacturer_input).to.be.not.undefined;
+			expect(v.capacity_input).to.be.not.undefined;
+
+			done();
+		});
+
+		it ('should be fine with no values for optional attributes', function(done) {
+			var c = {
+				serial_input: '',
+				manufacturer_input: '',
+				capacity_input: '',
+				notes_input: ''
+			};
+
+			var v = validate.Flash(c);
+			expect(v.notes_input).to.be.undefined;
+
+			done();
+		});
+	});
 });

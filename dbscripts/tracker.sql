@@ -115,7 +115,7 @@ DROP TABLE IF EXISTS `Flash_Drive`;
 CREATE TABLE `Flash_Drive` (
   `product_id` int(11) unsigned NOT NULL,
   `serial_num` varchar(20) NOT NULL,
-  `manufacturer` varchar(15) NOT NULL,
+  `manufacturer` varchar(45) NOT NULL,
   `capacity` int(5) NOT NULL,
   PRIMARY KEY (`product_id`),
   UNIQUE KEY `id_UNIQUE` (`product_id`),
@@ -1241,6 +1241,62 @@ BEGIN
     ON i.id = p.product_id
     SET i.notes = n
     WHERE p.serial_num = s;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_flash_drive` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_flash_drive`(IN `the_serial_num` VARCHAR(16), IN `new_capacity` INT, IN `new_manufacturer` VARCHAR(45), IN `new_notes` TEXT, IN `new_scrapped` TINYINT(1))
+BEGIN
+    DECLARE flash_id INT;
+    SET flash_id := (SELECT product_id 
+             FROM Flash_Drive
+                         WHERE serial_num = the_serial_num
+          );
+
+  UPDATE  Items i
+  SET   i.notes = new_notes,
+      i.scrapped = new_scrapped
+    WHERE i.id = ssd_id;
+    
+    UPDATE  Flash_Drive
+    SET   capacity = new_capacity,
+      manufacturer = new_manufacturer
+    WHERE product_id = flash_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_flash_drive_notes` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_flash_drive_notes`(IN s varchar(14), IN n text)
+BEGIN
+  UPDATE Items i
+    JOIN Flash_Drive flash
+    ON i.id = flash.product_id
+    SET i.notes = n
+    WHERE flash.serial_num = s;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

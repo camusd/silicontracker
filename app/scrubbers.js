@@ -7,6 +7,9 @@ module.exports = {
 	},
 	Memory: function(mem) {
 		return scrubMemory(mem);
+	},
+	Flash: function(flash) {
+		return scrubFlash(flash);
 	}
 };
 
@@ -237,4 +240,44 @@ function scrubMemory(mem) {
 	}
 
 	return mem;
+}
+
+function scrubFlash(flash) {
+	// Serial Number
+	// 1. Convert to uppercase
+	// 2. Split into array based on newline as the delimeter
+	// 3. Trim whitespace
+	if (flash.hasOwnProperty('serial_input')) {
+		if (flash.serial_input !== '') {
+			flash.serial_input = flash.serial_input.toUpperCase().split(/\n/);
+			for (var i = 0; i < flash.serial_input.length; i++) {
+				flash.serial_input[i] = flash.serial_input[i].trimWords();
+			}
+		} else {
+			flash.serial_input = [];
+		}
+	}
+
+	// Manufacturer
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (flash.hasOwnProperty('manufacturer_input')) {
+		flash.manufacturer_input = flash.manufacturer_input.capitalize().trimWords();
+	}
+
+	// Capacity
+	// 1. Trim whitespace
+	// 2. Convert to int
+	if (flash.hasOwnProperty('capacity_input')) {
+		flash.capacity_input = parseInt(flash.capacity_input.trim());
+	}
+
+	// Notes
+	// 1. Trim leading and trailing whitespace.
+	//    (Don't need to trim between words. Let the user decide how to use notes).
+	if (flash.hasOwnProperty('notes_input')) {
+		flash.notes_input = flash.notes_input.trim();
+	}
+
+	return flash;
 }

@@ -92,6 +92,28 @@ module.exports = function(app, conn) {
     res.end();
   });
 
+  app.post('/update/flash', function(req, res) {
+    conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
+      +req.body.capacity+"','"+req.body.manufacturer+"','"
+      +req.body.notes+"','"+req.body.scrapped+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
+  app.post('/update/flash/notes', function(req, res) {
+    conn.query("CALL update_flash_drive_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      function(error, results, fields) {
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
   app.post('/add/cpu', function(req, res) {
     req.body = scrub.CPU(req.body);
     var verrors = validate.CPU(req.body);
@@ -181,25 +203,30 @@ module.exports = function(app, conn) {
   });
 
   app.post('/add/flash', function(req, res) {
-    conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
+    req.body = scrub.Flash(req.body);
+    var verrors = validate.Flash(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
       function(error, results, fields){
         if(error) {
           throw error;
         }
         if(results[0].length == 0) {
           conn.query("CALL put_flash_drive('"+req.body.serial_input+"','"
-                           +req.body.manufacturer_input+"','"+req.body.capacity_input+"','"
-                           +req.body.notes_input+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
+            +req.body.manufacturer_input+"','"+req.body.capacity_input+"','"
+            +req.body.notes_input+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+          });
         }
+        res.status(200).send(req.body);
       });
-    res.statusCode = 302;
-    res.setHeader("Location", "/")
-    res.end();
+    }
   });
 
   /* Routes for loading pages in the web interface */
