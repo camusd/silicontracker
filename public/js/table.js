@@ -8,8 +8,6 @@ function format(notes) {
           <div class="col-xs-12" id="save-status"></div>';
 }
 
-var cpuColNames = ['', '', 'Serial Number','Spec','MM','Freq','Step','LLC','Cores','Codename','CPU Class','External Name', 'Architecture'];
-
 $(document).ready(function() {
   var cpu_table;
   var cpu_data;
@@ -516,213 +514,313 @@ $(document).ready(function() {
   /* Modals */
   $('#editCPUModal').on('show.bs.modal', function (event) {
     var modal = $(this);
-    modal.find('#serial_input').val(cpu_data.serial_num);
-    modal.find('#spec_input').val(cpu_data.spec);
-    modal.find('#mm_input').val(cpu_data.mm);
-    modal.find('#freq_input').val(cpu_data.frequency);
-    modal.find('#step_input').val(cpu_data.stepping);
-    modal.find('#llc_input').val(cpu_data.llc);
-    modal.find('#cores_input').val(cpu_data.cores);
-    modal.find('#codename_input').val(cpu_data.codename);
-    modal.find('#class_input').val(cpu_data.cpu_class);
-    modal.find('#external_input').val(cpu_data.external_name);
-    modal.find('#arch_input').val(cpu_data.architecture);
-    modal.find('#notes_input').val(cpu_data.notes);
-    if(modal.find('#scrap_input').val(cpu_data.scrapped) == 1) {
-      modal.find('#scrap_input').prop('checked', true);
+    modal.find('#serial_num').val(cpu_data.serial_num);
+    modal.find('#spec').val(cpu_data.spec);
+    modal.find('#mm').val(cpu_data.mm);
+    modal.find('#frequency').val(cpu_data.frequency);
+    modal.find('#stepping').val(cpu_data.stepping);
+    modal.find('#llc').val(cpu_data.llc);
+    modal.find('#cores').val(cpu_data.cores);
+    modal.find('#codename').val(cpu_data.codename);
+    modal.find('#cpu_class').val(cpu_data.cpu_class);
+    modal.find('#external_name').val(cpu_data.external_name);
+    modal.find('#architecture').val(cpu_data.architecture);
+    modal.find('#notes').val(cpu_data.notes);
+    if(modal.find('#scrap').val(cpu_data.scrapped) == 1) {
+      modal.find('#scrap').prop('checked', true);
     } else {
-      modal.find('#scrap_input').prop('checked', false);
+      modal.find('#scrap').prop('checked', false);
     };
   });
   $('#editCPUSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
-    cpu_data.spec = form.find('#spec_input').val();
-    cpu_data.mm = form.find('#mm_input').val();
-    cpu_data.frequency = form.find('#freq_input').val();
-    cpu_data.stepping = form.find('#step_input').val();
-    cpu_data.llc = form.find('#llc_input').val();
-    cpu_data.cores = form.find('#cores_input').val();
-    cpu_data.codename = form.find('#codename_input').val();
-    cpu_data.cpu_class = form.find('#class_input').val();
-    cpu_data.external_name = form.find('#external_input').val();
-    cpu_data.architecture = form.find('#arch_input').val();
-    cpu_data.notes = form.find('#notes_input').val();
-    if(document.getElementById('scrap_input').checked) {
+    cpu_data.spec = form.find('#spec').val();
+    cpu_data.mm = form.find('#mm').val();
+    cpu_data.frequency = form.find('#frequency').val();
+    cpu_data.stepping = form.find('#stepping').val();
+    cpu_data.llc = form.find('#llc').val();
+    cpu_data.cores = form.find('#cores').val();
+    cpu_data.codename = form.find('#codename').val();
+    cpu_data.cpu_class = form.find('#cpu_class').val();
+    cpu_data.external_name = form.find('#external_name').val();
+    cpu_data.architecture = form.find('#architecture').val();
+    cpu_data.notes = form.find('#notes').val();
+    if(document.getElementById('scrap').checked) {
       cpu_data.scrapped = 1;
     } else {
       cpu_data.scrapped = 0;
     };
+
+    // Getting the keys and values of all the fields in the form
+    var obj = {};
+    $.each($('#CPU').serializeArray(), function(_, kv) {
+      obj[kv.name] = kv.value;
+    });
+
+    // Clearing all the old error messages
+    $.each(obj, function(key, o) {
+      var k = '#cpu_' + key + '_help';
+      $(k).html('');
+    });
+
     $.post('/update/cpu', cpu_data, function(data, status, jqXHR) {
-      if (status !== 'success') {
-        alert('CPU item did not update!');
+      if(cpu_data.scrapped == 1) {
+        //Remove scrapped item and update banner to reflect that
+        cpu_table.row(cpu_data.index).remove();
+        $.get('/data/stats', function(data) {
+          $('#infoBanner').empty();
+          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                  data.num_active + ' active + ' +
+                                  data.num_scrapped + ' scrapped = ' +
+                                  data.num_total + '</span>');
+        });
+        cpu_table.draw();
       } else {
-        if(cpu_data.scrapped == 1) {
-          //Remove scrapped item and update banner to reflect that
-          cpu_table.row(cpu_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
-          cpu_table.draw();
-        } else {
-          cpu_table.row(cpu_data.index).data(cpu_data).draw();
-        };
-        $('#editCPUModal').modal('hide');
+        cpu_table.row(cpu_data.index).data(cpu_data).draw();
       }
+      $('#editCPUModal').modal('hide');
+    })
+    .fail(function(data) {
+      // get the list of errors
+      var errors = data.responseJSON;
+
+      // display the messages in the help divs
+      $.each(errors, function(key, messages) {
+        var k = '#cpu_' + key + '_help';
+
+        var repDOM = [];
+        $.each(messages, function(idx, m) {
+          repDOM.push('<span class="help-block"><p class="text-danger">'+m+'</p></span>')
+        });
+
+        $(k).append(repDOM);
+      });
     });
   });
 
   $('#editSSDModal').on('show.bs.modal', function (event) {
     var modal = $(this);
-    modal.find('#serial_input').val(ssd_data.serial_num);
-    modal.find('#capacity_input').val(ssd_data.capacity);
-    modal.find('#manufacturer_input').val(ssd_data.manufacturer);
-    modal.find('#model_input').val(ssd_data.model);
-    modal.find('#notes_input').val(ssd_data.notes);
-    if(modal.find('#scrap_input').val(ssd_data.scrapped) == 1) {
-      modal.find('#scrap_input').prop('checked', true);
+    modal.find('#serial_num').val(ssd_data.serial_num);
+    modal.find('#capacity').val(ssd_data.capacity);
+    modal.find('#manufacturer').val(ssd_data.manufacturer);
+    modal.find('#model').val(ssd_data.model);
+    modal.find('#notes').val(ssd_data.notes);
+    if(modal.find('#scrap').val(ssd_data.scrapped) == 1) {
+      modal.find('#scrap').prop('checked', true);
     } else {
-      modal.find('#scrap_input').prop('checked', false);
+      modal.find('#scrap').prop('checked', false);
     };
   });
   $('#editSSDSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
-    ssd_data.capacity = form.find('#capacity_input').val();
-    ssd_data.manufacturer = form.find('#manufacturer_input').val();
-    ssd_data.model = form.find('#model_input').val();
-    ssd_data.notes = form.find('#notes_input').val();
-    if(document.getElementById('scrap_input').checked) {
+    ssd_data.capacity = form.find('#capacity').val();
+    ssd_data.manufacturer = form.find('#manufacturer').val();
+    ssd_data.model = form.find('#model').val();
+    ssd_data.notes = form.find('#notes').val();
+    if(document.getElementById('scrap').checked) {
       ssd_data.scrapped = 1;
     } else {
       ssd_data.scrapped = 0;
     };
+
+    // Getting the keys and values of all the fields in the form
+    var obj = {};
+    $.each($('#SSD').serializeArray(), function(_, kv) {
+      obj[kv.name] = kv.value;
+    });
+
+    // Clearing all the old error messages
+    $.each(obj, function(key, o) {
+      var k = '#ssd_' + key + '_help';
+      $(k).html('');
+    });
+
     $.post('/update/ssd', ssd_data, function(data, status, jqXHR) {
-      if (status !== 'success') {
-        alert('SSD item did not update!');
+      if(ssd_data.scrapped == 1) {
+        //Remove scrapped item and update banner to reflect that
+        ssd_table.row(ssd_data.index).remove();
+        $.get('/data/stats', function(data) {
+          $('#infoBanner').empty();
+          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                  data.num_active + ' active + ' +
+                                  data.num_scrapped + ' scrapped = ' +
+                                  data.num_total + '</span>');
+        });
+        ssd_table.draw();
       } else {
-        if(ssd_data.scrapped == 1) {
-          //Remove scrapped item and update banner to reflect that
-          ssd_table.row(ssd_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
-          ssd_table.draw();
-        } else {
-          ssd_table.row(ssd_data.index).data(ssd_data).draw();
-        };
-        $('#editSSDModal').modal('hide');
+        ssd_table.row(ssd_data.index).data(ssd_data).draw();
       }
+      $('#editSSDModal').modal('hide');
+    })
+    .fail(function(data) {
+      // get the list of errors
+      var errors = data.responseJSON;
+
+      // display the messages in the help divs
+      $.each(errors, function(key, messages) {
+        var k = '#ssd_' + key + '_help';
+
+        var repDOM = [];
+        $.each(messages, function(idx, m) {
+          repDOM.push('<span class="help-block"><p class="text-danger">'+m+'</p></span>')
+        });
+
+        $(k).append(repDOM);
+      });
     });
   });
 
   $('#editMemoryModal').on('show.bs.modal', function (event) {
     var modal = $(this);
-    modal.find('#serial_input').val(memory_data.serial_num);
-    modal.find('#manufacturer_input').val(memory_data.manufacturer);
-    modal.find('#physical_size_input').val(memory_data.physical_size);
-    modal.find('#ecc_input').val(memory_data.ecc);
-    modal.find('#ranks_input').val(memory_data.ranks);
-    modal.find('#memory_type_input').val(memory_data.memory_type);
-    modal.find('#capacity_input').val(memory_data.capacity);
-    modal.find('#speed_input').val(memory_data.speed);
-    modal.find('#notes_input').val(memory_data.notes);
-    if(modal.find('#scrap_input').val(memory_data.scrapped) == 1) {
-      modal.find('#scrap_input').prop('checked', true);
+    modal.find('#serial_num').val(memory_data.serial_num);
+    modal.find('#manufacturer').val(memory_data.manufacturer);
+    modal.find('#physical_size').val(memory_data.physical_size);
+    modal.find('#ecc').val(memory_data.ecc);
+    modal.find('#ranks').val(memory_data.ranks);
+    modal.find('#memory_type').val(memory_data.memory_type);
+    modal.find('#capacity').val(memory_data.capacity);
+    modal.find('#speed').val(memory_data.speed);
+    modal.find('#notes').val(memory_data.notes);
+    if(modal.find('#scrap').val(memory_data.scrapped) == 1) {
+      modal.find('#scrap').prop('checked', true);
     } else {
-      modal.find('#scrap_input').prop('checked', false);
+      modal.find('#scrap').prop('checked', false);
     };
   });
   $('#editMemorySave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
-    memory_data.manufacturer = form.find('#manufacturer_input').val();
-    memory_data.physical_size = form.find('#physical_size_input').val();
-    memory_data.ecc = form.find('#ecc_input').val();
-    memory_data.ranks = form.find('#ranks_input').val();
-    memory_data.memory_type = form.find('#memory_type_input').val();
-    memory_data.capacity = form.find('#capacity_input').val();
-    memory_data.speed = form.find('#speed_input').val();
-    memory_data.notes = form.find('#notes_input').val();
-    if(document.getElementById('scrap_input').checked) {
+    memory_data.manufacturer = form.find('#manufacturer').val();
+    memory_data.physical_size = form.find('#physical_size').val();
+    memory_data.ecc = form.find('#ecc').val();
+    memory_data.ranks = form.find('#ranks').val();
+    memory_data.memory_type = form.find('#memory_type').val();
+    memory_data.capacity = form.find('#capacity').val();
+    memory_data.speed = form.find('#speed').val();
+    memory_data.notes = form.find('#notes').val();
+    if(document.getElementById('scrap').checked) {
       memory_data.scrapped = 1;
     } else {
       memory_data.scrapped = 0;
     };
+
+    // Getting the keys and values of all the fields in the form
+    var obj = {};
+    $.each($('#Memory').serializeArray(), function(_, kv) {
+      obj[kv.name] = kv.value;
+    });
+
+    // Clearing all the old error messages
+    $.each(obj, function(key, o) {
+      var k = '#memory_' + key + '_help';
+      $(k).html('');
+    });
+
     $.post('/update/memory', memory_data, function(data, status, jqXHR) {
-      if (status !== 'success') {
-        alert('Memory item did not update!');
+      if(memory_data.scrapped == 1) {
+        //Remove scrapped item and update banner to reflect that
+        memory_table.row(memory_data.index).remove();
+        $.get('/data/stats', function(data) {
+          $('#infoBanner').empty();
+          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                  data.num_active + ' active + ' +
+                                  data.num_scrapped + ' scrapped = ' +
+                                  data.num_total + '</span>');
+        });
+        memory_table.draw();
       } else {
-        if(memory_data.scrapped == 1) {
-          //Remove scrapped item and update banner to reflect that
-          memory_table.row(memory_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
-          memory_table.draw();
-        } else {
-          memory_table.row(memory_data.index).data(memory_data).draw();
-        };
-        $('#editMemoryModal').modal('hide');
+        memory_table.row(memory_data.index).data(memory_data).draw();
       }
+      $('#editMemoryModal').modal('hide');
+    })
+    .fail(function(data) {
+      // get the list of errors
+      var errors = data.responseJSON;
+
+      // display the messages in the help divs
+      $.each(errors, function(key, messages) {
+        var k = '#memory_' + key + '_help';
+
+        var repDOM = [];
+        $.each(messages, function(idx, m) {
+          repDOM.push('<span class="help-block"><p class="text-danger">'+m+'</p></span>')
+        });
+
+        $(k).append(repDOM);
+      });
     });
   });
 
   $('#editFlashModal').on('show.bs.modal', function (event) {
     var modal = $(this);
-    modal.find('#serial_input').val(flash_data.serial_num);
-    modal.find('#capacity_input').val(flash_data.capacity);
-    modal.find('#manufacturer_input').val(flash_data.manufacturer);
-    modal.find('#notes_input').val(flash_data.notes);
-    if(modal.find('#scrap_input').val(flash_data.scrapped) == 1) {
-      modal.find('#scrap_input').prop('checked', true);
+    modal.find('#serial_num').val(flash_data.serial_num);
+    modal.find('#capacity').val(flash_data.capacity);
+    modal.find('#manufacturer').val(flash_data.manufacturer);
+    modal.find('#notes').val(flash_data.notes);
+    if(modal.find('#scrap').val(flash_data.scrapped) == 1) {
+      modal.find('#scrap').prop('checked', true);
     } else {
-      modal.find('#scrap_input').prop('checked', false);
+      modal.find('#scrap').prop('checked', false);
     };
   });
   $('#editFlashSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
-    flash_data.capacity = form.find('#capacity_input').val();
-    flash_data.manufacturer = form.find('#manufacturer_input').val();
-    flash_data.notes = form.find('#notes_input').val();
-    if(document.getElementById('scrap_input').checked) {
+    flash_data.capacity = form.find('#capacity').val();
+    flash_data.manufacturer = form.find('#manufacturer').val();
+    flash_data.notes = form.find('#notes').val();
+    if(document.getElementById('scrap').checked) {
       flash_data.scrapped = 1;
     } else {
       flash_data.scrapped = 0;
     };
+
+    // Getting the keys and values of all the fields in the form
+    var obj = {};
+    $.each($('#Flash').serializeArray(), function(_, kv) {
+      obj[kv.name] = kv.value;
+    });
+
+    // Clearing all the old error messages
+    $.each(obj, function(key, o) {
+      var k = '#flash_' + key + '_help';
+      $(k).html('');
+    });
+
     $.post('/update/flash', flash_data, function(data, status, jqXHR) {
-      if (status !== 'success') {
-        alert('Flash Drive item did not update!');
+      if(flash_data.scrapped == 1) {
+        //Remove scrapped item and update banner to reflect that
+        flash_table.row(flash_data.index).remove();
+        $.get('/data/stats', function(data) {
+          $('#infoBanner').empty();
+          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                  data.num_active + ' active + ' +
+                                  data.num_scrapped + ' scrapped = ' +
+                                  data.num_total + '</span>');
+        });
+        flash_table.draw();
       } else {
-        if(flash_data.scrapped == 1) {
-          //Remove scrapped item and update banner to reflect that
-          flash_table.row(flash_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
-          flash_table.draw();
-        } else {
-          flash_table.row(flash_data.index).data(flash_data).draw();
-        };
-        $('#editFlashModal').modal('hide');
+        flash_table.row(flash_data.index).data(flash_data).draw();
       }
+      $('#editFlashModal').modal('hide');
+    })
+    .fail(function(data) {
+      // get the list of errors
+      var errors = data.responseJSON;
+
+      // display the messages in the help divs
+      $.each(errors, function(key, messages) {
+        var k = '#flash_' + key + '_help';
+
+        var repDOM = [];
+        $.each(messages, function(idx, m) {
+          repDOM.push('<span class="help-block"><p class="text-danger">'+m+'</p></span>')
+        });
+
+        $(k).append(repDOM);
+      });
     });
   });
 });

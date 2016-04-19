@@ -13,19 +13,26 @@ module.exports = function(app, conn) {
    * a form and POSTS the data. */
 
   app.post('/update/cpu', function(req, res) {
-    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
-      +req.body.spec+"','"+req.body.mm+"','"
-      +req.body.frequency+"','"+req.body.stepping+"','"
-      +req.body.llc+"','"+req.body.cores+"','"
-      +req.body.codename+"','"+req.body.cpu_class+"','"
-      +req.body.external_name+"','"+req.body.architecture+"','"
-      +req.body.notes+"','"+req.body.scrapped+"');",
+  	req.body = scrub.CPU(req.body);
+    var verrors = validate.CPU(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+	    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
+        +req.body.spec+"','"+req.body.mm+"','"
+        +req.body.frequency+"','"+req.body.stepping+"','"
+        +req.body.llc+"','"+req.body.cores+"','"
+        +req.body.codename+"','"+req.body.cpu_class+"','"
+        +req.body.external_name+"','"+req.body.architecture+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
       function(error, results, fields){
         if(error) {
           throw error;
         }
-    });
-    res.end();
+      });
+      res.status(200).send(req.body);
+    }
   });
 
   app.post('/update/cpu/notes', function(req, res) {
@@ -39,16 +46,23 @@ module.exports = function(app, conn) {
   });
 
   app.post('/update/ssd', function(req, res) {
-    conn.query("CALL update_ssd('"+req.body.serial_num+"','"
-      +req.body.capacity+"','"+req.body.manufacturer+"','"
-      +req.body.model+"','"
-      +req.body.notes+"','"+req.body.scrapped+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-    });
-    res.end();
+    req.body = scrub.SSD(req.body);
+    var verrors = validate.SSD(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL update_ssd('"+req.body.serial_num+"','"
+        +req.body.capacity+"','"+req.body.manufacturer+"','"
+        +req.body.model+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+      });
+      res.status(200).send(req.body);
+    }
   });
 
   app.post('/update/ssd/notes', function(req, res) {
@@ -62,24 +76,31 @@ module.exports = function(app, conn) {
   });
 
   app.post('/update/memory', function(req, res) {
-    conn.query("CALL update_memory('"+
-      req.body.serial_num+"','"+
-      req.body.manufacturer+"','"+
-      req.body.physical_size+"','"+
-      req.body.ecc+"','"+
-      req.body.ranks+"','"+
-      req.body.memory_type+"','"+
-      req.body.capacity+"','"+
-      req.body.speed+"','"+
-      req.body.notes+"','"+
-      req.body.scrapped+"');",
-      function(error, results, fields){
-        console.log(results);
-        if(error) {
-          throw error;
-        }
-    });
-    res.end();
+    req.body = scrub.Memory(req.body);
+    var verrors = validate.Memory(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL update_memory('"+
+        req.body.serial_num+"','"+
+        req.body.manufacturer+"','"+
+        req.body.physical_size+"','"+
+        req.body.ecc+"','"+
+        req.body.ranks+"','"+
+        req.body.memory_type+"','"+
+        req.body.capacity+"','"+
+        req.body.speed+"','"+
+        req.body.notes+"','"+
+        req.body.scrapped+"');",
+        function(error, results, fields){
+          console.log(results);
+          if(error) {
+            throw error;
+          }
+      });
+      res.status(200).send(req.body);
+    }
   });
 
   app.post('/update/memory/notes', function(req, res) {
@@ -93,15 +114,22 @@ module.exports = function(app, conn) {
   });
 
   app.post('/update/flash', function(req, res) {
-    conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
-      +req.body.capacity+"','"+req.body.manufacturer+"','"
-      +req.body.notes+"','"+req.body.scrapped+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-    });
-    res.end();
+    req.body = scrub.Flash(req.body);
+    var verrors = validate.Flash(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
+        +req.body.capacity+"','"+req.body.manufacturer+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+      });
+      res.status(200).send(req.body);
+    }
   });
 
   app.post('/update/flash/notes', function(req, res) {
@@ -121,19 +149,19 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_cpu('"+req.body.serial_input+"');",
+      conn.query("CALL check_serial_cpu('"+req.body.serial_num+"');",
         function(error, results, fields){
           if(error) {
             throw error;
           }
           if(results[0].length == 0) {
-            conn.query("CALL put_cpu('"+req.body.serial_input+"','"
-              +req.body.spec_input+"','"+req.body.mm_input+"','"
-              +req.body.freq_input+"','"+req.body.step_input+"','"
-              +req.body.llc_input+"','"+req.body.cores_input+"','"
-              +req.body.codename_input+"','"+req.body.class_input+"','"
-              +req.body.external_input+"','"+req.body.arch_input+"','"
-              +req.body.notes_input+"');",
+            conn.query("CALL put_cpu('"+req.body.serial_num+"','"
+              +req.body.spec+"','"+req.body.mm+"','"
+              +req.body.frequency+"','"+req.body.stepping+"','"
+              +req.body.llc+"','"+req.body.cores+"','"
+              +req.body.codename+"','"+req.body.cpu_class+"','"
+              +req.body.external_name+"','"+req.body.architecture+"','"
+              +req.body.notes+"');",
             function(error, results, fields){
               if(error) {
                 throw error;
@@ -153,15 +181,15 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_ssd('"+req.body.serial_input+"');",
+      conn.query("CALL check_serial_ssd('"+req.body.serial_num+"');",
       function(error, results, fields){
         if(error) {
           throw error;
         }
         if(results[0].length == 0) {
-          conn.query("CALL put_ssd('"+req.body.serial_input+"','"
-            +req.body.manufacturer_input+"','"+req.body.model_input+"','"
-            +req.body.capacity_input+"','"+req.body.notes_input+"');",
+          conn.query("CALL put_ssd('"+req.body.serial_num+"','"
+            +req.body.manufacturer+"','"+req.body.model+"','"
+            +req.body.capacity+"','"+req.body.notes+"');",
           function(error, results, fields){
             if(error) {
               throw error;
@@ -180,17 +208,17 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_memory('"+req.body.serial_input+"');",
+      conn.query("CALL check_serial_memory('"+req.body.serial_num+"');",
         function(error, results, fields){
           if(error) {
             throw error;
           }
           if(results[0].length == 0) {
-            conn.query("CALL put_memory('"+req.body.serial_input+"','"
-              +req.body.manufacturer_input+"','"+req.body.physical_size_input+"','"
-              +req.body.memory_type_input+"','"+req.body.capacity_input+"','"
-              +req.body.speed_input+"','"+req.body.ecc_input+"','"
-              +req.body.ranks_input+"','"+req.body.notes_input+"');",
+            conn.query("CALL put_memory('"+req.body.serial_num+"','"
+              +req.body.manufacturer+"','"+req.body.physical_size+"','"
+              +req.body.memory_type+"','"+req.body.capacity+"','"
+              +req.body.speed+"','"+req.body.ecc+"','"
+              +req.body.ranks+"','"+req.body.notes+"');",
             function(error, results, fields){
               if(error) {
                 throw error;
@@ -209,15 +237,15 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
+      conn.query("CALL check_serial_flash_drive('"+req.body.serial_num+"');",
       function(error, results, fields){
         if(error) {
           throw error;
         }
         if(results[0].length == 0) {
-          conn.query("CALL put_flash_drive('"+req.body.serial_input+"','"
-            +req.body.manufacturer_input+"','"+req.body.capacity_input+"','"
-            +req.body.notes_input+"');",
+          conn.query("CALL put_flash_drive('"+req.body.serial_num+"','"
+            +req.body.manufacturer+"','"+req.body.capacity+"','"
+            +req.body.notes+"');",
           function(error, results, fields){
             if(error) {
               throw error;

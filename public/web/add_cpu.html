@@ -60,76 +60,76 @@
       <form action="/add/cpu" method="post" id="CPU">
               
         <div class="col-md-6 form-group">
-          <label class="control-label" for="serial_input">Serial Number <span class="req-field">*</span></label>
-          <textarea id="serial_input" name="serial_input" class="form-control" rows="4" tabindex="1" type="text"></textarea>
-          <div id="serial_input_help"></div>
+          <label class="control-label" for="serial_num">Serial Number <span class="req-field">*</span></label>
+          <textarea id="serial_num" name="serial_num" class="form-control" rows="4" tabindex="1" type="text"></textarea>
+          <div id="serial_num_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="spec_input">Spec <span class="req-field">*</span></label>  
-          <input id="spec_input" name="spec_input" class="form-control"  maxlength="5" tabindex="2" type="text">
-          <div id="spec_input_help"></div>
+          <label class="control-label" for="spec">Spec <span class="req-field">*</span></label>  
+          <input id="spec" name="spec" class="form-control"  maxlength="5" tabindex="2" type="text">
+          <div id="spec_help"></div>
         </div>
         
         <div class="col-md-6 form-group">
-          <label class="control-label" for="mm_input">MM <span class="req-field">*</span></label>  
-          <input id="mm_input" name="mm_input" class="form-control" maxlength="7" tabindex="3" type="text">
-          <div id="mm_input_help"></div>
+          <label class="control-label" for="mm">MM <span class="req-field">*</span></label>  
+          <input id="mm" name="mm" class="form-control" maxlength="7" tabindex="3" type="text">
+          <div id="mm_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="freq_input">Frequency <span class="req-field">*</span></label>  
-          <input id="freq_input" name="freq_input" class="form-control" maxlength="5" tabindex="4" type="text">
-          <div id="freq_input_help"></div>
+          <label class="control-label" for="frequency">Frequency <span class="req-field">*</span></label>  
+          <input id="frequency" name="frequency" class="form-control" maxlength="5" tabindex="4" type="text">
+          <div id="frequency_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="step_input">Stepping <span class="req-field">*</span></label>  
-          <input id="step_input" name="step_input" class="form-control" maxlength="6" tabindex="5" type="text">
-          <div id="step_input_help"></div>
+          <label class="control-label" for="stepping">Stepping <span class="req-field">*</span></label>  
+          <input id="stepping" name="stepping" class="form-control" maxlength="6" tabindex="5" type="text">
+          <div id="stepping_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="llc_input">LLC (MB) <span class="req-field">*</span></label>  
-          <input id="llc_input" name="llc_input" class="form-control" tabindex="6" type="text">
-          <div id="llc_input_help"></div>
+          <label class="control-label" for="llc">LLC (MB) <span class="req-field">*</span></label>  
+          <input id="llc" name="llc" class="form-control" tabindex="6" type="text">
+          <div id="llc_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="cores_input">Cores <span class="req-field">*</span></label>  
-          <input id="cores_input" name="cores_input" class="form-control" maxlength="4" tabindex="7" type="text">
-          <div id="cores_input_help"></div>
+          <label class="control-label" for="cores">Cores <span class="req-field">*</span></label>  
+          <input id="cores" name="cores" class="form-control" maxlength="4" tabindex="7" type="text">
+          <div id="cores_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="codename_input">Codename <span class="req-field">*</span></label>  
-          <input id="codename_input" name="codename_input" class="form-control" maxlength="25" list="dd_codename" tabindex="8">
+          <label class="control-label" for="codename">Codename <span class="req-field">*</span></label>  
+          <input id="codename" name="codename" class="form-control" maxlength="25" list="dd_codename" tabindex="8">
           <datalist id="dd_codename"></datalist> <!-- list options generated using jquery. -->
-          <div id="codename_input_help"></div>
+          <div id="codename_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="class_input">Class <span class="req-field">*</span></label>  
-          <input id="class_input" name="class_input" class="form-control" maxlength="10" tabindex="9" type="text">
-          <div id="class_input_help"></div>
+          <label class="control-label" for="cpu_class">Class <span class="req-field">*</span></label>  
+          <input id="cpu_class" name="cpu_class" class="form-control" maxlength="10" tabindex="9" type="text">
+          <div id="cpu_class_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="external_input">External Name</label>  
-          <input id="external_input" name="external_input" class="form-control" maxlength="25" tabindex="10" type="text">
-          <div id="external_input_help"></div>
+          <label class="control-label" for="external_name">External Name</label>  
+          <input id="external_name" name="external_name" class="form-control" maxlength="25" tabindex="10" type="text">
+          <div id="external_name_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="arch_input">Architecture <span class="req-field">*</span></label>  
-          <input id="arch_input" name="arch_input" class="form-control" maxlength="25" tabindex="11" type="text">
-          <div id="arch_input_help"></div>
+          <label class="control-label" for="architecture">Architecture <span class="req-field">*</span></label>  
+          <input id="architecture" name="architecture" class="form-control" maxlength="25" tabindex="11" type="text">
+          <div id="architecture_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="notes_input">Notes</label>  
-          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" tabindex="12" type="text"></textarea>
-          <div id="notes_input_help"></div>
+          <label class="control-label" for="notes">Notes</label>  
+          <textarea id="notes" name="notes" class="form-control" class="form-control" tabindex="12" type="text"></textarea>
+          <div id="notes_help"></div>
         </div>
 
         <div class="col-md-12 form-group">

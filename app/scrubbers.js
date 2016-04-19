@@ -28,93 +28,93 @@ function scrubCPU(cpu) {
 	// 1. Convert to uppercase
 	// 2. Split into array based on newline as the delimeter
 	// 3. Trim whitespace
-	if (cpu.hasOwnProperty('serial_input')) {
-		if (cpu.serial_input !== '') {
-			cpu.serial_input = cpu.serial_input.toUpperCase().split(/\n/);
-			for (var i = 0; i < cpu.serial_input.length; i++) {
-				cpu.serial_input[i] = cpu.serial_input[i].trimWords();
+	if (cpu.hasOwnProperty('serial_num')) {
+		if (cpu.serial_num !== '') {
+			cpu.serial_num = cpu.serial_num.toUpperCase().split(/\n/);
+			for (var i = 0; i < cpu.serial_num.length; i++) {
+				cpu.serial_num[i] = cpu.serial_num[i].trimWords();
 			}
 		} else {
-			cpu.serial_input = [];
+			cpu.serial_num = [];
 		}
 	}
 
 	// Spec
 	// 1. Convert to uppercase
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('spec_input')) {
-		cpu.spec_input = cpu.spec_input.toUpperCase().trimWords();
+	if (cpu.hasOwnProperty('spec')) {
+		cpu.spec = cpu.spec.toUpperCase().trimWords();
 	}
 
 	// MM
 	// 1. Trim whitespace
-	if (cpu.hasOwnProperty('mm_input')) {
-		cpu.mm_input = cpu.mm_input.trimWords();
+	if (cpu.hasOwnProperty('mm')) {
+		cpu.mm = cpu.mm.trimWords();
 	}
 
 	// Frequency
 	// 1. Remove trailing zeros from string by converting string to float
 	//    (will automatically trim whitespace)
 	// 2. Make sure it's in string format
-	if (cpu.hasOwnProperty('freq_input')) {
-		cpu.freq_input = parseFloat(cpu.freq_input).toString();
+	if (cpu.hasOwnProperty('frequency')) {
+		cpu.frequency = parseFloat(cpu.frequency).toString();
 	}
 
 	// Stepping
 	// 1. Convert to uppercase
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('step_input')) {
-		cpu.step_input = cpu.step_input.toUpperCase().trimWords();
+	if (cpu.hasOwnProperty('stepping')) {
+		cpu.stepping = cpu.stepping.toUpperCase().trimWords();
 	}
 
 	// LLC
 	// 1. Trim whitespace and trailing zeros
-	if (cpu.hasOwnProperty('llc_input')) {
-		cpu.llc_input = parseFloat(cpu.llc_input);
+	if (cpu.hasOwnProperty('llc')) {
+		cpu.llc = parseFloat(cpu.llc);
 	}
 
 	// Cores
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (cpu.hasOwnProperty('cores_input')) {
-		cpu.cores_input = parseInt(cpu.cores_input.trim());
+	if (cpu.hasOwnProperty('cores')) {
+		cpu.cores = parseInt(cpu.cores.trim());
 	}
 
 	// Codename
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('codename_input')) {
-		cpu.codename_input = cpu.codename_input.capitalize().trimWords();
+	if (cpu.hasOwnProperty('codename')) {
+		cpu.codename = cpu.codename.capitalize().trimWords();
 	}
 
 	// CPU Class
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('class_input')) {
-		cpu.class_input = cpu.class_input.capitalize().trimWords();
+	if (cpu.hasOwnProperty('cpu_class')) {
+		cpu.cpu_class = cpu.cpu_class.capitalize().trimWords();
 	}
 
 	// External Name
 	// 1. Capitalize just the first word, since the format may contain abbreviations and numbers. 
 	//    Some abbreviations may not want to be capitalized (e.g. i7) so we leave that input up to the user.
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('external_input')) {
-		cpu.external_input = cpu.external_input.replace(/(?:^|\s)\S/, function(a) { return a.toUpperCase(); });
-		cpu.external_input = cpu.external_input.trimWords();
+	if (cpu.hasOwnProperty('external_name')) {
+		cpu.external_name = cpu.external_name.replace(/(?:^|\s)\S/, function(a) { return a.toUpperCase(); });
+		cpu.external_name = cpu.external_name.trimWords();
 	}
 
 	// Architecture
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (cpu.hasOwnProperty('arch_input')) {
-		cpu.arch_input = cpu.arch_input.capitalize().trimWords();
+	if (cpu.hasOwnProperty('architecture')) {
+		cpu.architecture = cpu.architecture.capitalize().trimWords();
 	}
 
 	// Notes
 	// 1. Trim leading and trailing whitespace.
 	//    (Don't need to trim between words. Let the user decide how to use notes).
-	if (cpu.hasOwnProperty('notes_input')) {
-		cpu.notes_input = cpu.notes_input.trim();
+	if (cpu.hasOwnProperty('notes')) {
+		cpu.notes = cpu.notes.trim();
 	}
 
 	return cpu;
@@ -125,43 +125,43 @@ function scrubSSD(ssd) {
 	// 1. Convert to uppercase
 	// 2. Split into array based on newline as the delimeter
 	// 3. Trim whitespace
-	if (ssd.hasOwnProperty('serial_input')) {
-		if (ssd.serial_input !== '') {
-			ssd.serial_input = ssd.serial_input.toUpperCase().split(/\n/);
-			for (var i = 0; i < ssd.serial_input.length; i++) {
-				ssd.serial_input[i] = ssd.serial_input[i].trimWords();
+	if (ssd.hasOwnProperty('serial_num')) {
+		if (ssd.serial_num !== '') {
+			ssd.serial_num = ssd.serial_num.toUpperCase().split(/\n/);
+			for (var i = 0; i < ssd.serial_num.length; i++) {
+				ssd.serial_num[i] = ssd.serial_num[i].trimWords();
 			}
 		} else {
-			ssd.serial_input = [];
+			ssd.serial_num = [];
 		}
 	}
 
 	// Manufacturer
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (ssd.hasOwnProperty('manufacturer_input')) {
-		ssd.manufacturer_input = ssd.manufacturer_input.capitalize().trimWords();
+	if (ssd.hasOwnProperty('manufacturer')) {
+		ssd.manufacturer = ssd.manufacturer.capitalize().trimWords();
 	}
 
 	// Model
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (ssd.hasOwnProperty('model_input')) {
-		ssd.model_input = ssd.model_input.capitalize().trimWords();
+	if (ssd.hasOwnProperty('model')) {
+		ssd.model = ssd.model.capitalize().trimWords();
 	}
 
 	// Capacity
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (ssd.hasOwnProperty('capacity_input')) {
-		ssd.capacity_input = parseInt(ssd.capacity_input.trim());
+	if (ssd.hasOwnProperty('capacity')) {
+		ssd.capacity = parseInt(ssd.capacity.trim());
 	}
 
 	// Notes
 	// 1. Trim leading and trailing whitespace.
 	//    (Don't need to trim between words. Let the user decide how to use notes).
-	if (ssd.hasOwnProperty('notes_input')) {
-		ssd.notes_input = ssd.notes_input.trim();
+	if (ssd.hasOwnProperty('notes')) {
+		ssd.notes = ssd.notes.trim();
 	}
 
 	return ssd;
@@ -172,71 +172,71 @@ function scrubMemory(mem) {
 	// 1. Convert to uppercase
 	// 2. Split into array based on newline as the delimeter
 	// 3. Trim whitespace
-	if (mem.hasOwnProperty('serial_input')) {
-		if (mem.serial_input !== '') {
-			mem.serial_input = mem.serial_input.toUpperCase().split(/\n/);
-			for (var i = 0; i < mem.serial_input.length; i++) {
-				mem.serial_input[i] = mem.serial_input[i].trimWords();
+	if (mem.hasOwnProperty('serial_num')) {
+		if (mem.serial_num !== '') {
+			mem.serial_num = mem.serial_num.toUpperCase().split(/\n/);
+			for (var i = 0; i < mem.serial_num.length; i++) {
+				mem.serial_num[i] = mem.serial_num[i].trimWords();
 			}
 		} else {
-			mem.serial_input = [];
+			mem.serial_num = [];
 		}
 	}
 
 	// Manufacturer
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (mem.hasOwnProperty('manufacturer_input')) {
-		mem.manufacturer_input = mem.manufacturer_input.capitalize().trimWords();
+	if (mem.hasOwnProperty('manufacturer')) {
+		mem.manufacturer = mem.manufacturer.capitalize().trimWords();
 	}
 
 	// Physical Size
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (mem.hasOwnProperty('physical_size_input')) {
-		mem.physical_size_input = parseInt(mem.physical_size_input.trim());
+	if (mem.hasOwnProperty('physical_size')) {
+		mem.physical_size = parseInt(mem.physical_size.trim());
 	}
 
 	// ECC
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (mem.hasOwnProperty('ecc_input')) {
-		mem.ecc_input = mem.ecc_input.capitalize().trimWords();
+	if (mem.hasOwnProperty('ecc')) {
+		mem.ecc = mem.ecc.capitalize().trimWords();
 	}
 
 	// Ranks
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (mem.hasOwnProperty('ranks_input')) {
-		mem.ranks_input = parseInt(mem.ranks_input.trim());
+	if (mem.hasOwnProperty('ranks')) {
+		mem.ranks = parseInt(mem.ranks.trim());
 	}
 
 	// Memory Type
 	// 1. Convert to uppercase
 	// 2. Trim whitespace
-	if (mem.hasOwnProperty('memory_type_input')) {
-		mem.memory_type_input = mem.memory_type_input.toUpperCase().trimWords();
+	if (mem.hasOwnProperty('memory_type')) {
+		mem.memory_type = mem.memory_type.toUpperCase().trimWords();
 	}
 
 	// Capacity
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (mem.hasOwnProperty('capacity_input')) {
-		mem.capacity_input = parseInt(mem.capacity_input.trim());
+	if (mem.hasOwnProperty('capacity')) {
+		mem.capacity = parseInt(mem.capacity.trim());
 	}
 
 	// Speed
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (mem.hasOwnProperty('speed_input')) {
-		mem.speed_input = parseInt(mem.speed_input.trim());
+	if (mem.hasOwnProperty('speed')) {
+		mem.speed = parseInt(mem.speed.trim());
 	}
 
 	// Notes
 	// 1. Trim leading and trailing whitespace.
 	//    (Don't need to trim between words. Let the user decide how to use notes).
-	if (mem.hasOwnProperty('notes_input')) {
-		mem.notes_input = mem.notes_input.trim();
+	if (mem.hasOwnProperty('notes')) {
+		mem.notes = mem.notes.trim();
 	}
 
 	return mem;
@@ -247,36 +247,36 @@ function scrubFlash(flash) {
 	// 1. Convert to uppercase
 	// 2. Split into array based on newline as the delimeter
 	// 3. Trim whitespace
-	if (flash.hasOwnProperty('serial_input')) {
-		if (flash.serial_input !== '') {
-			flash.serial_input = flash.serial_input.toUpperCase().split(/\n/);
-			for (var i = 0; i < flash.serial_input.length; i++) {
-				flash.serial_input[i] = flash.serial_input[i].trimWords();
+	if (flash.hasOwnProperty('serial_num')) {
+		if (flash.serial_num !== '') {
+			flash.serial_num = flash.serial_num.toUpperCase().split(/\n/);
+			for (var i = 0; i < flash.serial_num.length; i++) {
+				flash.serial_num[i] = flash.serial_num[i].trimWords();
 			}
 		} else {
-			flash.serial_input = [];
+			flash.serial_num = [];
 		}
 	}
 
 	// Manufacturer
 	// 1. Capitalize each word
 	// 2. Trim whitespace
-	if (flash.hasOwnProperty('manufacturer_input')) {
-		flash.manufacturer_input = flash.manufacturer_input.capitalize().trimWords();
+	if (flash.hasOwnProperty('manufacturer')) {
+		flash.manufacturer = flash.manufacturer.capitalize().trimWords();
 	}
 
 	// Capacity
 	// 1. Trim whitespace
 	// 2. Convert to int
-	if (flash.hasOwnProperty('capacity_input')) {
-		flash.capacity_input = parseInt(flash.capacity_input.trim());
+	if (flash.hasOwnProperty('capacity')) {
+		flash.capacity = parseInt(flash.capacity.trim());
 	}
 
 	// Notes
 	// 1. Trim leading and trailing whitespace.
 	//    (Don't need to trim between words. Let the user decide how to use notes).
-	if (flash.hasOwnProperty('notes_input')) {
-		flash.notes_input = flash.notes_input.trim();
+	if (flash.hasOwnProperty('notes')) {
+		flash.notes = flash.notes.trim();
 	}
 
 	return flash;
