@@ -48,12 +48,12 @@ module.exports = {
     self.notes = notes;
   },
 
-    Flash_Drive: function(serial_num, manufacturer, capacity, user, checked_in, notes) {
+    Flash_Drive: function(serial_num, capacity, manufacturer, user, checked_in, notes) {
     var self = this;
     
     self.serial_num = serial_num;
-    self.manufacturer = manufacturer;
     self.capacity = capacity;
+    self.manufacturer = manufacturer;
     self.user = user;
     self.checked_in = checked_in;
     self.notes = notes;

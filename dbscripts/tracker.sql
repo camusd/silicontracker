@@ -1268,7 +1268,7 @@ BEGIN
   UPDATE  Items i
   SET   i.notes = new_notes,
       i.scrapped = new_scrapped
-    WHERE i.id = ssd_id;
+    WHERE i.id = flash_id;
     
     UPDATE  Flash_Drive
     SET   capacity = new_capacity,
