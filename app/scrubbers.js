@@ -10,6 +10,9 @@ module.exports = {
 	},
 	Flash: function(flash) {
 		return scrubFlash(flash);
+	},
+	Board: function(board) {
+		return scrubBoard(board);
 	}
 };
 
@@ -280,4 +283,56 @@ function scrubFlash(flash) {
 	}
 
 	return flash;
+}
+
+function scrubBoard(board) {
+	// Serial Number
+	// 1. Convert to uppercase
+	// 2. Split into array based on newline as the delimeter
+	// 3. Trim whitespace
+	if (board.hasOwnProperty('serial_num')) {
+		if (board.serial_num !== '') {
+			board.serial_num = board.serial_num.toUpperCase().split(/\n/);
+			for (var i = 0; i < board.serial_num.length; i++) {
+				board.serial_num[i] = board.serial_num[i].trimWords();
+			}
+		} else {
+			board.serial_num = [];
+		}
+	}
+
+	// FPGA
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (board.hasOwnProperty('fpga')) {
+		board.fpga = board.fpga.capitalize().trimWords();
+	}
+
+	// BIOS
+	// 1. Trim whitespace
+	if (board.hasOwnProperty('bios')) {
+		board.bios = board.bios.trimWords();
+	}
+
+	// MAC Address
+	// 1. Trim whitespace
+	if (board.hasOwnProperty('mac')) {
+		board.mac = board.mac.trim();
+	}
+
+	// Fab
+	// 1. Capitalize each word
+	// 2. Trim whitespace
+	if (board.hasOwnProperty('fab')) {
+		board.fab = board.fab.capitalize().trimWords();
+	}
+
+	// Notes
+	// 1. Trim leading and trailing whitespace.
+	//    (Don't need to trim between words. Let the user decide how to use notes).
+	if (board.hasOwnProperty('notes')) {
+		board.notes = board.notes.trim();
+	}
+
+	return board;
 }

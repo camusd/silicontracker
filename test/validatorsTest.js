@@ -353,4 +353,85 @@ describe('validate', function() {
 			done();
 		});
 	});
+	describe('#Board()', function() {
+		var val;
+		var scrubbed;
+		before(function() {
+			var board = {
+				serial_num: '1234567890123456\nabcdefghijklmnop  ',
+				fpga: '  123 456 789 0 123 456 789 123    ',
+				bios: ' 1234567980:1234567980:1234567980:1234567980:1234567980:1234567980:123456789   ',
+				mac:  ' 1234567980:123456   ',
+				fab:  ' Fab A   ',
+				notes: '   here a  have      some notes!!!     '
+			};
+
+			scrubbed = scrub.Board(board);
+			val = validate.Board(scrubbed);
+		});
+		it('should have no errors', function(done) {
+			expect(val).to.be.undefined;
+
+			done();
+		});
+		it('should complain about serial_num number length', function(done) {
+			var c = scrubbed;
+			c.serial_num = ['1234567890123456', 'ABCDEFGHIJKLMNOPQRSTU'];
+
+			var v = validate.Board(c);
+
+			expect(v.serial_num).to.have.length(1);
+			expect(v.serial_num[0]).to.contain('ABCDEFGHIJKLMNOPQRSTU');
+			expect(v.serial_num[0]).to.contain('length');
+
+			done();
+		});
+		it('should complain about serial_num number format', function(done) {
+			var c = scrubbed;
+			c.serial_num = ['@@@@ABCD@@@@AB', 'ABCDEFGHIJKLMN'];
+
+			var v = validate.Board(c);
+
+			expect(v.serial_num).to.have.length(1);
+			expect(v.serial_num[0]).to.contain('@@@@ABCD@@@@AB');
+			expect(v.serial_num[0]).to.contain('alphanumeric');
+
+			done();
+		});
+		it('should complain about missing parameters', function(done) {
+			var c = {
+				serial_num: '',
+				fpga: '',
+				bios: '',
+				mac:  '',
+				fab:  '',
+				notes: ''
+			};
+
+			var v = validate.Board(c);
+			expect(v.serial_num).to.be.not.undefined;
+
+			done();
+		});
+
+		it ('should be fine with no values for optional attributes', function(done) {
+			var c = {
+				serial_num: '',
+				fpga: '',
+				bios: '',
+				mac:  '',
+				fab:  '',
+				notes: ''
+			};
+
+			var v = validate.Board(c);
+			expect(v.fpga).to.be.undefined;
+			expect(v.bios).to.be.undefined;
+			expect(v.mac).to.be.undefined;
+			expect(v.fab).to.be.undefined;
+			expect(v.notes).to.be.undefined;
+
+			done();
+		});
+	});
 });

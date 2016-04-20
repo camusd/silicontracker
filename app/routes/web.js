@@ -142,6 +142,36 @@ module.exports = function(app, conn) {
     res.end();
   });
 
+  app.post('/update/board', function(req, res) {
+    req.body = scrub.Board(req.body);
+    var verrors = validate.Board(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL update_board('"+req.body.serial_num+"','"
+        +req.body.fpga+"','"+req.body.bios+"','"
+        +req.body.mac+"','"+req.body.fab+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+      });
+      res.status(200).send(req.body);
+    }
+  });
+
+  app.post('/update/board/notes', function(req, res) {
+    conn.query("CALL update_board_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      function(error, results, fields) {
+        if(error) {
+          throw error;
+        }
+    });
+    res.end();
+  });
+
   app.post('/add/cpu', function(req, res) {
     req.body = scrub.CPU(req.body);
     var verrors = validate.CPU(req.body);
@@ -257,6 +287,33 @@ module.exports = function(app, conn) {
     }
   });
 
+  app.post('/add/board', function(req, res) {
+    req.body = scrub.Board(req.body);
+    var verrors = validate.Board(req.body);
+
+    if (verrors) {
+      res.status(400).send(verrors);
+    } else {
+      conn.query("CALL check_serial_board('"+req.body.serial_num+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+        if(results[0].length == 0) {
+          conn.query("CALL put_board('"+req.body.serial_num+"','"
+            +req.body.fpga+"','"+req.body.bios+"','"
+            +req.body.mac+"','"+req.body.fab+"','"+req.body.notes+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+          });
+        }
+        res.status(200).send(req.body);
+      });
+    }
+  });
+
   /* Routes for loading pages in the web interface */
 
   app.get('/', function(req, res) {
@@ -277,6 +334,10 @@ module.exports = function(app, conn) {
 
   app.get('/add/flash', function(req, res) {
     res.sendFile(rootdir + '/public/web/add_flash_drive.html');
+  });
+
+  app.get('/add/board', function(req, res) {
+    res.sendFile(rootdir + '/public/web/add_board.html');
   });
 
   app.get('/settings/attributes', enforceAdminLogin, function(req, res) {

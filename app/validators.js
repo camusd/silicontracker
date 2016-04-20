@@ -114,6 +114,34 @@ module.exports = {
 
 		return val;
 	},
+	Board: function(board) {
+		var val = validate(board, BoardConstraints);
+
+		// checking each serial_num number
+		for (var i = 0; i < board.serial_num.length; i++) {
+			var toValidate = {serial_num: board.serial_num[i]}
+			var v = validate(toValidate, BoardSerialConstraints);
+			if (v) {
+				// checking if any errors at all (if undefined or null)
+				if (val != null) {
+					// checking if any errors yet for serial_num numbers
+					if (val.hasOwnProperty('serial_num')) {
+						// push each serial_num number error
+						for (var j = 0; j < v.serial_num.length; j++) {
+							val.serial_num.push(v.serial_num[j]);
+						}
+					} else {
+						val.serial_num = v.serial_num;
+					}	
+				} else {
+					// if validate value is undefined, start new set of errors
+					val = v;
+				}
+			}
+		}
+
+		return val;
+	},
 };
 
 var attrNames = {
@@ -144,6 +172,12 @@ var attrNames = {
 	ranks: 			'Ranks',
 	
 	// Flash Drives
+
+	// Boards
+	fpga: 'FPGA',
+	bios: 'BIOS',
+	mac: 'MAC Address',
+	fab: 'Fab',
 
 	// Other
 	greaterThan: 			'greater than',
@@ -427,5 +461,51 @@ var FlashConstraints = {
 	// Notes
 	notes: {
 
+	}
+};
+
+var BoardSerialConstraints = {
+	serial_num: {
+		length: {
+			maximum: 20,
+			message: '^%{value} must be 16 characters or less in length.'
+		},
+		format: {
+			pattern: /[a-zA-Z0-9]+/,
+			message: '^%{value} must be alphanumeric (letters and numbers).'
+		}
+	}
+}
+
+var BoardConstraints = {
+	// Serial Number
+	serial_num: {
+		presence: true
+	},
+	// FPGA
+	fpga: {
+		length: {
+			maximum: 30
+		}
+	},
+	// BIOS
+	bios: {
+		length: {
+			maximum: 75
+		}
+	},
+	// MAC Address
+	mac: {
+		length: {
+			maximum: 17
+		}
+	},
+	fab: {
+		length: {
+			maximum: 10
+		}
+	},
+	// Notes
+	notes: {
 	}
 };

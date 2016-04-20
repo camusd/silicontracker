@@ -133,6 +133,30 @@ module.exports = function(app, conn) {
     });
   });
 
+  app.get('/data/board', function(req, res) {
+    var jsonToSend = {};
+    conn.query("CALL get_board();", function(error, results, fields){
+      if(error) {
+        throw error;
+      }
+      // We send admin stats for the table because there are admin-specific
+      // elements to the table.
+      if (req.session.wwid) {
+        jsonToSend.is_admin = req.session.is_admin;
+      } else {
+        jsonToSend.is_admin = 0;
+      }
+      var a = [];
+      for (var i in results[0]) {
+        a.push(new models.Board(results[0][i].serial_num, results[0][i].fpga,
+          results[0][i].bios, results[0][i].mac, results[0][i].fab,
+          results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+      }
+      jsonToSend.items = a;
+      res.json(jsonToSend);
+    });
+  });
+
   /* Gets all the different column names that are dropdown menus. */
   app.get('/dd/keys', function(req, res) {
     conn.query('CALL get_dropdown_keys()',
