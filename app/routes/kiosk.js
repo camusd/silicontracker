@@ -4,7 +4,7 @@ var models = require(rootdir + '/app/models');
 
 require('../templates')();
 
-module.exports = function(app, conn) {
+module.exports = function(app, pool) {
 		 /* Routes for loading pages in the kiosk interface */
 	app.get('/cart', enforceLogin, function(req, res) {
 	 	res.sendFile(rootdir + '/public/kiosk/cart.html');
@@ -19,36 +19,44 @@ module.exports = function(app, conn) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
 	 	// and JOIN with necessary tables
-	 	conn.query('SELECT * FROM Processor WHERE Processor.serial_num = \'' + serial + '\'',
-	 		function(error, results, fields){
-	 			if(error) {
-	 				throw error;
-	 			}
-	 			var a = [];
-	 			for (var i in results) {
-	 			a.push(new models.CPU(results[i].serial_num, results[i].spec, results[i].mm, 
-	 				results[i].frequency, results[i].stepping, results[i].llc, results[i].cores,
-	 				results[i].codename, results[i].cpu_class, results[i].external_name, results[i].architecture,
-	 				results[i].user, results[i].checked_in, results[i].notes));
-	 			};
-	 			res.send(a);
-	 		});
+      	pool.getConnection(function(err, conn) {
+		 	conn.query('SELECT * FROM Processor WHERE Processor.serial_num = \'' + serial + '\'',
+		 		function(error, results, fields){
+		 			if(error) {
+		 				throw error;
+		 			}
+		 			conn.release();
+
+		 			var a = [];
+		 			for (var i in results) {
+		 			a.push(new models.CPU(results[i].serial_num, results[i].spec, results[i].mm, 
+		 				results[i].frequency, results[i].stepping, results[i].llc, results[i].cores,
+		 				results[i].codename, results[i].cpu_class, results[i].external_name, results[i].architecture,
+		 				results[i].user, results[i].checked_in, results[i].notes));
+		 			};
+		 			res.send(a);
+		 		});
+		});
 	});
 
 	 /* Getters for json data on items in the cart */
 	app.get('/cart/serial/:serial', function(req, res) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
-	 	conn.query('SELECT checked_in FROM Items JOIN Processor ON Processor.product_id = Items.id WHERE Processor.serial_num = \'' + serial + '\'',
-	 		function(error, results, fields){
-	 			if(error) {
-	 				throw error;
-	 			}
-	 			if (process.env.ENV == 'dev')
-	 				console.log(results[0]);
-	 			
-	 			res.send(results[0]);
-	 		});
+      	pool.getConnection(function(err, conn) {
+		 	conn.query('SELECT checked_in FROM Items JOIN Processor ON Processor.product_id = Items.id WHERE Processor.serial_num = \'' + serial + '\'',
+		 		function(error, results, fields){
+		 			if(error) {
+		 				throw error;
+		 			}
+		 			conn.release();
+
+		 			if (process.env.ENV == 'dev')
+		 				console.log(results[0]);
+		 			
+		 			res.send(results[0]);
+		 		});
+		});
 	});
 
 	/* Posts on the kiosk */
@@ -58,22 +66,26 @@ module.exports = function(app, conn) {
 		var status = [];
 		for(var i in req.body.val_array) {
 			var addr, first_name, last_name, date;
-			conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');",
-				function(error, results, fields) {
-					if(error) {
-						throw error;
-					}
-					addr = results[2][0].email_address;
-					first_name = results[2][0].first_name;
-					last_name = results[2][0].last_name;
-					item_serial[i] = results[2][0].serial_num;
-					item_type[i] = results[2][0].item_type;
-					status[i] = results[2][0].status;
-					date = results[2][0].order_date;
-					
-					console.log("Sending cart email to "+addr+"...");
-					cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
-				});
+      		pool.getConnection(function(err, conn) {
+				conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');",
+					function(error, results, fields) {
+						if(error) {
+							throw error;
+						}
+		 				conn.release();
+						
+						addr = results[2][0].email_address;
+						first_name = results[2][0].first_name;
+						last_name = results[2][0].last_name;
+						item_serial[i] = results[2][0].serial_num;
+						item_type[i] = results[2][0].item_type;
+						status[i] = results[2][0].status;
+						date = results[2][0].order_date;
+						
+						console.log("Sending cart email to "+addr+"...");
+						cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
+					});
+			});
 		}
 		req.session.destroy(function (err) {
 	    	if (err) {
@@ -111,21 +123,25 @@ module.exports = function(app, conn) {
 	 		});
 	}, function(req,res,next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
-		conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
-				if (error) {
-					throw error;
-				}
-				if (results[0].length === 1) {
-	 				req.session.last_name = results[0][0].last_name;
-	 				req.session.first_name = results[0][0].first_name;
-	 				req.session.is_admin = results[0][0].is_admin;
-	 				req.session.save();
-				} else {
-					// Got no results
-					res.redirect('/kiosk');
-				}
-				next();
-	 		});
+      	pool.getConnection(function(err, conn) {
+			conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+					if (error) {
+						throw error;
+					}
+		 			conn.release();
+					
+					if (results[0].length === 1) {
+		 				req.session.last_name = results[0][0].last_name;
+		 				req.session.first_name = results[0][0].first_name;
+		 				req.session.is_admin = results[0][0].is_admin;
+		 				req.session.save();
+					} else {
+						// Got no results
+						res.redirect('/kiosk');
+					}
+					next();
+		 		});
+		});
 	});
 
 	app.post('/kiosk/login', function(req, res) {

@@ -12,6 +12,7 @@
 
 var express = require('express');
 var app = express();
+var mysql = require('mysql');
 var http = require('http')
 var fs = require('fs');
 var session = require('express-session');
@@ -29,13 +30,37 @@ process.env.ROOT_DIR = __dirname;
 require('./app/templates.js')();
 
 // Setting up the database
-var conn = require('./app/database');
-conn.connect(function(err){
-	if (err) {
-		throw 'mysql: error connecting: ' + err.stack;
-	}
-	console.log('mysql: connected as id ' + conn.threadId);
-});
+var db_options = {
+	host: process.env.DB_HOST || 'localhost',
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB || 'tracker'
+};
+
+var pool;
+// handleConnection()
+// When the database/server connection is lost due to connection issues,
+// the system will attempt to reconnect. 
+function handleConnection() {
+	pool = mysql.createPool(db_options);
+	pool.getConnection(function(err, connection) {
+		if(err) {
+	      console.log('error when connecting to db:', err);
+	      setTimeout(handleConnection, 2000);
+	    }  else {
+    		console.log('Mysql pool connection established.');
+	    }
+	});
+	pool.on('error', function(err) {
+		if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+	      handleConnection();
+	    } else {
+	      throw err;
+	    }
+	});
+}
+
+handleConnection();
 
 // TODO: SSL for database
 // Secure Socket Layer (SSL) Credentials
@@ -85,30 +110,34 @@ server.listen(port, ip, function(){
  */
 
 // Load the routes for the web data
-require('./app/routes/data')(app, conn);
+require('./app/routes/data')(app, pool);
 
 // Load the routes for the web pages
-require('./app/routes/web')(app, conn);
+require('./app/routes/web')(app, pool);
 
 // Load the routes for the kiosk
-require('./app/routes/kiosk')(app, conn);
+require('./app/routes/kiosk')(app, pool);
 
 // Send emails for overdue items
 var j = schedule.scheduleJob('00 00 * * 0', function() {
-	conn.query("CALL get_checkout();",
-		function(error, results, fields) {
-			if(error) {
-				throw error;
-			}
-			for(var i in results[0]) {
-				var addr = results[0][i].email_address;
-				var first_name = results[0][i].first_name;
-				var last_name = results[0][i].last_name;
-				var item_serial = results[0][i].serial_num;
-				var item_type = results[0][i].item_type;
-				var days = results[0][i].days;
-				console.log("Sending reminder email to "+addr+"...");
-				reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
-			}
-		});
+    pool.getConnection(function(err, conn) {
+		conn.query("CALL get_checkout();",
+			function(error, results, fields) {
+				if(error) {
+					throw error;
+				}
+				conn.release();
+
+				for(var i in results[0]) {
+					var addr = results[0][i].email_address;
+					var first_name = results[0][i].first_name;
+					var last_name = results[0][i].last_name;
+					var item_serial = results[0][i].serial_num;
+					var item_type = results[0][i].item_type;
+					var days = results[0][i].days;
+					console.log("Sending reminder email to "+addr+"...");
+					reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
+				}
+			});
+	});
 });

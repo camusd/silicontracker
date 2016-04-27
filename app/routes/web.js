@@ -3,7 +3,7 @@ var request = require('request');
 var scrub = require('../scrubbers');
 var validate = require('../validators');
 
-module.exports = function(app, conn) {
+module.exports = function(app, pool) {
   
   // Middleware: Enforce admin privileges to add items.
   //app.use('/add/*', enforceAdminLogin, function(req, res) {});
@@ -19,28 +19,34 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-	    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
-        +req.body.spec+"','"+req.body.mm+"','"
-        +req.body.frequency+"','"+req.body.stepping+"','"
-        +req.body.llc+"','"+req.body.cores+"','"
-        +req.body.codename+"','"+req.body.cpu_class+"','"
-        +req.body.external_name+"','"+req.body.architecture+"','"
-        +req.body.notes+"','"+req.body.scrapped+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
+      pool.getConnection(function(err, conn) {
+  	    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
+          +req.body.spec+"','"+req.body.mm+"','"
+          +req.body.frequency+"','"+req.body.stepping+"','"
+          +req.body.llc+"','"+req.body.cores+"','"
+          +req.body.codename+"','"+req.body.cpu_class+"','"
+          +req.body.external_name+"','"+req.body.architecture+"','"
+          +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
+        });
       });
       res.status(200).send(req.body);
     }
   });
 
   app.post('/update/cpu/notes', function(req, res) {
-    conn.query("CALL update_cpu_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-      function(error, results, fields) {
-        if(error) {
-          throw error;
-        }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_cpu_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+      });
     });
     res.end();
   });
@@ -52,25 +58,31 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL update_ssd('"+req.body.serial_num+"','"
-        +req.body.capacity+"','"+req.body.manufacturer+"','"
-        +req.body.model+"','"
-        +req.body.notes+"','"+req.body.scrapped+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL update_ssd('"+req.body.serial_num+"','"
+          +req.body.capacity+"','"+req.body.manufacturer+"','"
+          +req.body.model+"','"
+          +req.body.notes+"','"+req.body.scrapped+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+            conn.release();
+        });
       });
       res.status(200).send(req.body);
     }
   });
 
   app.post('/update/ssd/notes', function(req, res) {
-    conn.query("CALL update_ssd_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-      function(error, results, fields) {
-        if(error) {
-          throw error;
-        }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_ssd_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+      });
     });
     res.end();
   });
@@ -82,33 +94,39 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL update_memory('"+
-        req.body.serial_num+"','"+
-        req.body.manufacturer+"','"+
-        req.body.physical_size+"','"+
-        req.body.ecc+"','"+
-        req.body.ranks+"','"+
-        req.body.memory_type+"','"+
-        req.body.capacity+"','"+
-        req.body.speed+"','"+
-        req.body.notes+"','"+
-        req.body.scrapped+"');",
-        function(error, results, fields){
-          console.log(results);
-          if(error) {
-            throw error;
-          }
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL update_memory('"+
+          req.body.serial_num+"','"+
+          req.body.manufacturer+"','"+
+          req.body.physical_size+"','"+
+          req.body.ecc+"','"+
+          req.body.ranks+"','"+
+          req.body.memory_type+"','"+
+          req.body.capacity+"','"+
+          req.body.speed+"','"+
+          req.body.notes+"','"+
+          req.body.scrapped+"');",
+          function(error, results, fields){
+            console.log(results);
+            if(error) {
+              throw error;
+            }
+            conn.release();
+        });
       });
       res.status(200).send(req.body);
     }
   });
 
   app.post('/update/memory/notes', function(req, res) {
-    conn.query("CALL update_memory_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-      function(error, results, fields) {
-        if(error) {
-          throw error;
-        }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_memory_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+      });
     });
     res.end();
   });
@@ -120,24 +138,30 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
-        +req.body.capacity+"','"+req.body.manufacturer+"','"
-        +req.body.notes+"','"+req.body.scrapped+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
+          +req.body.capacity+"','"+req.body.manufacturer+"','"
+          +req.body.notes+"','"+req.body.scrapped+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+            conn.release();
+        });
       });
       res.status(200).send(req.body);
     }
   });
 
   app.post('/update/flash/notes', function(req, res) {
-    conn.query("CALL update_flash_drive_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-      function(error, results, fields) {
-        if(error) {
-          throw error;
-        }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_flash_drive_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+      });
     });
     res.end();
   });
@@ -149,25 +173,31 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL update_board('"+req.body.serial_num+"','"
-        +req.body.fpga+"','"+req.body.bios+"','"
-        +req.body.mac+"','"+req.body.fab+"','"
-        +req.body.notes+"','"+req.body.scrapped+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL update_board('"+req.body.serial_num+"','"
+          +req.body.fpga+"','"+req.body.bios+"','"
+          +req.body.mac+"','"+req.body.fab+"','"
+          +req.body.notes+"','"+req.body.scrapped+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+            conn.release();
+        });
       });
       res.status(200).send(req.body);
     }
   });
 
   app.post('/update/board/notes', function(req, res) {
-    conn.query("CALL update_board_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-      function(error, results, fields) {
-        if(error) {
-          throw error;
-        }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_board_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+      });
     });
     res.end();
   });
@@ -179,29 +209,32 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_cpu('"+req.body.serial_num+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-          if(results[0].length == 0) {
-            conn.query("CALL put_cpu('"+req.body.serial_num+"','"
-              +req.body.spec+"','"+req.body.mm+"','"
-              +req.body.frequency+"','"+req.body.stepping+"','"
-              +req.body.llc+"','"+req.body.cores+"','"
-              +req.body.codename+"','"+req.body.cpu_class+"','"
-              +req.body.external_name+"','"+req.body.architecture+"','"
-              +req.body.notes+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
-          }
-          res.status(200).send(req.body);
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL check_serial_cpu('"+req.body.serial_num+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+            conn.release();
+            
+            if(results[0].length == 0) {
+              conn.query("CALL put_cpu('"+req.body.serial_num+"','"
+                +req.body.spec+"','"+req.body.mm+"','"
+                +req.body.frequency+"','"+req.body.stepping+"','"
+                +req.body.llc+"','"+req.body.cores+"','"
+                +req.body.codename+"','"+req.body.cpu_class+"','"
+                +req.body.external_name+"','"+req.body.architecture+"','"
+                +req.body.notes+"');",
+              function(error, results, fields){
+                if(error) {
+                  throw error;
+                }
+              });
+            }
+            res.status(200).send(req.body);
         });
-    }
-    
+      });
+    } 
   });
 
   app.post('/add/ssd', function(req, res) {
@@ -211,22 +244,26 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_ssd('"+req.body.serial_num+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-        if(results[0].length == 0) {
-          conn.query("CALL put_ssd('"+req.body.serial_num+"','"
-            +req.body.manufacturer+"','"+req.body.model+"','"
-            +req.body.capacity+"','"+req.body.notes+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        res.status(200).send(req.body);
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL check_serial_ssd('"+req.body.serial_num+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
+
+          if(results[0].length == 0) {
+            conn.query("CALL put_ssd('"+req.body.serial_num+"','"
+              +req.body.manufacturer+"','"+req.body.model+"','"
+              +req.body.capacity+"','"+req.body.notes+"');",
+            function(error, results, fields){
+              if(error) {
+                throw error;
+              }
+            });
+          }
+          res.status(200).send(req.body);
+        });
       });
     }
   });
@@ -238,25 +275,29 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_memory('"+req.body.serial_num+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-          if(results[0].length == 0) {
-            conn.query("CALL put_memory('"+req.body.serial_num+"','"
-              +req.body.manufacturer+"','"+req.body.physical_size+"','"
-              +req.body.memory_type+"','"+req.body.capacity+"','"
-              +req.body.speed+"','"+req.body.ecc+"','"
-              +req.body.ranks+"','"+req.body.notes+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
-          }
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL check_serial_memory('"+req.body.serial_num+"');",
+          function(error, results, fields){
+            if(error) {
+              throw error;
+            }
+            conn.release();
+
+            if(results[0].length == 0) {
+              conn.query("CALL put_memory('"+req.body.serial_num+"','"
+                +req.body.manufacturer+"','"+req.body.physical_size+"','"
+                +req.body.memory_type+"','"+req.body.capacity+"','"
+                +req.body.speed+"','"+req.body.ecc+"','"
+                +req.body.ranks+"','"+req.body.notes+"');",
+              function(error, results, fields){
+                if(error) {
+                  throw error;
+                }
+              });
+            }
+            res.status(200).send(req.body);
+        });
       });
-      res.status(200).send(req.body);
     }
   });
 
@@ -267,22 +308,26 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_flash_drive('"+req.body.serial_num+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-        if(results[0].length == 0) {
-          conn.query("CALL put_flash_drive('"+req.body.serial_num+"','"
-            +req.body.manufacturer+"','"+req.body.capacity+"','"
-            +req.body.notes+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        res.status(200).send(req.body);
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL check_serial_flash_drive('"+req.body.serial_num+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
+
+          if(results[0].length == 0) {
+            conn.query("CALL put_flash_drive('"+req.body.serial_num+"','"
+              +req.body.manufacturer+"','"+req.body.capacity+"','"
+              +req.body.notes+"');",
+            function(error, results, fields){
+              if(error) {
+                throw error;
+              }
+            });
+          }
+          res.status(200).send(req.body);
+        });
       });
     }
   });
@@ -294,22 +339,26 @@ module.exports = function(app, conn) {
     if (verrors) {
       res.status(400).send(verrors);
     } else {
-      conn.query("CALL check_serial_board('"+req.body.serial_num+"');",
-      function(error, results, fields){
-        if(error) {
-          throw error;
-        }
-        if(results[0].length == 0) {
-          conn.query("CALL put_board('"+req.body.serial_num+"','"
-            +req.body.fpga+"','"+req.body.bios+"','"
-            +req.body.mac+"','"+req.body.fab+"','"+req.body.notes+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        res.status(200).send(req.body);
+      pool.getConnection(function(err, conn) {
+        conn.query("CALL check_serial_board('"+req.body.serial_num+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
+
+          if(results[0].length == 0) {
+            conn.query("CALL put_board('"+req.body.serial_num+"','"
+              +req.body.fpga+"','"+req.body.bios+"','"
+              +req.body.mac+"','"+req.body.fab+"','"+req.body.notes+"');",
+            function(error, results, fields){
+              if(error) {
+                throw error;
+              }
+            });
+          }
+          res.status(200).send(req.body);
+        });
       });
     }
   });
@@ -397,21 +446,25 @@ module.exports = function(app, conn) {
       });
   }, function(req,res,next) {
     // We know at this point we have a wwid, so let's try to get the user from our DB.
-    conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
-        if (error) {
-          throw error;
-        }
-        if (results[0].length === 1) {
-          req.session.last_name = results[0][0].last_name;
-          req.session.first_name = results[0][0].first_name;
-          req.session.is_admin = results[0][0].is_admin;
-          req.session.save();
-        } else {
-          // Got no results
-          res.redirect('/login');
-        }
-        next();
-      });
+    pool.getConnection(function(err, conn) {
+      conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+          if (error) {
+            throw error;
+          }
+          conn.release();
+          
+          if (results[0].length === 1) {
+            req.session.last_name = results[0][0].last_name;
+            req.session.first_name = results[0][0].first_name;
+            req.session.is_admin = results[0][0].is_admin;
+            req.session.save();
+          } else {
+            // Got no results
+            res.redirect('/login');
+          }
+          next();
+        });
+    });
   });
 
   app.post('/login/login', function(req, res) {
