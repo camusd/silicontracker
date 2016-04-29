@@ -9,32 +9,33 @@
  */
 
 $(document).ready(function() {
-    var pressed = false; 
-    var chars = []; 
-    $(window).keypress(function(e) {
-        chars.push(String.fromCharCode(e.which));
-        if (pressed == false) {
-            setTimeout(function(){
-                // If there are ten characters inserted before the timeout
-                if (chars.length >= 10) {
-                    var barcode = chars.join("");
-                    // There was an item scanned. Enter response code here.
-                    var itemInfo = "";
-                    $.get('/serial/'+barcode, function(data) {
-                      if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
-                      else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
-                      else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
-                      else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
-                      else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
-                      else {$('#item-info').html(ErrorInfo());}
-                    });
-                }
-                chars = [];
-                pressed = false;
-            },100); // <-- this is the timeout in milliseconds
-        }
-        pressed = true;
-    });
+  var pressed = false; 
+  var chars = []; 
+  $(window).keypress(function(e) {
+      chars.push(String.fromCharCode(e.which));
+      if (pressed == false) {
+          setTimeout(function(){
+              // If there are ten characters inserted before the timeout
+              if (chars.length >= 10) {
+                  var barcode = chars.join("");
+                  // There was an item scanned. Enter response code here.
+                  var itemInfo = "";
+                  $.get('/serial/'+barcode, function(data) {
+                    if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
+                    else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
+                    else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
+                    else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
+                    else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
+                    else {$('#item-info').html(ErrorInfo());}
+                  });
+              }
+              chars = [];
+              pressed = false;
+          },250); // <-- this is the timeout in milliseconds
+      }
+      pressed = true;
+  });
+});
 
 // Add id=barcode to your input field if you plan on
 // using the barcode scanner and you don't want the
