@@ -20,21 +20,48 @@ module.exports = function(app, pool) {
 	 	// TODO: Put in Stored Procedure
 	 	// and JOIN with necessary tables
       	pool.getConnection(function(err, conn) {
-		 	conn.query('SELECT * FROM Processor WHERE Processor.serial_num = \'' + serial + '\'',
+		 	conn.query('CALL get_scanned_item("' + serial + '");',
 		 		function(error, results, fields){
 		 			if(error) {
 		 				throw error;
 		 			}
 		 			conn.release();
 
-		 			var a = [];
-		 			for (var i in results) {
-		 			a.push(new models.CPU(results[i].serial_num, results[i].spec, results[i].mm, 
-		 				results[i].frequency, results[i].stepping, results[i].llc, results[i].cores,
-		 				results[i].codename, results[i].cpu_class, results[i].external_name, results[i].architecture,
-		 				results[i].user, results[i].checked_in, results[i].notes));
-		 			};
-		 			res.send(a);
+		 			results = results[0][0];
+
+		 			var jsonToSend;
+		 			if (results.item_type === 'cpu') {
+			 			jsonToSend = new models.CPU(results.serial_num, results.spec, results.mm, 
+			 				results.frequency, results.stepping, results.llc, results.cores,
+			 				results.codename, results.cpu_class, results.external_name, results.architecture,
+			 				results.user, results.checked_in, results.notes);
+			 		} else if (results.item_type === 'ssd') {
+			 			jsonToSend = new models.SSD(results.serial_num, results.manufacturer, 
+            				results.model, results.capacity, results.user,
+            				results.checked_in, results.notes);
+			 		} else if (results.item_type === 'memory') {
+			 			jsonToSend = new models.Memory(results.serial_num, results.manufacturer,
+            				results.physical_size, results.memory_type, results.capacity, 
+            				results.speed, results.ecc, results.ranks, results.user,
+            				results.checked_in, results.notes);
+			 		} else if (results.item_type === 'flash_drive') {
+			 			jsonToSend = new models.Flash_Drive(results.serial_num, results.capacity,
+            				results.manufacturer, results.user, results.checked_in, results.notes);
+			 		} else if (results.item_type === 'board') {
+			 			jsonToSend = new models.Board(results.serial_num, results.fpga,
+            				results.bios, results.mac, results.fab,
+            				results.user, results.checked_in, results.notes);
+			 		} else if (results.item_type === 'NA') {
+			 			jsonToSend = {err: 'Item Not Found'};
+			 		}
+
+			 		if (results.item_type !== 'NA') {
+			 			jsonToSend.item_type = results.item_type;
+			 			jsonToSend.checked_in = (results.checked_in === 1 ? 'Checked In' : 'Checked Out');
+		 				jsonToSend.scrapped = (results.scrapped === 1 ? 'Scrapped' : 'Not Scrapped');
+			 		}
+		 			
+		 			res.json(jsonToSend);
 		 		});
 		});
 	});

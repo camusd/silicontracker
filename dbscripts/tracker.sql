@@ -724,6 +724,80 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scanned_item` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scanned_item`(IN sn VARCHAR(30))
+BEGIN
+
+SET @c := (SELECT serial_num FROM Processor WHERE serial_num = sn);
+IF @c IS NOT NULL THEN
+  SET @q = CONCAT("SELECT c.serial_num, c.spec, c.mm, c.frequency, c.stepping, c.llc,
+    c.cores, c.codename, c.cpu_class, c.external_name, c.architecture,
+        i.item_type, i.notes, i.checked_in, i.scrapped
+        FROM Processor c
+        JOIN Items i ON i.id = c.product_id
+    WHERE c.serial_num='", @c, "'");
+END IF;
+
+SET @s := (SELECT serial_num FROM SSD WHERE serial_num = sn);
+IF @s IS NOT NULL THEN
+  SET @q = CONCAT("SELECT s.serial_num, s.manufacturer, s.model, s.capacity,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM SSD s 
+        JOIN Items i ON i.id = s.product_id
+        WHERE serial_num='", @s, "'");
+END IF;
+
+SET @r := (SELECT serial_num FROM RAM WHERE serial_num = sn);
+IF @r IS NOT NULL THEN
+  SET @q = CONCAT("SELECT r.serial_num, r.manufacturer, r.physical_size,
+    r.memory_type, r.capacity, r.speed, r.ecc, r.ranks,
+        i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM RAM r
+        JOIN Items i ON i.id = r.product_id
+        WHERE serial_num='", @r, "'");
+END IF;
+
+SET @f := (SELECT serial_num FROM Flash_Drive WHERE serial_num = sn);
+IF @f IS NOT NULL THEN
+  SET @q = CONCAT("SELECT f.serial_num, f.manufacturer, f.capacity,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM Flash_Drive f
+        JOIN Items i ON i.id = f.product_id
+        WHERE serial_num='", @f, "'");
+END IF;
+
+SET @b := (SELECT serial_num FROM Board WHERE serial_num = sn);
+IF @b IS NOT NULL THEN
+  SET @q = CONCAT("SELECT b.serial_num, b.fpga, b.bios, b.mac, b.fab,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM Board b
+        JOIN Items i ON i.id = b.product_id
+        WHERE serial_num='", @b, "'");
+END IF;
+
+IF COALESCE(@c, @s, @r, @f, @b) IS NULL THEN
+  SET @q = "SELECT \"NA\" AS item_type";
+END IF;
+
+PREPARE stmt FROM @q;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_status` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
