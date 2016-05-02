@@ -10,19 +10,132 @@ function format(notes) {
 
 var cpuColNames = ['', '', 'Serial Number','Spec','MM','Freq','Step','LLC','Cores','Codename','CPU Class','External Name', 'Architecture'];
 
-$(document).ready(function() {
-  var cpu_table;
-  var cpu_data;
-  var ssd_table;
-  var ssd_data;
-  var memory_table;
-  var memory_data;
-  var flash_table;
-  var flash_data;
+var cpu_table;
+var cpu_data;
+var ssd_table;
+var ssd_data;
+var memory_table;
+var memory_data;
+var flash_table;
+var flash_data;
 
-  $.get('/data/cpu', function(jsonData) {
+var jsonData = {};
+var cpu = [];
+var ssd = [];
+var memory = [];
+var flash = [];
+
+jsonData.cpu = cpu;
+jsonData.ssd = ssd;
+jsonData.memory = memory;
+jsonData.flash = flash;
+
+var pressed = false; 
+var chars = [];
+
+//to be deleted
+function get_test_barcode() {
+  var barcode = $("#testing_barcode").val();
+  return barcode;
+}
+
+function arrayFind(arr, fn) {
+  for(var i = 0; i < arr.length; i++) {
+    if(fn(arr[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function submitData(data) {
+  $.post("/scrap/submit", data); 
+  var len = data.cpu.length + data.ssd.length + data.memory.length + data.flash.length;
+  if(len === 1) {
+    alert(len + " item was scrapped");
+  } else {
+    alert(len + " items were scrapped");
+  }
+  window.location="/";
+};
+
+// test code to be deleted
+function run_on_test_submit() {
+  var barcode = get_test_barcode();
+  $.get('/data/scrap/cpu/'+barcode, function(data) {
+    if(data.length == 0) {
+      $('#scrap-error').html("<div>Item not found in database</div>");
+      if($('#scrap-error').is(":hidden")) {
+        $('#scrap-error').show();
+      }
+    } else if(arrayFind(cpu, function(n) {
+      return n.serial_num == data.serial_num;
+    }) != -1) {
+      $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
+      if($('#scrap-error').is(":hidden")) {
+        $('#scrap-error').show();
+      }
+    } else if(data.scrapped === 1) {
+      $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
+      if($('#scrap-error').is(":hidden")) {
+        $('#scrap-error').show();
+      }
+    } else {
+      if($('#scrap-error').is(":visible")) {
+        $('#scrap-error').hide();
+      }
+      cpu.push(data);
+      jsonData.cpu = cpu;
+      cpu_table.row.add(cpu[cpu.length - 1]);
+      cpu_table.draw();
+    }
+  });
+}
+
+
+$(document).ready(function() {
+  $('#scrap-error').hide();
+  $(window).keypress(function(e) {
+      chars.push(String.fromCharCode(e.which));
+      if (pressed == false) {
+          setTimeout(function(){
+              // If there are ten characters inserted before the timeout
+              if (chars.length >= 10) {
+                  var barcode = chars.join("");
+                  barcode = barcode.replace("\r","");
+                  // There was an item scanned. Enter response code here.
+                  // TODO: instead of alerting after ajax call, make call to either
+                  //       loading a popup or inline on page... basically something
+                  //       prettier than an alert.
+                  $.get('/data/scrap/cpu/'+barcode, function(data) {
+                      if(data.length == 0) {
+                        alert("Item not found in database");
+                      } else if(arrayFind(cpu, function(n) {
+                        return n.serial_num == data.serial_num;
+                      }) != -1) {
+                        //change alert to modal
+                        alert("Item already in the table of items to be scrapped");
+                      } else if(data.scrapped === 1) {
+                        //change alert to modal
+                        alert("Item is already scrapped");
+                      } else {
+                        cpu.push(data);
+                        jsonData.cpu = cpu;
+                        cpu_table.row.add(cpu[cpu.length - 1]);
+                        cpu_table.draw();
+                      }
+                  });
+              }
+              chars = [];
+              pressed = false;
+          },100); // <-- this is the timeout in milliseconds
+      }
+      pressed = true;
+  });
+
+  $.get('/data/cpu', function(data) {
     cpu_table = $('#cpu_table').DataTable({
-    "data": jsonData.items,
+    "data": jsonData.cpu,
     "columns" : [
       {
         "className": 'notes-control',
@@ -69,7 +182,7 @@ $(document).ready(function() {
          "footer" : false
     }
     });
-    if (jsonData.is_admin === 1) {
+    if (data.is_admin === 1) {
       cpu_table.column(-1).visible(true);
     }
     // setting the column search bar width
@@ -149,7 +262,6 @@ $(document).ready(function() {
     var tableId = 'cpu_table';
     $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
 
-    
   });
 
   $.get('/data/ssd', function(jsonData) {
@@ -473,14 +585,6 @@ $(document).ready(function() {
         if(cpu_data.scrapped == 1) {
           //Remove scrapped item and update banner to reflect that
           cpu_table.row(cpu_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items</strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
           cpu_table.draw();
         } else {
           cpu_table.row(cpu_data.index).data(cpu_data).draw();

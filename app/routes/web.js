@@ -182,7 +182,7 @@ module.exports = function(app, conn) {
 
   app.post('/add/flash', function(req, res) {
     conn.query("CALL check_serial_flash_drive('"+req.body.serial_input+"');",
-      function(error, results, fields){
+      function(error, results, fields) {
         if(error) {
           throw error;
         }
@@ -190,16 +190,58 @@ module.exports = function(app, conn) {
           conn.query("CALL put_flash_drive('"+req.body.serial_input+"','"
                            +req.body.manufacturer_input+"','"+req.body.capacity_input+"','"
                            +req.body.notes_input+"');",
-            function(error, results, fields){
+            function(error, results, fields) {
               if(error) {
                 throw error;
               }
             });
         }
       });
-    res.statusCode = 302;
-    res.setHeader("Location", "/")
-    res.end();
+    res.status(200).send(req.body);
+  });
+
+  app.post('/scrap/submit', function(req, res) {
+    if(req.body.hasOwnProperty('cpu')) {
+      for(var i = 0; i < req.body.cpu.length; i++) {
+        conn.query("CALL scrap_cpu('"+req.body.cpu[i].serial_num+"');",
+          function(error, results, fields) {
+            if(error) {
+              throw error;
+            }
+          });
+      }
+    }
+    if(req.body.hasOwnProperty('ssd')) {
+      for(var i = 0; i < req.body.ssd.length; i++) {
+        conn.query("CALL scrap_ssd('"+req.body.ssd[i].serial_num+"');",
+          function(error, results, fields) {
+            if(error) {
+              throw error;
+            }
+          });
+      }
+    }
+    if(req.body.hasOwnProperty('memory')) {
+      for(var i = 0; i < req.body.memory.length; i++) {
+        conn.query("CALL scrap_memory('"+req.body.memory[i].serial_num+"');",
+          function(error, results, fields) {
+            if(error) {
+              throw error;
+            }
+          });
+      }
+    }
+    if(req.body.hasOwnProperty('flash')) {
+      for(var i = 0; i < req.body.flash.length; i++) {
+        conn.query("CALL scrap_flash('"+req.body.flash[i].serial_num+"');",
+          function(error, results, fields) {
+            if(error) {
+              throw error;
+            }
+          });
+      }
+    }
+    res.status(200).send(req.body);
   });
 
   /* Routes for loading pages in the web interface */
@@ -227,6 +269,14 @@ module.exports = function(app, conn) {
   app.get('/settings/attributes', enforceAdminLogin, function(req, res) {
     res.sendFile(rootdir + '/public/web/edit_dropdowns.html');
   });
+
+  app.get('/scrap-items', enforceAdminLogin, function(req, res) {
+    res.sendFile(rootdir + '/public/web/scrap-items.html');
+  })
+
+  app.get('/view-scrapped', enforceAdminLogin, function(req, res) {
+    res.sendFile(rootdir + '/public/web/view-scrapped.html');
+  })
 
   // TODO: Add new attributes to the database
   app.post('/settings/attributes', enforceAdminLogin, function(req, res) {
