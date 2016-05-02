@@ -42,6 +42,7 @@
             <li role="presentation"><a href="/add/ssd">Add SSD</a></li>
             <li role="presentation"><a href="/add/memory">Add Memory</a></li>
             <li role="presentation"><a href="/add/flash">Add Flash Drive</a></li>
+            <li role="presentation"><a href="/add/board">Add Board</a></li>
           </ul>
         </li>
       </ul>
@@ -60,60 +61,60 @@
       <form action="/add/memory" method="post" id="Memory">
             
         <div class="col-md-6 form-group">
-          <label class="control-label" for="serial_input">Serial Number <span class="req-field">*</span></label>
-          <textarea id="serial_input" name="serial_input" class="form-control" type="text"></textarea>
-          <div id="serial_input_help"></div>
+          <label class="control-label" for="serial_num">Serial Number <span class="req-field">*</span></label>
+          <textarea id="serial_num" name="serial_num" class="form-control" rows="4" tabindex="1" type="text"></textarea>
+          <div id="serial_num_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="manufacturer_input">Manufacturer <span class="req-field">*</span></label>  
-          <input id="manufacturer_input" name="manufacturer_input" class="form-control" type="text">
-          <div id="manufacturer_input_help"></div>
+          <label class="control-label" for="manufacturer">Manufacturer <span class="req-field">*</span></label>  
+          <input id="manufacturer" name="manufacturer" class="form-control" type="text">
+          <div id="manufacturer_help"></div>
         </div>
         
         <div class="col-md-6 form-group">
-          <label class="control-label" for="physical_size_input">Physical Size <span class="req-field">*</span></label>  
-          <input id="physical_size_input" name="physical_size_input" class="form-control" type="text">
-          <div id="physical_size_input_help"></div>
+          <label class="control-label" for="physical_size">Physical Size <span class="req-field">*</span></label>  
+          <input id="physical_size" name="physical_size" class="form-control" type="text">
+          <div id="physical_size_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="ecc_input">ECC <span class="req-field">*</span></label>  
-          <select id="ecc_input" name="ecc_input" class="form-control">
+          <label class="control-label" for="ecc">ECC <span class="req-field">*</span></label>  
+          <select id="ecc" name="ecc" class="form-control">
             <option value="No">No</option>
             <option value="Yes">Yes</option>
           </select>
-          <div id="ecc_input_help"></div>
+          <div id="ecc_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="ranks_input">Ranks <span class="req-field">*</span></label>
-          <input id="ranks_input" name="ranks_input" class="form-control" type="text">
-          <div id="ranks_input_help"></div>
+          <label class="control-label" for="ranks">Ranks <span class="req-field">*</span></label>
+          <input id="ranks" name="ranks" class="form-control" type="text">
+          <div id="ranks_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="memory_type_input">Type <span class="req-field">*</span></label>  
-          <input id="memory_type_input" name="memory_type_input" class="form-control" type="text">
-          <div id="memory_type_input_help"></div>
+          <label class="control-label" for="memory_type">Type <span class="req-field">*</span></label>  
+          <input id="memory_type" name="memory_type" class="form-control" type="text">
+          <div id="memory_type_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="capacity_input">Capacity <span class="req-field">*</span></label>  
-          <input id="capacity_input" name="capacity_input" class="form-control" type="text">
-          <div id="capacity_input_help"></div>
+          <label class="control-label" for="capacity">Capacity <span class="req-field">*</span></label>  
+          <input id="capacity" name="capacity" class="form-control" type="text">
+          <div id="capacity_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="speed_input">Speed <span class="req-field">*</span></label>  
-          <input id="speed_input" name="speed_input" class="form-control" type="text">
-          <div id="speed_input_help"></div>
+          <label class="control-label" for="speed">Speed <span class="req-field">*</span></label>  
+          <input id="speed" name="speed" class="form-control" type="text">
+          <div id="speed_help"></div>
         </div>
 
         <div class="col-md-6 form-group">
-          <label class="control-label" for="notes_input">Notes</label>  
-          <textarea id="notes_input" name="notes_input" class="form-control" class="form-control" type="text"></textarea>
-          <div id="notes_input_help"></div>
+          <label class="control-label" for="notes">Notes</label>  
+          <textarea id="notes" name="notes" class="form-control" class="form-control" type="text"></textarea>
+          <div id="notes_help"></div>
         </div>
 
         <div class="col-md-12 form-group">

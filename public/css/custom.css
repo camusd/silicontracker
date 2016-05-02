@@ -126,3 +126,7 @@ table th {
 .hidden {
   display: none;
 }
+
+.white-space {
+  padding-bottom: 30px;
+}

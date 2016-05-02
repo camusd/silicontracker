@@ -26,15 +26,13 @@ DROP TABLE IF EXISTS `Board`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Board` (
   `product_id` int(11) unsigned NOT NULL,
-  `serial_num` varchar(9) NOT NULL,
-  `fpga` varchar(8) NOT NULL,
-  `bios` varchar(8) NOT NULL,
-  `mac` varchar(17) NOT NULL,
-  `fab` varchar(5) NOT NULL,
-  `track_id` int(5) unsigned NOT NULL,
+  `serial_num` varchar(20) NOT NULL,
+  `fpga` varchar(30),
+  `bios` varchar(75),
+  `mac` varchar(17),
+  `fab` varchar(10),
   PRIMARY KEY (`product_id`),
   UNIQUE KEY `product_id_UNIQUE` (`product_id`),
-  UNIQUE KEY `track_id_UNIQUE` (`track_id`),
   UNIQUE KEY `serial_num_UNIQUE` (`serial_num`),
   KEY `product_id_INDEX` (`product_id`),
   CONSTRAINT `fk_Board_Items1` FOREIGN KEY (`product_id`) REFERENCES `Items` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -115,7 +113,7 @@ DROP TABLE IF EXISTS `Flash_Drive`;
 CREATE TABLE `Flash_Drive` (
   `product_id` int(11) unsigned NOT NULL,
   `serial_num` varchar(20) NOT NULL,
-  `manufacturer` varchar(15) NOT NULL,
+  `manufacturer` varchar(45) NOT NULL,
   `capacity` int(5) NOT NULL,
   PRIMARY KEY (`product_id`),
   UNIQUE KEY `id_UNIQUE` (`product_id`),
@@ -427,6 +425,25 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'tracker'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `check_serial_board` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `check_serial_board`(IN which_serial VARCHAR(14))
+BEGIN
+  SELECT Board.serial_num
+    FROM Board
+    WHERE Board.serial_num = which_serial;
+
+END ;;
+DELIMITER ;
+
 /*!50003 DROP PROCEDURE IF EXISTS `check_serial_cpu` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -523,19 +540,19 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
 CREATE PROCEDURE `get_board`()
 BEGIN
-	SELECT
-		Board.serial_num, fpga, bios, mac, fab,
-		Board.track_id, Checkout.user, checked_in, notes
-	FROM 
-		Board INNER JOIN Items
+  SELECT
+    Board.serial_num, fpga, bios, mac, fab,
+    Checkout.user, checked_in, notes
+  FROM 
+    Board INNER JOIN Items
         ON Board.product_id = Items.id JOIN Checkout
         ON Checkout.product_id = Items.id
     WHERE
-		scrapped = 0
+    scrapped = 0
         AND Items.item_type = 'board';
 
 END ;;
@@ -668,7 +685,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_dropdown_keys`()
+CREATE PROCEDURE `get_dropdown_keys`()
 BEGIN
   SELECT DISTINCT attr_type
   FROM  Dropdown_Attributes;
@@ -730,6 +747,80 @@ BEGIN
   WHERE
 		scrapped = 0
         AND Items.item_type = 'memory';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scanned_item` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scanned_item`(IN sn VARCHAR(30))
+BEGIN
+
+SET @c := (SELECT serial_num FROM Processor WHERE serial_num = sn);
+IF @c IS NOT NULL THEN
+  SET @q = CONCAT("SELECT c.serial_num, c.spec, c.mm, c.frequency, c.stepping, c.llc,
+    c.cores, c.codename, c.cpu_class, c.external_name, c.architecture,
+        i.item_type, i.notes, i.checked_in, i.scrapped
+        FROM Processor c
+        JOIN Items i ON i.id = c.product_id
+    WHERE c.serial_num='", @c, "'");
+END IF;
+
+SET @s := (SELECT serial_num FROM SSD WHERE serial_num = sn);
+IF @s IS NOT NULL THEN
+  SET @q = CONCAT("SELECT s.serial_num, s.manufacturer, s.model, s.capacity,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM SSD s 
+        JOIN Items i ON i.id = s.product_id
+        WHERE serial_num='", @s, "'");
+END IF;
+
+SET @r := (SELECT serial_num FROM RAM WHERE serial_num = sn);
+IF @r IS NOT NULL THEN
+  SET @q = CONCAT("SELECT r.serial_num, r.manufacturer, r.physical_size,
+    r.memory_type, r.capacity, r.speed, r.ecc, r.ranks,
+        i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM RAM r
+        JOIN Items i ON i.id = r.product_id
+        WHERE serial_num='", @r, "'");
+END IF;
+
+SET @f := (SELECT serial_num FROM Flash_Drive WHERE serial_num = sn);
+IF @f IS NOT NULL THEN
+  SET @q = CONCAT("SELECT f.serial_num, f.manufacturer, f.capacity,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM Flash_Drive f
+        JOIN Items i ON i.id = f.product_id
+        WHERE serial_num='", @f, "'");
+END IF;
+
+SET @b := (SELECT serial_num FROM Board WHERE serial_num = sn);
+IF @b IS NOT NULL THEN
+  SET @q = CONCAT("SELECT b.serial_num, b.fpga, b.bios, b.mac, b.fab,
+    i.item_type, i.notes, i.checked_in, i.scrapped
+    FROM Board b
+        JOIN Items i ON i.id = b.product_id
+        WHERE serial_num='", @b, "'");
+END IF;
+
+IF COALESCE(@c, @s, @r, @f, @b) IS NULL THEN
+  SET @q = "SELECT \"NA\" AS item_type";
+END IF;
+
+PREPARE stmt FROM @q;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 END ;;
 DELIMITER ;
@@ -819,26 +910,25 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
 CREATE PROCEDURE `put_board`(IN new_serial_num VARCHAR(9),
  IN new_fpga VARCHAR(8),
  IN new_bios VARCHAR(8),
  IN new_mac VARCHAR(17),
  IN new_fab VARCHAR(5),
- IN new_track_id INT(5),
  IN new_notes TEXT)
 BEGIN
-	INSERT INTO Items
-		(item_type, notes)
-	VALUES
-		('board', new_notes);
-	INSERT INTO Board
-		(product_id, serial_num, fpga,
-         bios, mac, fab, track_id)
-	VALUES
-		(LAST_INSERT_ID(), new_serial_num, new_fpga,
-         new_bios, new_mac, new_fab, new_track_id);
+  INSERT INTO Items
+    (item_type, notes)
+  VALUES
+    ('board', new_notes);
+  INSERT INTO Board
+    (product_id, serial_num, fpga,
+         bios, mac, fab)
+  VALUES
+    (LAST_INSERT_ID(), new_serial_num, new_fpga,
+         new_bios, new_mac, new_fab);
 
 END ;;
 DELIMITER ;
@@ -979,7 +1069,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `scan_cpu` */;
+/*!50003 DROP PROCEDURE IF EXISTS `scan_board` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -987,17 +1077,17 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
- IN item VARCHAR(14))
+CREATE PROCEDURE `scan_board`(IN new_user VARCHAR(8),
+ IN item VARCHAR(20))
 BEGIN
   SELECT 
-    @id := Processor.product_id
+    @id := Board.product_id
   FROM
-    Processor
+    Board
   WHERE
-    Processor.serial_num = item;
+    Board.serial_num = item;
 
   SELECT
     @checked_in := IF(Items.checked_in = 1, 0, 1)
@@ -1006,14 +1096,13 @@ BEGIN
   WHERE
     Items.id = @id;
 
-	UPDATE
-		Items JOIN Processor
-        ON Processor.product_id = Items.id
+  UPDATE
+    Items JOIN Board
+        ON Board.product_id = Items.id
   SET 
     Items.checked_in = IF(Items.checked_in = 1, 0, 1)
     WHERE
-    Processor.serial_num = item;
-
+    Board.serial_num = item;
   INSERT INTO Log
     (product_id, user, log_date, checked_in)
   VALUES
@@ -1025,6 +1114,55 @@ BEGIN
 
   SELECT
     email_address, first_name, last_name, Processor.serial_num, item_type, checked_in, NOW() AS order_date
+  FROM
+    Items JOIN Board
+        ON Board.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = new_user
+  WHERE
+    Board.serial_num = item;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `scan_cpu` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
+ IN item VARCHAR(14))
+BEGIN
+  SET @pid = (SELECT product_id
+         FROM Processor
+         WHERE Processor.serial_num = item);
+  
+    SET @checked_in = (SELECT checked_in
+            FROM Items
+                        WHERE id = @pid);
+
+
+  UPDATE Items i
+    SET i.checked_in = NOT @checked_in
+    WHERE i.id = @pid;
+
+  INSERT INTO Log (product_id, user, log_date, checked_in)
+  VALUES (@pid, new_user, NOW(), @checked_in);
+
+  IF @checked_in = 0 THEN CALL put_checkout(@pid, new_user);
+  ELSE CALL delete_checkout(@pid);
+  END IF;
+
+  SELECT
+    email_address, first_name, last_name, Processor.serial_num, item_type, checked_in, CURDATE() AS order_date
+>>>>>>> 64f908271900b02d7ff17820e0fce7402dd80f29
   FROM
     Items JOIN Processor
         ON Processor.product_id = Items.id LEFT JOIN Owners
@@ -1237,6 +1375,41 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_board` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_board`(IN `the_serial_num` VARCHAR(20), IN `new_fpga` VARCHAR(30), IN `new_bios` VARCHAR(75), IN `new_mac` VARCHAR(17), IN `new_fab` VARCHAR(10), IN `new_notes` TEXT, IN `new_scrapped` TINYINT(1))
+BEGIN
+    DECLARE board_id INT;
+    SET board_id := (SELECT product_id 
+           FROM Board 
+           WHERE serial_num = the_serial_num
+          );
+
+  UPDATE  Items i
+  SET   i.notes = new_notes,
+      i.scrapped = new_scrapped
+    WHERE i.id = board_id;
+    
+    UPDATE  Board
+    SET     fpga = new_fpga,
+      bios = new_bios,
+            mac = new_mac,
+            fab = new_fab
+    WHERE product_id = board_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `scrap_ssd` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1312,6 +1485,29 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_board_notes` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_board_notes`(IN s varchar(20), IN n text)
+BEGIN
+  UPDATE Items i
+    JOIN Board board
+    ON i.id = board.product_id
+    SET i.notes = n
+    WHERE board.serial_num = s;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_cpu` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1371,6 +1567,62 @@ BEGIN
     ON i.id = p.product_id
     SET i.notes = n
     WHERE p.serial_num = s;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_flash_drive` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_flash_drive`(IN `the_serial_num` VARCHAR(16), IN `new_capacity` INT, IN `new_manufacturer` VARCHAR(45), IN `new_notes` TEXT, IN `new_scrapped` TINYINT(1))
+BEGIN
+    DECLARE flash_id INT;
+    SET flash_id := (SELECT product_id 
+             FROM Flash_Drive
+                         WHERE serial_num = the_serial_num
+          );
+
+  UPDATE  Items i
+  SET   i.notes = new_notes,
+      i.scrapped = new_scrapped
+    WHERE i.id = flash_id;
+    
+    UPDATE  Flash_Drive
+    SET   capacity = new_capacity,
+      manufacturer = new_manufacturer
+    WHERE product_id = flash_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_flash_drive_notes` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_flash_drive_notes`(IN s varchar(14), IN n text)
+BEGIN
+  UPDATE Items i
+    JOIN Flash_Drive flash
+    ON i.id = flash.product_id
+    SET i.notes = n
+    WHERE flash.serial_num = s;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
