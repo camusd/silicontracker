@@ -215,7 +215,6 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
             
             if(results[0].length == 0) {
               conn.query("CALL put_cpu('"+req.body.serial_num+"','"
@@ -229,9 +228,9 @@ module.exports = function(app, pool) {
                 if(error) {
                   throw error;
                 }
-                conn.release();
               });
             }
+            conn.release();
             res.status(200).send(req.body);
         });
       });
@@ -251,7 +250,6 @@ module.exports = function(app, pool) {
           if(error) {
             throw error;
           }
-          conn.release();
 
           if(results[0].length == 0) {
             conn.query("CALL put_ssd('"+req.body.serial_num+"','"
@@ -261,9 +259,9 @@ module.exports = function(app, pool) {
               if(error) {
                 throw error;
               }
-              conn.release();
             });
           }
+          conn.release();
           res.status(200).send(req.body);
         });
       });
@@ -283,7 +281,6 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
 
             if(results[0].length == 0) {
               conn.query("CALL put_memory('"+req.body.serial_num+"','"
@@ -295,9 +292,9 @@ module.exports = function(app, pool) {
                 if(error) {
                   throw error;
                 }
-                conn.release();
               });
             }
+            conn.release();
             res.status(200).send(req.body);
         });
       });
@@ -317,7 +314,6 @@ module.exports = function(app, pool) {
           if(error) {
             throw error;
           }
-          conn.release();
 
           if(results[0].length == 0) {
             conn.query("CALL put_flash_drive('"+req.body.serial_num+"','"
@@ -327,9 +323,9 @@ module.exports = function(app, pool) {
               if(error) {
                 throw error;
               }
-              conn.release();
             });
           }
+          conn.release();
           res.status(200).send(req.body);
         });
       });
@@ -349,7 +345,6 @@ module.exports = function(app, pool) {
           if(error) {
             throw error;
           }
-          conn.release();
 
           if(results[0].length == 0) {
             conn.query("CALL put_board('"+req.body.serial_num+"','"
@@ -359,9 +354,9 @@ module.exports = function(app, pool) {
               if(error) {
                 throw error;
               }
-              conn.release();
             });
           }
+          conn.release();
           res.status(200).send(req.body);
         });
       });
@@ -370,8 +365,8 @@ module.exports = function(app, pool) {
 
   app.post('/scrap/submit', function(req, res) {
     if(req.body.hasOwnProperty('cpu')) {
-      for(var i = 0; i < req.body.cpu.length; i++) {
-        pool.getConnection(function(err, conn) {
+      pool.getConnection(function(err, conn) {
+        for(var i = 0; i < req.body.cpu.length; i++) {
           conn.query("CALL scrap_cpu('"+req.body.cpu[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
@@ -379,12 +374,12 @@ module.exports = function(app, pool) {
             }
             conn.release();
           });
-        });
-      }
+        }
+      });
     }
     if(req.body.hasOwnProperty('ssd')) {
-      for(var i = 0; i < req.body.ssd.length; i++) {
-        pool.getConnection(function(err, conn) {
+      pool.getConnection(function(err, conn) {
+        for(var i = 0; i < req.body.ssd.length; i++) {
           conn.query("CALL scrap_ssd('"+req.body.ssd[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
@@ -392,12 +387,12 @@ module.exports = function(app, pool) {
             }
             conn.release();
           });
-        });
-      }
+        }
+      });
     }
     if(req.body.hasOwnProperty('memory')) {
-      for(var i = 0; i < req.body.memory.length; i++) {
-        pool.getConnection(function(err, conn) {
+      pool.getConnection(function(err, conn) {
+        for(var i = 0; i < req.body.memory.length; i++) {
           conn.query("CALL scrap_memory('"+req.body.memory[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
@@ -405,12 +400,12 @@ module.exports = function(app, pool) {
             }
             conn.release();
           });
-        });
-      }
+        }
+      });
     }
     if(req.body.hasOwnProperty('flash')) {
-      for(var i = 0; i < req.body.flash.length; i++) {
-        pool.getConnection(function(err, conn) {
+      pool.getConnection(function(err, conn) {
+        for(var i = 0; i < req.body.flash.length; i++) {
           conn.query("CALL scrap_flash('"+req.body.flash[i].serial_num+"');",
             function(error, results, fields) {
             if(error) {
@@ -418,8 +413,21 @@ module.exports = function(app, pool) {
             }
             conn.release();
           });
-        });
-      }
+        }
+      });
+    }
+    if(req.body.hasOwnProperty('board')) {
+      pool.getConnection(function(err, conn) {
+        for(var i = 0; i < req.body.flash.length; i++) {
+          conn.query("CALL scrap_board('"+req.body.board[i].serial_num+"');",
+            function(error, results, fields) {
+            if(error) {
+              throw error;
+            }
+            conn.release();
+          });
+        }
+      });
     }
   });
 

@@ -699,22 +699,7 @@ $(document).ready(function() {
         });
         cpu_table.draw();
       } else {
-        if(cpu_data.scrapped == 1) {
-          //Remove scrapped item and update banner to reflect that
-          cpu_table.row(cpu_data.index).remove();
-          $.get('/data/stats', function(data) {
-            $('#infoBanner').empty();
-            $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-            $('#infoBanner').append('<span><strong>Total Items</strong>: ' +
-                                    data.num_active + ' active + ' +
-                                    data.num_scrapped + ' scrapped = ' +
-                                    data.num_total + '</span>');
-          });
-          cpu_table.draw();
-        } else {
-          cpu_table.row(cpu_data.index).data(cpu_data).draw();
-        };
-        $('#editCPUModal').modal('hide');
+        cpu_table.row(cpu_data.index).data(cpu_data).draw();
       }
       $('#editCPUModal').modal('hide');
     })
