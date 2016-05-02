@@ -39,7 +39,7 @@ $(document).ready(function() {
                 }
                 chars = [];
                 pressed = false;
-            },100); // <-- this is the timeout in milliseconds
+            },250); // <-- this is the timeout in milliseconds
         }
         pressed = true;
     });

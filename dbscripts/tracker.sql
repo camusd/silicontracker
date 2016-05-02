@@ -1105,40 +1105,29 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
+CREATE DEFINER=`root`@`localhost` PROCEDURE `scan_cpu`(IN new_user VARCHAR(8),
  IN item VARCHAR(14))
 BEGIN
-  SELECT 
-    @id := Processor.product_id
-  FROM
-    Processor
-  WHERE
-    Processor.serial_num = item;
+  SET @pid = (SELECT product_id
+         FROM Processor
+         WHERE Processor.serial_num = item);
+  
+    SET @checked_in = (SELECT checked_in
+            FROM Items
+                        WHERE id = @pid);
 
-  SELECT
-    @checked_in := IF(Items.checked_in = 1, 0, 1)
-  FROM
-    Items
-  WHERE
-    Items.id = @id;
 
-	UPDATE
-		Items JOIN Processor
-        ON Processor.product_id = Items.id
-  SET 
-    Items.checked_in = IF(Items.checked_in = 1, 0, 1)
-    WHERE
-    Processor.serial_num = item;
+  UPDATE Items i
+    SET i.checked_in = NOT @checked_in
+    WHERE i.id = @pid;
 
-  INSERT INTO Log
-    (product_id, user, log_date, checked_in)
-  VALUES
-    (@id, new_user, NOW(), @checked_in);
+  INSERT INTO Log (product_id, user, log_date, checked_in)
+  VALUES (@pid, new_user, NOW(), @checked_in);
 
-  IF @checked_in = 0 THEN CALL put_checkout(@id, new_user);
-  ELSE CALL delete_checkout(@id);
+  IF @checked_in = 0 THEN CALL put_checkout(@pid, new_user);
+  ELSE CALL delete_checkout(@pid);
   END IF;
 
   SELECT

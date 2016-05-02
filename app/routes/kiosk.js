@@ -91,36 +91,43 @@ module.exports = function(app, pool) {
 		var item_serial = [];
 		var item_type = [];
 		var status = [];
-		for(var i in req.body.val_array) {
+		var wwid = req.session.wwid;
+		var serial_nums = req.body.val_array;
+		var total_finished = 0;
+		for(var i=0; i < serial_nums.length; i++) {
 			var addr, first_name, last_name, date;
-      		pool.getConnection(function(err, conn) {
-				conn.query("CALL scan_cpu('"+req.session.wwid+"','"+req.body.val_array[i]+"');",
+      		pool.getConnection(function(i, err, conn) {
+				conn.query("CALL scan_cpu("+ wwid +",'"+serial_nums[i]+"');",
 					function(error, results, fields) {
 						if(error) {
 							throw error;
 						}
 		 				conn.release();
 						
-						addr = results[2][0].email_address;
-						first_name = results[2][0].first_name;
-						last_name = results[2][0].last_name;
-						item_serial[i] = results[2][0].serial_num;
-						item_type[i] = results[2][0].item_type;
-						status[i] = results[2][0].status;
-						date = results[2][0].order_date;
+						addr = results[0][0].email_address;
+						first_name = results[0][0].first_name;
+						last_name = results[0][0].last_name;
+						item_serial[i] = results[0][0].serial_num;
+						item_type[i] = results[0][0].item_type;
+						status[i] = results[0][0].status;
+						date = results[0][0].order_date;
 						
 						console.log("Sending cart email to "+addr+"...");
 						cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
+						total_finished++;
 					});
-			});
+			}.bind(pool, i));
 		}
-		req.session.destroy(function (err) {
-	    	if (err) {
-	    		console.log(err)
-    		};
-	    });
-	    res.clearCookie('my.tracker.sid');
-		res.redirect('/kiosk');
+		if (total_finished === serial_nums.length) {
+			req.session.destroy(function (err) {
+		    	if (err) {
+		    		console.log(err)
+	    		} else {
+	    			res.clearCookie('my.tracker.sid');
+					res.redirect('/kiosk');
+	    		}
+		    });
+		}    
 	});
 
 
