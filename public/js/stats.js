@@ -15,8 +15,8 @@ $(document).ready(function() {
       if (data.is_admin) {
         $('#settings-list').append('<li class="dropdown-header">Admin Settings</li>\
                                     <li><a href="/settings/attributes">Edit Dropdowns</a></li>');
-        $('#navbar-left').append('<li id="scrap-items"><a href="/scrap-items">Scrap Items</a></li>\
-                                  <li id="view-scrapped"><a href="/view-scrapped">View Scrapped</a></li>');
+        $('#navbar-left').append('<li id="scrap-items"><a href="/scrap-items">Mass Scrap</a></li>\
+                                  <li id="view-scrapped"><a href="/view-scrapped">View Scrapped Items</a></li>');
         if (window.location.pathname === '/scrap-items') {
           $('#infoBanner').append('<span>Scan an item to add it to the table of items to be scrapped</span>');
           $('#scrap-items').addClass('active');

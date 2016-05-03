@@ -372,9 +372,9 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
           });
         }
+        conn.release();
       });
     }
     if(req.body.hasOwnProperty('ssd')) {
@@ -385,9 +385,9 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
           });
         }
+        conn.release();
       });
     }
     if(req.body.hasOwnProperty('memory')) {
@@ -398,9 +398,9 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
           });
         }
+        conn.release();
       });
     }
     if(req.body.hasOwnProperty('flash')) {
@@ -411,9 +411,9 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
           });
         }
+        conn.release();
       });
     }
     if(req.body.hasOwnProperty('board')) {
@@ -424,9 +424,9 @@ module.exports = function(app, pool) {
             if(error) {
               throw error;
             }
-            conn.release();
           });
         }
+        conn.release();
       });
     }
   });

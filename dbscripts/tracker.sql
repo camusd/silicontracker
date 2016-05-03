@@ -546,7 +546,7 @@ CREATE PROCEDURE `get_board`()
 BEGIN
   SELECT
     Board.serial_num, fpga, bios, mac, fab,
-    Checkout.user, checked_in, notes
+    Checkout.user, checked_in, notes, scrapped
   FROM 
     Board INNER JOIN Items
         ON Board.product_id = Items.id JOIN Checkout
@@ -727,7 +727,7 @@ CREATE PROCEDURE `get_flash_by_serial`(IN which_serial VARCHAR(20))
 BEGIN
   SELECT
     Flash_Drive.serial_num, manufacturer, capacity,
-        Checkout.user, checked_in, notes scrapped
+        Checkout.user, checked_in, notes, scrapped
   FROM 
     Flash_Drive INNER JOIN Items
         ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
@@ -826,7 +826,7 @@ CREATE PROCEDURE `get_flash`()
 BEGIN
 	SELECT
 		Flash_Drive.serial_num, manufacturer, capacity,
-        Checkout.user, checked_in, notes
+        Checkout.user, checked_in, notes, scrapped
 	FROM 
 		Flash_Drive INNER JOIN Items
         ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
@@ -856,7 +856,7 @@ BEGIN
 	SELECT
 		RAM.serial_num, manufacturer, physical_size,
         memory_type, capacity, speed, ecc, ranks,
-        Checkout.user, checked_in, notes
+        Checkout.user, checked_in, notes, scrapped
 	FROM 
 		RAM INNER JOIN Items
         ON RAM.product_id = Items.id LEFT JOIN Checkout
@@ -975,6 +975,123 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_ssd` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scrapped_ssd`()
+BEGIN
+  SELECT
+    SSD.serial_num, manufacturer, model,
+        capacity, Checkout.user, checked_in, notes, scrapped
+  FROM 
+    SSD INNER JOIN Items
+        ON SSD.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
+  WHERE
+    scrapped = 1
+        AND Items.item_type = 'ssd';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_memory` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scrapped_memory`()
+BEGIN
+  SELECT
+    RAM.serial_num, manufacturer, physical_size,
+        memory_type, capacity, speed, ecc, ranks,
+        Checkout.user, checked_in, notes, scrapped
+  FROM 
+    RAM INNER JOIN Items
+        ON RAM.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
+  WHERE
+    scrapped = 1
+        AND Items.item_type = 'memory';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_flash` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scrapped_flash`()
+BEGIN
+  SELECT
+    Flash_Drive.serial_num, manufacturer, capacity,
+        Checkout.user, checked_in, notes, scrapped
+  FROM 
+    Flash_Drive INNER JOIN Items
+        ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
+  WHERE
+    scrapped = 1
+        AND Items.item_type = 'flash';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_board` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_scrapped_board`()
+BEGIN
+  SELECT
+    Board.serial_num, fpga, bios, mac, fab,
+    Checkout.user, checked_in, notes, scrapped
+  FROM 
+    Board INNER JOIN Items
+        ON Board.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id
+  WHERE
+    scrapped = 1
+        AND Items.item_type = 'board';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_status` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1012,7 +1129,7 @@ CREATE PROCEDURE `get_ssd`()
 BEGIN
 	SELECT
 		SSD.serial_num, manufacturer, model,
-        capacity, Checkout.user, checked_in, notes
+        capacity, Checkout.user, checked_in, notes, scrapped
 	FROM 
 		SSD INNER JOIN Items
         ON SSD.product_id = Items.id LEFT JOIN Checkout
@@ -1067,9 +1184,9 @@ CREATE PROCEDURE `put_board`(IN new_serial_num VARCHAR(9),
  IN new_notes TEXT)
 BEGIN
   INSERT INTO Items
-    (item_type, notes)
+    (item_type, notes, scrapped, checked_in)
   VALUES
-    ('board', new_notes);
+    ('board', new_notes, 0, 1);
   INSERT INTO Board
     (product_id, serial_num, fpga,
          bios, mac, fab)
@@ -1096,9 +1213,9 @@ DELIMITER ;;
 CREATE PROCEDURE `put_cpu`(IN `new_serial_num` VARCHAR(14), IN `new_spec` VARCHAR(5), IN `new_mm` VARCHAR(7), IN `new_frequency` VARCHAR(5), IN `new_stepping` VARCHAR(6), IN `new_llc` FLOAT, IN `new_cores` INT(4), IN `new_codename` VARCHAR(25), IN `new_cpu_class` VARCHAR(10), IN `new_external_name` VARCHAR(25), IN `new_architecture` VARCHAR(25), IN `new_notes` TEXT)
 BEGIN
 	INSERT INTO Items
-		(item_type, notes)
+		(item_type, notes, scrapped, checked_in)
 	VALUES
-		('cpu', new_notes);
+		('cpu', new_notes, 0, 1);
 	INSERT INTO Processor
 		(product_id, serial_num, spec, mm, frequency,
          stepping, llc, cores, codename, cpu_class,
@@ -1131,9 +1248,9 @@ CREATE PROCEDURE `put_flash_drive`(IN new_serial_num VARCHAR(20),
  IN new_notes TEXT)
 BEGIN
 	INSERT INTO Items
-		(item_type, notes)
+		(item_type, notes, scrapped, checked_in)
 	VALUES
-		('flash', new_notes);
+		('flash', new_notes, 0, 1);
 	INSERT INTO Flash_Drive
 		(product_id, serial_num, manufacturer, capacity)
 	VALUES
@@ -1167,9 +1284,9 @@ CREATE PROCEDURE `put_memory`(IN new_serial_num VARCHAR(20),
  IN new_notes TEXT)
 BEGIN
 	INSERT INTO Items
-		(item_type, notes)
+		(item_type, notes, scrapped, checked_in)
 	VALUES
-		('memory', new_notes);
+		('memory', new_notes, 0, 1);
 	INSERT INTO RAM
 		(product_id, serial_num, manufacturer, physical_size,
          memory_type, capacity, speed, ecc, ranks)
@@ -1201,9 +1318,9 @@ CREATE PROCEDURE `put_ssd`(IN new_serial_num VARCHAR(20),
  IN new_notes TEXT)
 BEGIN
 	INSERT INTO Items
-		(item_type, notes)
+		(item_type, notes, scrapped, checked_in)
 	VALUES
-		('ssd', new_notes);
+		('ssd', new_notes, 0, 1);
 	INSERT INTO SSD
 		(product_id, serial_num, manufacturer, model, capacity)
 	VALUES

@@ -8,12 +8,6 @@ function format(notes) {
           <div class="col-xs-12" id="save-status"></div>';
 }
 
-// //to be deleted
-// function get_test_barcode() {
-//   var barcode = $("#testing_barcode").val();
-//   return barcode;
-// }
-
 function arrayFind(arr, fn) {
   for(var i = 0; i < arr.length; i++) {
     if(fn(arr[i])) {
@@ -34,178 +28,18 @@ function submitData(data, cpu_len, ssd_len, mem_len, flash_len) {
   window.location="/";
 };
 
-// // test code to be deleted
-// function run_on_test_submit() {
-//   var barcode = get_test_barcode();
-//   var item_found = 0;
-//   $.get('/data/scrap/cpu/'+barcode, function(data) {
-//     if(data.length == 0) {
-//       return;
-//     } else if(arrayFind(cpu, function(n) {
-//       return n.serial_num == data.serial_num;
-//     }) != -1) {
-//       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else if(data.scrapped === 1) {
-//       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else {
-//       if($('#scrap-error').is(":visible")) {
-//         $('#scrap-error').hide();
-//       }
-//       item_found = 1;
-//       cpu.push(data);
-//       jsonToSend.cpu = cpu;
-//       cpu_table.row.add(cpu[cpu.length - 1]);
-//       cpu_table.draw();
-//     }
-//   });
+var jsonToSend = {};
+var cpu = [];
+var ssd = [];
+var memory = [];
+var flash = [];
+var board = [];
 
-//   $.get('/data/scrap/ssd/'+barcode, function(data) {
-//     if(data.length == 0) {
-//       return;
-//     } else if(arrayFind(ssd, function(n) {
-//       return n.serial_num == data.serial_num;
-//     }) != -1) {
-//       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else if(data.scrapped === 1) {
-//       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else {
-//       if($('#scrap-error').is(":visible")) {
-//         $('#scrap-error').hide();
-//       }
-//       item_found = 1;
-//       ssd.push(data);
-//       jsonToSend.ssd = ssd;
-//       ssd_table.row.add(ssd[ssd.length - 1]);
-//       ssd_table.draw();
-//     }
-//   });
-
-//   $.get('/data/scrap/memory/'+barcode, function(data) {
-//     if(data.length == 0) {
-//       return;
-//     } else if(arrayFind(memory, function(n) {
-//       return n.serial_num == data.serial_num;
-//     }) != -1) {
-//       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else if(data.scrapped === 1) {
-//       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else {
-//       if($('#scrap-error').is(":visible")) {
-//         $('#scrap-error').hide();
-//       }
-//       item_found = 1;
-//       memory.push(data);
-//       jsonToSend.memory = memory;
-//       memory_table.row.add(memory[memory.length - 1]);
-//       memory_table.draw();
-//     }
-//   });
-
-//   $.get('/data/scrap/flash/'+barcode, function(data) {
-//     if(data.length == 0) {
-//       return;
-//     } else if(arrayFind(flash, function(n) {
-//       return n.serial_num == data.serial_num;
-//     }) != -1) {
-//       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else if(data.scrapped === 1) {
-//       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else {
-//       if($('#scrap-error').is(":visible")) {
-//         $('#scrap-error').hide();
-//       }
-//       item_found = 1;
-//       flash.push(data);
-//       jsonToSend.flash = flash;
-//       flash_table.row.add(flash[flash.length - 1]);
-//       flash_table.draw();
-//     }
-//   });
-
-//     $.get('/data/scrap/board/'+barcode, function(data) {
-//     if(data.length == 0) {
-//       if(item_found == 0) {
-//         $('#scrap-error').html("<div>Item not found in database</div>");
-//         if($('#scrap-error').is(":hidden")) {
-//           $('#scrap-error').show();
-//         }
-//       }
-//       return;
-//     } else if(arrayFind(board, function(n) {
-//       return n.serial_num == data.serial_num;
-//     }) != -1) {
-//       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else if(data.scrapped === 1) {
-//       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
-//       if($('#scrap-error').is(":hidden")) {
-//         $('#scrap-error').show();
-//       }
-//     } else {
-//       if($('#scrap-error').is(":visible")) {
-//         $('#scrap-error').hide();
-//       }
-//       item_found = 1;
-//       board.push(data);
-//       jsonToSend.board = board;
-//       board_table.row.add(board[board.length - 1]);
-//       board_table.draw();
-//     }
-//   });
-// }
-
-  // var cpu_table;
-  // var cpu_data;
-  // var ssd_table;
-  // var ssd_data;
-  // var memory_table;
-  // var memory_data;
-  // var flash_table;
-  // var flash_data;
-  // var board_table;
-  // var board_data;
-
-  // var jsonToSend = {};
-  // var cpu = [];
-  // var ssd = [];
-  // var memory = [];
-  // var flash = [];
-  // var board = [];
-
-  // var pressed = false; 
-  // var chars = [];
-
-  // jsonToSend.cpu = cpu;
-  // jsonToSend.ssd = ssd;
-  // jsonToSend.memory = memory;
-  // jsonToSend.flash = flash;
-  // jsonToSend.board = board;
+jsonToSend.cpu = cpu;
+jsonToSend.ssd = ssd;
+jsonToSend.memory = memory;
+jsonToSend.flash = flash;
+jsonToSend.board = board;
 
 $(document).ready(function() {
   var cpu_table;
@@ -219,21 +53,8 @@ $(document).ready(function() {
   var board_table;
   var board_data;
 
-  var jsonToSend = {};
-  var cpu = [];
-  var ssd = [];
-  var memory = [];
-  var flash = [];
-  var board = [];
-
   var pressed = false; 
   var chars = [];
-
-  jsonToSend.cpu = cpu;
-  jsonToSend.ssd = ssd;
-  jsonToSend.memory = memory;
-  jsonToSend.flash = flash;
-  jsonToSend.board = board;
 
   $('#scrap-error').hide();
   $(window).keypress(function(e) {
@@ -389,7 +210,7 @@ $(document).ready(function() {
               }
               chars = [];
               pressed = false;
-          },100); // <-- this is the timeout in milliseconds
+          },250); // <-- this is the timeout in milliseconds
       }
       pressed = true;
   });
@@ -1022,11 +843,6 @@ $(document).ready(function() {
     modal.find('#external_name').val(cpu_data.external_name);
     modal.find('#architecture').val(cpu_data.architecture);
     modal.find('#notes').val(cpu_data.notes);
-    if(modal.find('#scrap').val(cpu_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
-    } else {
-      modal.find('#scrap').prop('checked', false);
-    };
   });
   $('#editCPUSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -1041,11 +857,6 @@ $(document).ready(function() {
     cpu_data.external_name = form.find('#external_name').val();
     cpu_data.architecture = form.find('#architecture').val();
     cpu_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
-      cpu_data.scrapped = 1;
-    } else {
-      cpu_data.scrapped = 0;
-    };
 
     // Getting the keys and values of all the fields in the form
     var obj = {};
@@ -1060,21 +871,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/cpu', cpu_data, function(data, status, jqXHR) {
-      if(cpu_data.scrapped == 1) {
-        //Remove scrapped item and update banner to reflect that
-        cpu_table.row(cpu_data.index).remove();
-        $.get('/data/stats', function(data) {
-          $('#infoBanner').empty();
-          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
-        });
-        cpu_table.draw();
-      } else {
-        cpu_table.row(cpu_data.index).data(cpu_data).draw();
-      }
+      cpu_table.row(cpu_data.index).data(cpu_data).draw();
       $('#editCPUModal').modal('hide');
     })
     .fail(function(data) {
@@ -1102,11 +899,6 @@ $(document).ready(function() {
     modal.find('#manufacturer').val(ssd_data.manufacturer);
     modal.find('#model').val(ssd_data.model);
     modal.find('#notes').val(ssd_data.notes);
-    if(modal.find('#scrap').val(ssd_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
-    } else {
-      modal.find('#scrap').prop('checked', false);
-    };
   });
   $('#editSSDSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -1114,11 +906,6 @@ $(document).ready(function() {
     ssd_data.manufacturer = form.find('#manufacturer').val();
     ssd_data.model = form.find('#model').val();
     ssd_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
-      ssd_data.scrapped = 1;
-    } else {
-      ssd_data.scrapped = 0;
-    };
 
     // Getting the keys and values of all the fields in the form
     var obj = {};
@@ -1133,21 +920,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/ssd', ssd_data, function(data, status, jqXHR) {
-      if(ssd_data.scrapped == 1) {
-        //Remove scrapped item and update banner to reflect that
-        ssd_table.row(ssd_data.index).remove();
-        $.get('/data/stats', function(data) {
-          $('#infoBanner').empty();
-          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
-        });
-        ssd_table.draw();
-      } else {
-        ssd_table.row(ssd_data.index).data(ssd_data).draw();
-      }
+      ssd_table.row(ssd_data.index).data(ssd_data).draw();
       $('#editSSDModal').modal('hide');
     })
     .fail(function(data) {
@@ -1179,11 +952,6 @@ $(document).ready(function() {
     modal.find('#capacity').val(memory_data.capacity);
     modal.find('#speed').val(memory_data.speed);
     modal.find('#notes').val(memory_data.notes);
-    if(modal.find('#scrap').val(memory_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
-    } else {
-      modal.find('#scrap').prop('checked', false);
-    };
   });
   $('#editMemorySave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -1195,11 +963,6 @@ $(document).ready(function() {
     memory_data.capacity = form.find('#capacity').val();
     memory_data.speed = form.find('#speed').val();
     memory_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
-      memory_data.scrapped = 1;
-    } else {
-      memory_data.scrapped = 0;
-    };
 
     // Getting the keys and values of all the fields in the form
     var obj = {};
@@ -1214,21 +977,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/memory', memory_data, function(data, status, jqXHR) {
-      if(memory_data.scrapped == 1) {
-        //Remove scrapped item and update banner to reflect that
-        memory_table.row(memory_data.index).remove();
-        $.get('/data/stats', function(data) {
-          $('#infoBanner').empty();
-          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
-        });
-        memory_table.draw();
-      } else {
-        memory_table.row(memory_data.index).data(memory_data).draw();
-      }
+      memory_table.row(memory_data.index).data(memory_data).draw();
       $('#editMemoryModal').modal('hide');
     })
     .fail(function(data) {
@@ -1255,22 +1004,12 @@ $(document).ready(function() {
     modal.find('#capacity').val(flash_data.capacity);
     modal.find('#manufacturer').val(flash_data.manufacturer);
     modal.find('#notes').val(flash_data.notes);
-    if(modal.find('#scrap').val(flash_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
-    } else {
-      modal.find('#scrap').prop('checked', false);
-    };
   });
   $('#editFlashSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
     flash_data.capacity = form.find('#capacity').val();
     flash_data.manufacturer = form.find('#manufacturer').val();
     flash_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
-      flash_data.scrapped = 1;
-    } else {
-      flash_data.scrapped = 0;
-    };
 
     // Getting the keys and values of all the fields in the form
     var obj = {};
@@ -1285,21 +1024,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/flash', flash_data, function(data, status, jqXHR) {
-      if(flash_data.scrapped == 1) {
-        //Remove scrapped item and update banner to reflect that
-        flash_table.row(flash_data.index).remove();
-        $.get('/data/stats', function(data) {
-          $('#infoBanner').empty();
-          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
-        });
-        flash_table.draw();
-      } else {
-        flash_table.row(flash_data.index).data(flash_data).draw();
-      }
+      flash_table.row(flash_data.index).data(flash_data).draw();
       $('#editFlashModal').modal('hide');
     })
     .fail(function(data) {
@@ -1321,7 +1046,6 @@ $(document).ready(function() {
   });
 
   $('#editBoardModal').on('show.bs.modal', function (event) {
-    console.log('showing modal');
     var modal = $(this);
     modal.find('#serial_num').val(board_data.serial_num);
     modal.find('#fpga').val(board_data.fpga);
@@ -1329,11 +1053,6 @@ $(document).ready(function() {
     modal.find('#mac').val(board_data.mac);
     modal.find('#fab').val(board_data.fab);
     modal.find('#notes').val(board_data.notes);
-    if(modal.find('#scrap').val(board_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
-    } else {
-      modal.find('#scrap').prop('checked', false);
-    };
   });
   $('#editBoardSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -1342,11 +1061,6 @@ $(document).ready(function() {
     board_data.mac = form.find('#mac').val();
     board_data.fab = form.find('#fab').val();
     board_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
-      board_data.scrapped = 1;
-    } else {
-      board_data.scrapped = 0;
-    };
 
     // Getting the keys and values of all the fields in the form
     var obj = {};
@@ -1361,21 +1075,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/board', board_data, function(data, status, jqXHR) {
-      if(board_data.scrapped == 1) {
-        //Remove scrapped item and update banner to reflect that
-        board_table.row(board_data.index).remove();
-        $.get('/data/stats', function(data) {
-          $('#infoBanner').empty();
-          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
-        });
-        board_table.draw();
-      } else {
-        board_table.row(board_data.index).data(board_data).draw();
-      }
+      board_table.row(board_data.index).data(board_data).draw();
       $('#editBoardModal').modal('hide');
     })
     .fail(function(data) {

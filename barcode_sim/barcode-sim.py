@@ -14,7 +14,7 @@ while(1):
 		serialNo = raw_input('Enter a barcode: ')
 		serialNo = list(serialNo)
 		call(['xdotool', 'key', 'alt+Tab'])
-		sleep(0.01)
+		sleep(0.1)
 		for c in serialNo:
 			call(['xdotool', 'key', c])
 		call(['xdotool', 'key', 'KP_Enter'])

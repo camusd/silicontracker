@@ -58,10 +58,12 @@ module.exports = function(app, pool) {
         }
         var a = [];
         for (var i in results[0]) {
-          a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
-            results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
-            results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
-            results[0][i].user, results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+          a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec,
+            results[0][i].mm, results[0][i].frequency, results[0][i].stepping,
+            results[0][i].llc, results[0][i].cores, results[0][i].codename,
+            results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
+            results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+            results[0][i].scrapped));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -89,7 +91,7 @@ module.exports = function(app, pool) {
         for (var i in results[0]) {
           a.push(new models.SSD(results[0][i].serial_num, results[0][i].manufacturer, 
             results[0][i].model, results[0][i].capacity, results[0][i].user,
-            results[0][i].checked_in, results[0][i].notes));
+            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -118,7 +120,7 @@ module.exports = function(app, pool) {
           a.push(new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
             results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
             results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
-            results[0][i].checked_in, results[0][i].notes));
+            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -146,7 +148,8 @@ module.exports = function(app, pool) {
         for (var i in results[0]) {
           a.push(new models.Flash_Drive(results[0][i].serial_num, 
             results[0][i].capacity, results[0][i].manufacturer,
-            results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+            results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+            results[0][i].scrapped));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -174,7 +177,8 @@ module.exports = function(app, pool) {
         for (var i in results[0]) {
           a.push(new models.Board(results[0][i].serial_num, results[0][i].fpga,
             results[0][i].bios, results[0][i].mac, results[0][i].fab,
-            results[0][i].user, results[0][i].checked_in, results[0][i].notes));
+            results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+            results[0][i].scrapped));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -198,10 +202,12 @@ module.exports = function(app, pool) {
             console.log(results[0][0].serial_num);
           }
           if(results[0].length > 0) {
-            jsonToSend = new models.CPU(results[0][0].serial_num, results[0][0].spec, results[0][0].mm, 
-              results[0][0].frequency, results[0][0].stepping, results[0][0].llc, results[0][0].cores,
-              results[0][0].codename, results[0][0].cpu_class, results[0][0].external_name, results[0][0].architecture,
-              results[0][0].user, results[0][0].checked_in, results[0][0].notes, results[0][0].scrapped);
+            jsonToSend = new models.CPU(results[0][0].serial_num, results[0][0].spec,
+              results[0][0].mm, results[0][0].frequency, results[0][0].stepping,
+              results[0][0].llc, results[0][0].cores, results[0][0].codename,
+              results[0][0].cpu_class, results[0][0].external_name, results[0][0].architecture,
+              results[0][0].user, results[0][0].checked_in, results[0][0].notes,
+              results[0][0].scrapped);
           } else {
             jsonToSend = [];
           }
@@ -227,7 +233,7 @@ module.exports = function(app, pool) {
           if(results[0].length > 0) {
             jsonToSend = new models.SSD(results[0][0].serial_num, results[0][0].manufacturer, 
             results[0][0].model, results[0][0].capacity, results[0][0].user,
-            results[0][0].checked_in, results[0][0].notes);
+            results[0][0].checked_in, results[0][0].notes, results[0][0].scrapped);
           } else {
             jsonToSend = [];
           }
@@ -251,10 +257,10 @@ module.exports = function(app, pool) {
             console.log(results[0][0].serial_num);
           }
           if(results[0].length > 0) {
-            jsonToSend = new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
-            results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
-            results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
-            results[0][i].checked_in, results[0][i].notes);
+            jsonToSend = new models.Memory(results[0][0].serial_num, results[0][0].manufacturer,
+            results[0][0].physical_size, results[0][0].memory_type, results[0][0].capacity, 
+            results[0][0].speed, results[0][0].ecc, results[0][0].ranks, results[0][0].user,
+            results[0][0].checked_in, results[0][0].notes, results[0][0].scrapped);
           } else {
             jsonToSend = [];
           }
@@ -278,9 +284,10 @@ module.exports = function(app, pool) {
             console.log(results[0][0].serial_num);
           }
           if(results[0].length > 0) {
-            jsonToSend = new models.Flash_Drive(results[0][i].serial_num, 
-              results[0][i].capacity, results[0][i].manufacturer, 
-              results[0][i].user, results[0][i].checked_in, results[0][i].notes);
+            jsonToSend = new models.Flash_Drive(results[0][0].serial_num, 
+              results[0][0].capacity, results[0][0].manufacturer, 
+              results[0][0].user, results[0][0].checked_in, results[0][0].notes,
+              results[0][0].scrapped);
           } else {
             jsonToSend = [];
           }
@@ -304,9 +311,10 @@ module.exports = function(app, pool) {
             console.log(results[0][0].serial_num);
           }
           if(results[0].length > 0) {
-            jsonToSend = new models.Board(results[0][i].serial_num, results[0][i].fpga,
-            results[0][i].bios, results[0][i].mac, results[0][i].fab,
-            results[0][i].user, results[0][i].checked_in, results[0][i].notes);
+            jsonToSend = new models.Board(results[0][0].serial_num, results[0][0].fpga,
+            results[0][0].bios, results[0][0].mac, results[0][0].fab,
+            results[0][0].user, results[0][0].checked_in, results[0][0].notes,
+            results[0][0].scrapped);
           } else {
             jsonToSend = [];
           }
@@ -323,6 +331,7 @@ module.exports = function(app, pool) {
           if(error) {
             throw error;
           }
+          conn.release();
           if (req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
@@ -331,10 +340,127 @@ module.exports = function(app, pool) {
           if(results[0].length > 0) {
             var a = [];
             for (var i in results[0]) {
-              a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec, results[0][i].mm, 
-                results[0][i].frequency, results[0][i].stepping, results[0][i].llc, results[0][i].cores,
-                results[0][i].codename, results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
-                results[0][i].user, results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+              a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec,
+                results[0][i].mm, results[0][i].frequency, results[0][i].stepping,
+                results[0][i].llc, results[0][i].cores, results[0][i].codename,
+                results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
+                results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+                results[0][i].scrapped));
+            }
+            jsonToSend.items = a;
+          }
+          res.json(jsonToSend);
+        });
+    });
+  });
+
+  app.get('/data/scrap/ssd', function(req, res) {
+    var jsonToSend = {};
+    pool.getConnection(function(err, conn) {
+      conn.query('CALL get_scrapped_ssd();',
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+          if (req.session.wwid) {
+            jsonToSend.is_admin = req.session.is_admin;
+          } else {
+            jsonToSend.is_admin = 0;
+          }
+          if(results[0].length > 0) {
+            var a = [];
+            for (var i in results[0]) {
+              a.push(new models.SSD(results[0][i].serial_num, results[0][i].manufacturer, 
+                results[0][i].model, results[0][i].capacity, results[0][i].user,
+                results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+            }
+            jsonToSend.items = a;
+          }
+          res.json(jsonToSend);
+        });
+    });
+  });
+
+  app.get('/data/scrap/memory', function(req, res) {
+    var jsonToSend = {};
+    pool.getConnection(function(err, conn) {
+      conn.query('CALL get_scrapped_memory();',
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+          if (req.session.wwid) {
+            jsonToSend.is_admin = req.session.is_admin;
+          } else {
+            jsonToSend.is_admin = 0;
+          }
+          if(results[0].length > 0) {
+            var a = [];
+            for (var i in results[0]) {
+              a.push(new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
+                results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
+                results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
+                results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+            }
+            jsonToSend.items = a;
+          }
+          res.json(jsonToSend);
+        });
+    });
+  });
+
+  app.get('/data/scrap/flash', function(req, res) {
+    var jsonToSend = {};
+    pool.getConnection(function(err, conn) {
+      conn.query('CALL get_scrapped_flash();',
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+          if (req.session.wwid) {
+            jsonToSend.is_admin = req.session.is_admin;
+          } else {
+            jsonToSend.is_admin = 0;
+          }
+          if(results[0].length > 0) {
+            var a = [];
+            for (var i in results[0]) {
+              a.push(new models.Flash_Drive(results[0][i].serial_num, 
+                results[0][i].capacity, results[0][i].manufacturer,
+                results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+                results[0][i].scrapped));
+            }
+            jsonToSend.items = a;
+          }
+          res.json(jsonToSend);
+        });
+    });
+  });
+
+  app.get('/data/scrap/board', function(req, res) {
+    var jsonToSend = {};
+    pool.getConnection(function(err, conn) {
+      conn.query('CALL get_scrapped_board();',
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+          if (req.session.wwid) {
+            jsonToSend.is_admin = req.session.is_admin;
+          } else {
+            jsonToSend.is_admin = 0;
+          }
+          if(results[0].length > 0) {
+            var a = [];
+            for (var i in results[0]) {
+              a.push(new models.Board(results[0][i].serial_num, results[0][i].fpga,
+                results[0][i].bios, results[0][i].mac, results[0][i].fab,
+                results[0][i].user, results[0][i].checked_in, results[0][i].notes,
+                results[0][i].scrapped));
             }
             jsonToSend.items = a;
           }

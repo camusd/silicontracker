@@ -152,7 +152,7 @@ $(document).ready(function() {
     
   });
 
-  $.get('/data/ssd', function(jsonData) {
+  $.get('/data/scrap/ssd', function(jsonData) {
     ssd_table = $('#ssd_table').DataTable({
     "data": jsonData.items,
     "columns" : [
@@ -270,7 +270,7 @@ $(document).ready(function() {
     $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
   });
 
-  $.get('/data/memory', function(jsonData) {
+  $.get('/data/scrap/memory', function(jsonData) {
     memory_table = $('#memory_table').DataTable({
     "data": jsonData.items,
     "columns" : [
@@ -397,7 +397,7 @@ $(document).ready(function() {
 
   });
 
-  $.get('/data/flash', function(jsonData) {
+  $.get('/data/scrap/flash', function(jsonData) {
     flash_table = $('#flash_table').DataTable({
     "data": jsonData.items,
     "columns" : [
@@ -513,7 +513,7 @@ $(document).ready(function() {
     $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
   });
 
-  $.get('/data/board', function(jsonData) {
+  $.get('/data/scrap/board', function(jsonData) {
     board_table = $('#board_table').DataTable({
     "data": jsonData.items,
     "columns" : [
@@ -648,10 +648,10 @@ $(document).ready(function() {
     modal.find('#external_name').val(cpu_data.external_name);
     modal.find('#architecture').val(cpu_data.architecture);
     modal.find('#notes').val(cpu_data.notes);
-    if(modal.find('#scrap').val(cpu_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(cpu_data.scrapped == 1) {
+      modal.find('#scrap_cpu').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_cpu').prop('checked', false);
     };
   });
   $('#editCPUSave').on('click', function() {
@@ -667,7 +667,7 @@ $(document).ready(function() {
     cpu_data.external_name = form.find('#external_name').val();
     cpu_data.architecture = form.find('#architecture').val();
     cpu_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_cpu').checked) {
       cpu_data.scrapped = 1;
     } else {
       cpu_data.scrapped = 0;
@@ -686,7 +686,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/cpu', cpu_data, function(data, status, jqXHR) {
-      if(cpu_data.scrapped == 1) {
+      if(cpu_data.scrapped == 0) {
         //Remove scrapped item and update banner to reflect that
         cpu_table.row(cpu_data.index).remove();
         $.get('/data/stats', function(data) {
@@ -728,10 +728,10 @@ $(document).ready(function() {
     modal.find('#manufacturer').val(ssd_data.manufacturer);
     modal.find('#model').val(ssd_data.model);
     modal.find('#notes').val(ssd_data.notes);
-    if(modal.find('#scrap').val(ssd_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(ssd_data.scrapped == 1) {
+      modal.find('#scrap_ssd').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_ssd').prop('checked', false);
     };
   });
   $('#editSSDSave').on('click', function() {
@@ -740,7 +740,7 @@ $(document).ready(function() {
     ssd_data.manufacturer = form.find('#manufacturer').val();
     ssd_data.model = form.find('#model').val();
     ssd_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_ssd').checked) {
       ssd_data.scrapped = 1;
     } else {
       ssd_data.scrapped = 0;
@@ -759,7 +759,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/ssd', ssd_data, function(data, status, jqXHR) {
-      if(ssd_data.scrapped == 1) {
+      if(ssd_data.scrapped == 0) {
         //Remove scrapped item and update banner to reflect that
         ssd_table.row(ssd_data.index).remove();
         $.get('/data/stats', function(data) {
@@ -805,11 +805,11 @@ $(document).ready(function() {
     modal.find('#capacity').val(memory_data.capacity);
     modal.find('#speed').val(memory_data.speed);
     modal.find('#notes').val(memory_data.notes);
-    if(modal.find('#scrap').val(memory_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(memory_data.scrapped == 1) {
+      modal.find('#scrap_memory').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
-    };
+      modal.find('#scrap_memory').prop('checked', false);
+    }
   });
   $('#editMemorySave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
@@ -821,7 +821,7 @@ $(document).ready(function() {
     memory_data.capacity = form.find('#capacity').val();
     memory_data.speed = form.find('#speed').val();
     memory_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_memory').checked) {
       memory_data.scrapped = 1;
     } else {
       memory_data.scrapped = 0;
@@ -840,7 +840,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/memory', memory_data, function(data, status, jqXHR) {
-      if(memory_data.scrapped == 1) {
+      if(memory_data.scrapped == 0) {
         //Remove scrapped item and update banner to reflect that
         memory_table.row(memory_data.index).remove();
         $.get('/data/stats', function(data) {
@@ -881,10 +881,10 @@ $(document).ready(function() {
     modal.find('#capacity').val(flash_data.capacity);
     modal.find('#manufacturer').val(flash_data.manufacturer);
     modal.find('#notes').val(flash_data.notes);
-    if(modal.find('#scrap').val(flash_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(flash_data.scrapped == 1) {
+      modal.find('#scrap_flash').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_flash').prop('checked', false);
     };
   });
   $('#editFlashSave').on('click', function() {
@@ -892,7 +892,7 @@ $(document).ready(function() {
     flash_data.capacity = form.find('#capacity').val();
     flash_data.manufacturer = form.find('#manufacturer').val();
     flash_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_flash').checked) {
       flash_data.scrapped = 1;
     } else {
       flash_data.scrapped = 0;
@@ -911,7 +911,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/flash', flash_data, function(data, status, jqXHR) {
-      if(flash_data.scrapped == 1) {
+      if(flash_data.scrapped == 0) {
         //Remove scrapped item and update banner to reflect that
         flash_table.row(flash_data.index).remove();
         $.get('/data/stats', function(data) {
@@ -947,7 +947,6 @@ $(document).ready(function() {
   });
 
   $('#editBoardModal').on('show.bs.modal', function (event) {
-    console.log('showing modal');
     var modal = $(this);
     modal.find('#serial_num').val(board_data.serial_num);
     modal.find('#fpga').val(board_data.fpga);
@@ -955,10 +954,10 @@ $(document).ready(function() {
     modal.find('#mac').val(board_data.mac);
     modal.find('#fab').val(board_data.fab);
     modal.find('#notes').val(board_data.notes);
-    if(modal.find('#scrap').val(board_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(board_data.scrapped == 1) {
+      modal.find('#scrap_board').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_board').prop('checked', false);
     };
   });
   $('#editBoardSave').on('click', function() {
@@ -968,7 +967,7 @@ $(document).ready(function() {
     board_data.mac = form.find('#mac').val();
     board_data.fab = form.find('#fab').val();
     board_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_board').checked) {
       board_data.scrapped = 1;
     } else {
       board_data.scrapped = 0;
@@ -987,7 +986,7 @@ $(document).ready(function() {
     });
 
     $.post('/update/board', board_data, function(data, status, jqXHR) {
-      if(board_data.scrapped == 1) {
+      if(board_data.scrapped == 0) {
         //Remove scrapped item and update banner to reflect that
         board_table.row(board_data.index).remove();
         $.get('/data/stats', function(data) {

@@ -648,10 +648,10 @@ $(document).ready(function() {
     modal.find('#external_name').val(cpu_data.external_name);
     modal.find('#architecture').val(cpu_data.architecture);
     modal.find('#notes').val(cpu_data.notes);
-    if(modal.find('#scrap').val(cpu_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(cpu_data.scrapped == 1) {
+      modal.find('#scrap_cpu').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_cpu').prop('checked', false);
     };
   });
   $('#editCPUSave').on('click', function() {
@@ -667,7 +667,7 @@ $(document).ready(function() {
     cpu_data.external_name = form.find('#external_name').val();
     cpu_data.architecture = form.find('#architecture').val();
     cpu_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_cpu').checked) {
       cpu_data.scrapped = 1;
     } else {
       cpu_data.scrapped = 0;
@@ -728,10 +728,10 @@ $(document).ready(function() {
     modal.find('#manufacturer').val(ssd_data.manufacturer);
     modal.find('#model').val(ssd_data.model);
     modal.find('#notes').val(ssd_data.notes);
-    if(modal.find('#scrap').val(ssd_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(ssd_data.scrapped == 1) {
+      modal.find('#scrap_ssd').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_ssd').prop('checked', false);
     };
   });
   $('#editSSDSave').on('click', function() {
@@ -740,7 +740,7 @@ $(document).ready(function() {
     ssd_data.manufacturer = form.find('#manufacturer').val();
     ssd_data.model = form.find('#model').val();
     ssd_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_ssd').checked) {
       ssd_data.scrapped = 1;
     } else {
       ssd_data.scrapped = 0;
@@ -805,10 +805,10 @@ $(document).ready(function() {
     modal.find('#capacity').val(memory_data.capacity);
     modal.find('#speed').val(memory_data.speed);
     modal.find('#notes').val(memory_data.notes);
-    if(modal.find('#scrap').val(memory_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(memory_data.scrapped == 1) {
+      modal.find('#scrap_memory').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_memory').prop('checked', false);
     };
   });
   $('#editMemorySave').on('click', function() {
@@ -821,7 +821,7 @@ $(document).ready(function() {
     memory_data.capacity = form.find('#capacity').val();
     memory_data.speed = form.find('#speed').val();
     memory_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_memory').checked) {
       memory_data.scrapped = 1;
     } else {
       memory_data.scrapped = 0;
@@ -881,10 +881,10 @@ $(document).ready(function() {
     modal.find('#capacity').val(flash_data.capacity);
     modal.find('#manufacturer').val(flash_data.manufacturer);
     modal.find('#notes').val(flash_data.notes);
-    if(modal.find('#scrap').val(flash_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(flash_data.scrapped == 1) {
+      modal.find('#scrap_flash').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_flash').prop('checked', false);
     };
   });
   $('#editFlashSave').on('click', function() {
@@ -892,7 +892,7 @@ $(document).ready(function() {
     flash_data.capacity = form.find('#capacity').val();
     flash_data.manufacturer = form.find('#manufacturer').val();
     flash_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_flash').checked) {
       flash_data.scrapped = 1;
     } else {
       flash_data.scrapped = 0;
@@ -947,7 +947,6 @@ $(document).ready(function() {
   });
 
   $('#editBoardModal').on('show.bs.modal', function (event) {
-    console.log('showing modal');
     var modal = $(this);
     modal.find('#serial_num').val(board_data.serial_num);
     modal.find('#fpga').val(board_data.fpga);
@@ -955,10 +954,10 @@ $(document).ready(function() {
     modal.find('#mac').val(board_data.mac);
     modal.find('#fab').val(board_data.fab);
     modal.find('#notes').val(board_data.notes);
-    if(modal.find('#scrap').val(board_data.scrapped) == 1) {
-      modal.find('#scrap').prop('checked', true);
+    if(board_data.scrapped == 1) {
+      modal.find('#scrap_board').prop('checked', true);
     } else {
-      modal.find('#scrap').prop('checked', false);
+      modal.find('#scrap_board').prop('checked', false);
     };
   });
   $('#editBoardSave').on('click', function() {
@@ -968,7 +967,7 @@ $(document).ready(function() {
     board_data.mac = form.find('#mac').val();
     board_data.fab = form.find('#fab').val();
     board_data.notes = form.find('#notes').val();
-    if(document.getElementById('scrap').checked) {
+    if(document.getElementById('scrap_board').checked) {
       board_data.scrapped = 1;
     } else {
       board_data.scrapped = 0;
