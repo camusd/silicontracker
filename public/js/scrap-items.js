@@ -68,16 +68,18 @@ $(document).ready(function() {
                   // There was an item scanned. Enter response code here.
                   var item_found = 0;
                   $.get('/data/scrap/cpu/'+barcode, function(data) {
-                    if(data.length == 0) {
+                    if(data.length === 0) {
                       return;
                     } else if(arrayFind(cpu, function(n) {
                       return n.serial_num == data.serial_num;
                     }) != -1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
                       }
                     } else if(data.scrapped === 1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
@@ -91,20 +93,33 @@ $(document).ready(function() {
                       jsonToSend.cpu = cpu;
                       cpu_table.row.add(cpu[cpu.length - 1]);
                       cpu_table.draw();
+                      // Switch the active table
+                      $('#tab-table2').removeClass('active');
+                      $('#tab-table3').removeClass('active');
+                      $('#tab-table4').removeClass('active');
+                      $('#tab-table5').removeClass('active');
+                      $('#tab-table1').addClass('active');
+                      $('#ssd-tab').removeClass('active');
+                      $('#memory-tab').removeClass('active');
+                      $('#flash-tab').removeClass('active');
+                      $('#board-tab').removeClass('active');
+                      $('#cpu-tab').addClass('active');
                     }
                   });
 
                   $.get('/data/scrap/ssd/'+barcode, function(data) {
-                    if(data.length == 0) {
+                    if(data.length === 0) {
                       return;
                     } else if(arrayFind(ssd, function(n) {
                       return n.serial_num == data.serial_num;
                     }) != -1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
                       }
                     } else if(data.scrapped === 1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
@@ -118,20 +133,33 @@ $(document).ready(function() {
                       jsonToSend.ssd = ssd;
                       ssd_table.row.add(ssd[ssd.length - 1]);
                       ssd_table.draw();
+                      // Switch the active table
+                      $('#tab-table1').removeClass('active');
+                      $('#tab-table3').removeClass('active');
+                      $('#tab-table4').removeClass('active');
+                      $('#tab-table5').removeClass('active');
+                      $('#tab-table2').addClass('active');
+                      $('#cpu-tab').removeClass('active');
+                      $('#memory-tab').removeClass('active');
+                      $('#flash-tab').removeClass('active');
+                      $('#board-tab').removeClass('active');
+                      $('#ssd-tab').addClass('active');
                     }
                   });
 
                   $.get('/data/scrap/memory/'+barcode, function(data) {
-                    if(data.length == 0) {
+                    if(data.length === 0) {
                       return;
                     } else if(arrayFind(memory, function(n) {
                       return n.serial_num == data.serial_num;
                     }) != -1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
                       }
                     } else if(data.scrapped === 1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
@@ -145,20 +173,33 @@ $(document).ready(function() {
                       jsonToSend.memory = memory;
                       memory_table.row.add(memory[memory.length - 1]);
                       memory_table.draw();
+                      // Switch the active table
+                      $('#tab-table1').removeClass('active');
+                      $('#tab-table2').removeClass('active');
+                      $('#tab-table4').removeClass('active');
+                      $('#tab-table5').removeClass('active');
+                      $('#tab-table3').addClass('active');
+                      $('#cpu-tab').removeClass('active');
+                      $('#ssd-tab').removeClass('active');
+                      $('#flash-tab').removeClass('active');
+                      $('#board-tab').removeClass('active');
+                      $('#memory-tab').addClass('active');
                     }
                   });
 
                   $.get('/data/scrap/flash/'+barcode, function(data) {
-                    if(data.length == 0) {
+                    if(data.length === 0) {
                       return;
                     } else if(arrayFind(flash, function(n) {
                       return n.serial_num == data.serial_num;
                     }) != -1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
                       }
                     } else if(data.scrapped === 1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
@@ -172,12 +213,23 @@ $(document).ready(function() {
                       jsonToSend.flash = flash;
                       flash_table.row.add(flash[flash.length - 1]);
                       flash_table.draw();
+                      // Switch the active table
+                      $('#tab-table1').removeClass('active');
+                      $('#tab-table2').removeClass('active');
+                      $('#tab-table3').removeClass('active');
+                      $('#tab-table5').removeClass('active');
+                      $('#tab-table4').addClass('active');
+                      $('#cpu-tab').removeClass('active');
+                      $('#ssd-tab').removeClass('active');
+                      $('#memory-tab').removeClass('active');
+                      $('#board-tab').removeClass('active');
+                      $('#flash-tab').addClass('active');
                     }
                   });
 
                     $.get('/data/scrap/board/'+barcode, function(data) {
-                    if(data.length == 0) {
-                      if(item_found == 0) {
+                    if(data.length === 0) {
+                      if(item_found === 0) {
                         $('#scrap-error').html("<div>Item not found in database</div>");
                         if($('#scrap-error').is(":hidden")) {
                           $('#scrap-error').show();
@@ -187,11 +239,13 @@ $(document).ready(function() {
                     } else if(arrayFind(board, function(n) {
                       return n.serial_num == data.serial_num;
                     }) != -1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item is already in the table of items to be scrapped</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
                       }
                     } else if(data.scrapped === 1) {
+                      item_found = 1;
                       $('#scrap-error').html("<div>Item has already been scrapped previously</div>");
                       if($('#scrap-error').is(":hidden")) {
                         $('#scrap-error').show();
@@ -205,6 +259,17 @@ $(document).ready(function() {
                       jsonToSend.board = board;
                       board_table.row.add(board[board.length - 1]);
                       board_table.draw();
+                      // Switch the active table
+                      $('#tab-table1').removeClass('active');
+                      $('#tab-table2').removeClass('active');
+                      $('#tab-table3').removeClass('active');
+                      $('#tab-table4').removeClass('active');
+                      $('#tab-table5').addClass('active');
+                      $('#cpu-tab').removeClass('active');
+                      $('#ssd-tab').removeClass('active');
+                      $('#memory-tab').removeClass('active');
+                      $('#flash-tab').removeClass('active');
+                      $('#board-tab').addClass('active');
                     }
                   });
               }
