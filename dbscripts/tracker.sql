@@ -1425,7 +1425,7 @@ BEGIN
   END IF;
 
   SELECT
-    email_address, first_name, last_name, Processor.serial_num, item_type, checked_in, CURDATE() AS order_date
+    email_address, first_name, last_name, Processor.serial_num, item_type, checked_in, NOW() AS order_date
   FROM
     Items JOIN Processor
         ON Processor.product_id = Items.id LEFT JOIN Owners
@@ -1483,7 +1483,7 @@ BEGIN
   END IF;
 
   SELECT
-    email_address, first_name, last_name, Flash_Drive.serial_num, item_type, checked_in, CURDATE() AS order_date
+    email_address, first_name, last_name, Flash_Drive.serial_num, item_type, checked_in, NOW() AS order_date
   FROM
     Items JOIN Flash_Drive
         ON Flash_Drive.product_id = Items.id LEFT JOIN Owners
@@ -1541,7 +1541,7 @@ BEGIN
   END IF;
 
   SELECT
-    email_address, first_name, last_name, RAM.serial_num, item_type, checked_in, CURDATE() AS order_date
+    email_address, first_name, last_name, RAM.serial_num, item_type, checked_in, NOW() AS order_date
   FROM
     Items JOIN RAM
         ON RAM.product_id = Items.id LEFT JOIN Owners
@@ -1599,7 +1599,7 @@ BEGIN
   END IF;
 
   SELECT
-    email_address, first_name, last_name, SSD.serial_num, item_type, checked_in, CURDATE() AS order_date
+    email_address, first_name, last_name, SSD.serial_num, item_type, checked_in, NOW() AS order_date
   FROM
     Items JOIN SSD
         ON SSD.product_id = Items.id LEFT JOIN Owners

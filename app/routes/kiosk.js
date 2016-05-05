@@ -19,7 +19,7 @@ module.exports = function(app, pool) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
 	 	// and JOIN with necessary tables
-      	pool.getConnection(function(err, conn) {
+    pool.getConnection(function(err, conn) {
 		 	conn.query('CALL get_scanned_item("' + serial + '");',
 		 		function(error, results, fields){
 		 			if(error) {
@@ -70,7 +70,7 @@ module.exports = function(app, pool) {
 	app.get('/cart/serial/:serial', function(req, res) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
-      	pool.getConnection(function(err, conn) {
+    pool.getConnection(function(err, conn) {
 		 	conn.query('SELECT checked_in FROM Items JOIN Processor ON Processor.product_id = Items.id WHERE Processor.serial_num = \'' + serial + '\'',
 		 		function(error, results, fields){
 		 			if(error) {
@@ -87,47 +87,45 @@ module.exports = function(app, pool) {
 	});
 
 	/* Posts on the kiosk */
-	app.post('/kiosk/submit', function(req, res) {
+	app.post('/kiosk/submit', function(req, res) {	
 		var item_serial = [];
 		var item_type = [];
 		var status = [];
 		var wwid = req.session.wwid;
-		var serial_nums = req.body.val_array;
+		var serial_nums = req.body.data;
 		var total_finished = 0;
-		for(var i=0; i < serial_nums.length; i++) {
-			var addr, first_name, last_name, date;
-      		pool.getConnection(function(i, err, conn) {
-				conn.query("CALL scan_cpu("+ wwid +",'"+serial_nums[i]+"');",
-					function(error, results, fields) {
-						if(error) {
-							throw error;
-						}
-		 				conn.release();
-						
+		var addr, first_name, last_name, date;
+    for(var i=0; i < serial_nums.length; i++) {
+    	pool.getConnection(function(i, err, conn) {
+      	conn.query("CALL scan_cpu("+ wwid +",'"+serial_nums[i]+"');",
+      		function(error, results, fields) {
+      			if(error) {
+      				throw error;
+      			}
 						addr = results[0][0].email_address;
 						first_name = results[0][0].first_name;
 						last_name = results[0][0].last_name;
 						item_serial[i] = results[0][0].serial_num;
 						item_type[i] = results[0][0].item_type;
-						status[i] = results[0][0].status;
+						status[i] = results[0][0].checked_in;
 						date = results[0][0].order_date;
 						
-						console.log("Sending cart email to "+addr+"...");
-						cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
 						total_finished++;
+						if (total_finished === serial_nums.length) {
+							console.log("Sending cart email to "+addr+"...");
+							cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
+							req.session.destroy(function (err) {
+								if (err) {
+						    	console.log(err)
+					    	} else {
+					    		res.clearCookie('my.tracker.sid');
+									res.redirect('/kiosk');
+					    	}
+						  });
+						}  
 					});
-			}.bind(pool, i));
-		}
-		if (total_finished === serial_nums.length) {
-			req.session.destroy(function (err) {
-		    	if (err) {
-		    		console.log(err)
-	    		} else {
-	    			res.clearCookie('my.tracker.sid');
-					res.redirect('/kiosk');
-	    		}
-		    });
-		}    
+      }.bind(pool, i));
+    }
 	});
 
 

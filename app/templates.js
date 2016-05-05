@@ -41,7 +41,7 @@ module.exports = function() {
 		});
 		var intro = "Hello "+first_name+" "+last_name+",\n\n"
 		          +"This is an automated message from the Silicon Tracker"
-		          +" Service.  Here is a summary of your order from"+date+":\n\n";
+		          +" Service.  Here is a summary of your order from "+date+":\n\n";
 		var order = "";
 		var checked = 'in';
 		for(var i in item_serial) {
@@ -50,7 +50,7 @@ module.exports = function() {
 			} else {
 				checked = 'out';
 			}
-			order = order+"Serial number: "+item_serial+" Type: "+item_type+" Status: checked "+checked+"\n"; 
+			order = order+"Serial number: "+item_serial[i]+", Type: "+item_type[i]+", Status: checked "+checked+"\n"; 
 		}
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
