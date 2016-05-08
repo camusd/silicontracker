@@ -118,42 +118,12 @@ require('./app/routes/web')(app, pool);
 // Load the routes for the kiosk
 require('./app/routes/kiosk')(app, pool);
 
-// // Send emails for overdue items
-// // var j = schedule.scheduleJob('00 00 * * 0', function() {
-// var j = schedule.scheduleJob('* * * * *', function() {
-// 	var total_finished = 0;
-//   pool.getConnection(function(err, conn) {
-// 		conn.query("CALL get_checkout_summary();",
-// 			function(error, results, fields) {
-// 				if(error) {
-// 					throw error;
-// 				}
-// 				conn.release();
-
-// 				for(var i in results[0]) {
-// 					var addr = results[0][i].email_address;
-// 					var first_name = results[0][i].first_name;
-// 					var last_name = results[0][i].last_name;
-// 					var item_serial = results[0][i].serial_num;
-// 					var item_type = results[0][i].item_type;
-// 					var days = results[0][i].days;
-// 					total_finished++;
-// 					if(total_finished == results[0].length) {
-// 						console.log("Sending reminder email to "+addr+"...");
-// 						reminderTemplate(addr, first_name, last_name, item_serial, item_type, days);
-// 					}
-// 				}
-// 			});
-// 	});
-// });
-
 // Send emails for overdue items
-// var j = schedule.scheduleJob('00 00 * * 0', function() {
-var j = schedule.scheduleJob('* * * * *', function() {
+var j = schedule.scheduleJob('00 00 * * 0', function() {
 	var item_serial = [];
 	var item_type = [];
 	var days = [];
-	var total_finished, addr, first_name, last_name;
+	var addr, first_name, last_name;
   pool.getConnection(function(err, conn) {
 		conn.query("CALL get_overdue_owner();",
 			function(error, results, fields) {
@@ -162,13 +132,12 @@ var j = schedule.scheduleJob('* * * * *', function() {
 				}
 				var owner = results[0];
 				for(var i in owner) {
-					total_finished = 0;
-					console.log(owner[i].wwid);
-					conn.query("CALL get_checkout_summary("+owner[i].wwid+");",
+					conn.query("CALL get_checkout_summary("+owner[i].wwid+","+owner[i].overdue_item_email_setting+");",
 						function(error, results, fields) {
 							if(error) {
 								throw error;
 							}
+							var total_finished = 0;
 							for(var j in results[0]) {
 								item_serial[j] = results[0][j].serial_num;
 								item_type[j] = results[0][j].item_type;

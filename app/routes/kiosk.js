@@ -17,8 +17,6 @@ module.exports = function(app, pool) {
 	 /* Getters for json data on items in the kiosk */
 	app.get('/serial/:serial', function(req, res) {
 	 	var serial = req.params.serial;
-	 	// TODO: Put in Stored Procedure
-	 	// and JOIN with necessary tables
     pool.getConnection(function(err, conn) {
 		 	conn.query('CALL get_scanned_item("' + serial + '");',
 		 		function(error, results, fields){
@@ -66,10 +64,24 @@ module.exports = function(app, pool) {
 		});
 	});
 
+	app.get('/user/:serial', function(req, res) {
+	 	var serial = req.params.serial;
+    pool.getConnection(function(err, conn) {
+		 	conn.query('CALL get_user_from_checkout("' + serial + '");',
+		 		function(error, results, fields){
+		 			if(error) {
+		 				throw error;
+		 			}
+		 			conn.release();
+
+		 			res.send(results[0][0]);
+		 		});
+		 });
+  });
+
 	 /* Getters for json data on items in the cart */
 	app.get('/cart/serial/:serial', function(req, res) {
 	 	var serial = req.params.serial;
-	 	// TODO: Put in Stored Procedure
     pool.getConnection(function(err, conn) {
 		 	conn.query("CALL get_checkout_status(\'" + serial + "\');",
 		 		function(error, results, fields){

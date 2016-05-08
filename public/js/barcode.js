@@ -21,12 +21,25 @@ $(document).ready(function() {
                   // There was an item scanned. Enter response code here.
                   var itemInfo = "";
                   $.get('/serial/'+barcode, function(data) {
-                    if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
-                    else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
-                    else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
-                    else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
-                    else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
-                    else {$('#item-info').html(ErrorInfo());}
+                    if(data.checked_in == "Checked Out") {
+                      $.get('/user/'+barcode, function(user) {
+                        data.first_name = user.first_name;
+                        data.last_name = user.last_name;
+                        if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
+                        else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
+                        else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
+                        else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
+                        else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
+                        else {$('#item-info').html(ErrorInfo());}
+                      })
+                    } else {
+                      if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
+                      else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
+                      else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
+                      else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
+                      else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
+                      else {$('#item-info').html(ErrorInfo());}
+                    }
                   });
               }
               chars = [];
@@ -47,10 +60,15 @@ $("#barcode").keypress(function(e){
 });
 
 function UserInfo(info) {
-  return ('<div class="col-sm-6 col-xs-12"><strong>Checked In/Out:</strong></div>'+
-          '<div class="col-sm-6 col-xs-12">'+info.checked_in+'</div>'+
-          '<div class="col-sm-6 col-xs-12"><strong>Scrapped Status:</strong></div>'+
-          '<div class="col-sm-6 col-xs-12">'+info.scrapped+'</div>');
+  var user_data = ('<div class="col-sm-6 col-xs-12"><strong>Checked In/Out:</strong></div>'+
+                   '<div class="col-sm-6 col-xs-12">'+info.checked_in+'</div>'+
+                   '<div class="col-sm-6 col-xs-12"><strong>Scrapped Status:</strong></div>'+
+                   '<div class="col-sm-6 col-xs-12">'+info.scrapped+'</div>');
+  if(info.checked_in == "Checked Out") {
+    user_data = (user_data+'<div class="col-sm-6 col-xs-12"><strong>User:</strong></div>'+
+                          '<div class=col-sm-6 col-xs-12">'+info.first_name+' '+info.last_name+'</div>');
+  }
+  return user_data;
 }
 
 function CPUInfo(info) {
