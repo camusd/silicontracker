@@ -10,17 +10,24 @@ module.exports = function() {
 				pass: process.env.EMAIL_PASSWORD
 			}
 		});
-		var text = "Hello "+first_name+" "+last_name+",\n\n"
+		var intro = "Hello "+first_name+" "+last_name+",\n\n"
 		          +"This is an automated message from the Silicon Tracker"
-		          +" Service informing you that you have had the "+item_type
-		          +" with serial number: "+item_serial+" checked out for "+time+" days."
-		          +" If you are no longer using this "+item_type+", please return it at"
-		          +" your earliest convinence.";
+		          +" Service reminding you that you have had the following"
+		          +" items checked awhile.\n\n";
+
+		var order = "";
+		for(var i in item_serial) {
+			order = order+"Serial number: "+item_serial[i]+"	|	Type: "+item_type[i]+"	|	Days checked out: "+time[i]+"\n";
+		}
+
+		var outro = "\nIf you are no longer using these items, please return them at"
+		          +" your earliest convinence.\n";
+
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: addr,
-			subject: "Silicon Tracker checkout reminder",
-			text: text
+			subject: "Silicon Tracker Checkout Reminder",
+			text: intro+order+outro
 		};
 		transporter.sendMail(mailOptions, function(error, info){
 			if(error) {
@@ -50,12 +57,12 @@ module.exports = function() {
 			} else {
 				checked = 'out';
 			}
-			order = order+"Serial number: "+item_serial[i]+", Type: "+item_type[i]+", Status: checked "+checked+"\n"; 
+			order = order+"Serial number: "+item_serial[i]+"	|	Type: "+item_type[i]+"	|	Status: checked "+checked+"\n"; 
 		}
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: addr,
-			subject: "Silicon Tracker checkout reminder",
+			subject: "Silicon Tracker Checkout Summary",
 			text: intro+order
 		};
 		transporter.sendMail(mailOptions, function(error, info){

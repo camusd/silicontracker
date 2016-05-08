@@ -40,7 +40,7 @@ module.exports = function(app, pool) {
 
   app.post('/update/cpu/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
-      conn.query("CALL update_cpu_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
           if(error) {
             throw error;
@@ -76,7 +76,7 @@ module.exports = function(app, pool) {
 
   app.post('/update/ssd/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
-      conn.query("CALL update_ssd_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
           if(error) {
             throw error;
@@ -120,7 +120,7 @@ module.exports = function(app, pool) {
 
   app.post('/update/memory/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
-      conn.query("CALL update_memory_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
           if(error) {
             throw error;
@@ -139,7 +139,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL update_flash_drive('"+req.body.serial_num+"','"
+        conn.query("CALL update_flash('"+req.body.serial_num+"','"
           +req.body.capacity+"','"+req.body.manufacturer+"','"
           +req.body.notes+"','"+req.body.scrapped+"');",
           function(error, results, fields){
@@ -155,7 +155,7 @@ module.exports = function(app, pool) {
 
   app.post('/update/flash/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
-      conn.query("CALL update_flash_drive_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
           if(error) {
             throw error;
@@ -191,7 +191,7 @@ module.exports = function(app, pool) {
 
   app.post('/update/board/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
-      conn.query("CALL update_board_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
+      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
           if(error) {
             throw error;
@@ -210,7 +210,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial_cpu('"+req.body.serial_num+"');",
+        conn.query("CALL check_serial('"+req.body.serial_num+"');",
           function(error, results, fields){
             if(error) {
               throw error;
@@ -245,7 +245,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial_ssd('"+req.body.serial_num+"');",
+        conn.query("CALL check_serial('"+req.body.serial_num+"');",
         function(error, results, fields){
           if(error) {
             throw error;
@@ -276,7 +276,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial_memory('"+req.body.serial_num+"');",
+        conn.query("CALL check_serial('"+req.body.serial_num+"');",
           function(error, results, fields){
             if(error) {
               throw error;
@@ -309,7 +309,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial_flash_drive('"+req.body.serial_num+"');",
+        conn.query("CALL check_serial('"+req.body.serial_num+"');",
         function(error, results, fields){
           if(error) {
             throw error;
@@ -340,7 +340,7 @@ module.exports = function(app, pool) {
       res.status(400).send(verrors);
     } else {
       pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial_board('"+req.body.serial_num+"');",
+        conn.query("CALL check_serial('"+req.body.serial_num+"');",
         function(error, results, fields){
           if(error) {
             throw error;
@@ -367,7 +367,7 @@ module.exports = function(app, pool) {
     if(req.body.hasOwnProperty('cpu')) {
       pool.getConnection(function(err, conn) {
         for(var i = 0; i < req.body.cpu.length; i++) {
-          conn.query("CALL scrap_cpu('"+req.body.cpu[i].serial_num+"');",
+          conn.query("CALL scrap_item('"+req.body.cpu[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
               throw error;
@@ -380,7 +380,7 @@ module.exports = function(app, pool) {
     if(req.body.hasOwnProperty('ssd')) {
       pool.getConnection(function(err, conn) {
         for(var i = 0; i < req.body.ssd.length; i++) {
-          conn.query("CALL scrap_ssd('"+req.body.ssd[i].serial_num+"');",
+          conn.query("CALL scrap_item('"+req.body.ssd[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
               throw error;
@@ -393,7 +393,7 @@ module.exports = function(app, pool) {
     if(req.body.hasOwnProperty('memory')) {
       pool.getConnection(function(err, conn) {
         for(var i = 0; i < req.body.memory.length; i++) {
-          conn.query("CALL scrap_memory('"+req.body.memory[i].serial_num+"');",
+          conn.query("CALL scrap_item('"+req.body.memory[i].serial_num+"');",
           function(error, results, fields) {
             if(error) {
               throw error;
@@ -406,7 +406,7 @@ module.exports = function(app, pool) {
     if(req.body.hasOwnProperty('flash')) {
       pool.getConnection(function(err, conn) {
         for(var i = 0; i < req.body.flash.length; i++) {
-          conn.query("CALL scrap_flash('"+req.body.flash[i].serial_num+"');",
+          conn.query("CALL scrap_item('"+req.body.flash[i].serial_num+"');",
             function(error, results, fields) {
             if(error) {
               throw error;
@@ -419,7 +419,7 @@ module.exports = function(app, pool) {
     if(req.body.hasOwnProperty('board')) {
       pool.getConnection(function(err, conn) {
         for(var i = 0; i < req.body.flash.length; i++) {
-          conn.query("CALL scrap_board('"+req.body.board[i].serial_num+"');",
+          conn.query("CALL scrap_item('"+req.body.board[i].serial_num+"');",
             function(error, results, fields) {
             if(error) {
               throw error;

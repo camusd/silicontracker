@@ -71,7 +71,7 @@ module.exports = function(app, pool) {
 	 	var serial = req.params.serial;
 	 	// TODO: Put in Stored Procedure
     pool.getConnection(function(err, conn) {
-		 	conn.query('SELECT checked_in FROM Items JOIN Processor ON Processor.product_id = Items.id WHERE Processor.serial_num = \'' + serial + '\'',
+		 	conn.query("CALL get_checkout_status(\'" + serial + "\');",
 		 		function(error, results, fields){
 		 			if(error) {
 		 				throw error;
@@ -94,28 +94,32 @@ module.exports = function(app, pool) {
 		var wwid = req.session.wwid;
 		var serial_nums = req.body.data;
 		var total_finished = 0;
-		var addr, first_name, last_name, date;
+		var addr, setting, first_name, last_name, date;
     for(var i=0; i < serial_nums.length; i++) {
     	pool.getConnection(function(i, err, conn) {
-      	conn.query("CALL scan_cpu("+ wwid +",'"+serial_nums[i]+"');",
+      	conn.query("CALL scan_item("+ wwid +",'"+serial_nums[i]+"');",
       		function(error, results, fields) {
       			if(error) {
       				throw error;
       			}
-						addr = results[0][0].email_address;
-						first_name = results[0][0].first_name;
-						last_name = results[0][0].last_name;
+
 						item_serial[i] = results[0][0].serial_num;
 						item_type[i] = results[0][0].item_type;
 						status[i] = results[0][0].checked_in;
-						date = results[0][0].order_date;
-						
 						total_finished++;
-						if (total_finished === serial_nums.length) {
-							console.log("Sending cart email to "+addr+"...");
-							cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
+
+						if(total_finished == serial_nums.length) {
+							addr = results[0][0].email_address;
+							setting = results[0][0].cart_summary_email_setting;
+							last_name = results[0][0].last_name;
+							first_name = results[0][0].first_name;
+							date = results[0][0].order_date;
+							if(setting === 1) {
+								console.log("Sending cart email to "+addr+"...");
+								cartTemplate(addr, first_name, last_name, item_serial, item_type, status, date);
+							}
 							req.session.destroy(function (err) {
-								if (err) {
+								if(err) {
 						    	console.log(err)
 					    	} else {
 					    		res.clearCookie('my.tracker.sid');
