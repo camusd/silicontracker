@@ -49,8 +49,8 @@ $(document).ready(function() {
             if($('#scan-error').is(":hidden")) {
               $('#scan-error').show();
             }
-          } else if(data.scrapped == 'Scrapped') {
-            $('#scan-error').html("<div>Scrapped items cannot be checked in or out</div>");
+          } else if(data.scrapped === 'Scrapped' && data.checked_in === 'Checked In') {
+            $('#scan-error').html("<div>Scrapped items cannot be checked out</div>");
             if($('#scan-error').is(":hidden")) {
               $('#scan-error').show();
             }
