@@ -202,7 +202,8 @@ CREATE TABLE `Owners` (
   `first_name` varchar(30) NOT NULL,
   `email_address` varchar(60) NOT NULL,
   `is_admin` tinyint(1) unsigned DEFAULT '0',
-  `overdue_item_email_setting` int(3) unsigned DEFAULT '30',
+  `overdue_item_email_setting` tinyint(1) unsigned DEFAULT '1',
+  `overdue_item_email_frequency` int(3) unsigned DEFAULT '30',
   `cart_summary_email_setting` tinyint(1) unsigned DEFAULT '1',
   PRIMARY KEY (`wwid`),
   UNIQUE KEY `wwid_UNIQUE` (`wwid`),
@@ -216,7 +217,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0, 30, 1),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1, 30, 1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0, 30, 1),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com',1, 30, 0),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1, 30, 1),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1, 30, 1);
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0, 1, 30, 1),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1, 1, 30, 1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0, 1, 30, 1),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com', 1, 1, 30, 0),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1, 1, 30, 1),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1, 1, 30, 1);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -471,6 +472,31 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_addr` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_addr`(IN user varchar(8))
+BEGIN
+  SELECT
+    email_address, cart_summary_email_setting, first_name, last_name, NOW() AS order_date
+  FROM
+    Owners
+  WHERE
+    wwid = user;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_board` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -569,14 +595,17 @@ DELIMITER ;
 DELIMITER ;;
 CREATE PROCEDURE `get_overdue_owner`()
 BEGIN
-  SELECT DISTINCT 
+  SELECT 
     wwid
   FROM
     Owners JOIN Checkout
       ON Checkout.user = Owners.wwid LEFT JOIN Items
       ON Items.id = Checkout.product_id
-  WHERE
-      TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= 0;
+  GROUP BY
+    wwid
+  HAVING
+    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= overdue_item_email_frequency AND
+    overdue_item_email_setting = 1;
 
 END ;;
 DELIMITER ;
@@ -871,26 +900,25 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `get_scanned_item`(IN sn VARCHAR(30))
+CREATE PROCEDURE `get_scanned_item`(IN sn VARCHAR(20))
 BEGIN
 
-SET @c := (SELECT serial_num FROM Items WHERE serial_num = sn);
 SET @t := (SELECT Items.item_type FROM Items WHERE serial_num = sn);
 IF @t = 'cpu' THEN
   SET @q = CONCAT("SELECT i.serial_num, c.spec, c.mm, c.frequency, c.stepping, c.llc,
-    c.cores, c.codename, c.cpu_class, c.external_name, c.architecture,
-        i.item_type, i.notes, i.checked_in, i.scrapped
-        FROM Processor c
+    c.cores, c.codename, c.cpu_class, c.external_name, c.architecture, 
+    i.item_type, i.notes, i.checked_in, i.scrapped 
+    FROM Processor c
         JOIN Items i ON i.id = c.product_id
-    WHERE i.serial_num='", @c, "'");
+        WHERE i.serial_num='", sn, "'");
 END IF;
 
 IF @t = 'ssd' THEN
-  SET @q = CONCAT("SELECT i.serial_num, s.manufacturer, s.model, s.capacity,
+  SET @q = CONCAT("SELECT i.serial_num, d.manufacturer, d.model, d.capacity,
     i.item_type, i.notes, i.checked_in, i.scrapped
-    FROM SSD s 
-        JOIN Items i ON i.id = s.product_id
-        WHERE i.serial_num='", @s, "'");
+    FROM SSD d 
+        JOIN Items i ON i.id = d.product_id
+        WHERE i.serial_num='", sn, "'");
 END IF;
 
 IF @t = 'memory' THEN
@@ -899,7 +927,7 @@ IF @t = 'memory' THEN
         i.item_type, i.notes, i.checked_in, i.scrapped
     FROM RAM r
         JOIN Items i ON i.id = r.product_id
-        WHERE i.serial_num='", @r, "'");
+        WHERE i.serial_num='", sn, "'");
 END IF;
 
 IF @t = 'flash' THEN
@@ -907,7 +935,7 @@ IF @t = 'flash' THEN
     i.item_type, i.notes, i.checked_in, i.scrapped
     FROM Flash_Drive f
         JOIN Items i ON i.id = f.product_id
-        WHERE i.serial_num='", @f, "'");
+        WHERE i.serial_num='", sn, "'");
 END IF;
 
 IF @t = 'board' THEN
@@ -915,10 +943,10 @@ IF @t = 'board' THEN
     i.item_type, i.notes, i.checked_in, i.scrapped
     FROM Board b
         JOIN Items i ON i.id = b.product_id
-        WHERE i.serial_num='", @b, "'");
+        WHERE i.serial_num='", sn, "'");
 END IF;
 
-IF COALESCE(@c, @s, @r, @f, @b) IS NULL THEN
+IF @t IS NULL THEN
   SET @q = "SELECT \"NA\" AS item_type";
 END IF;
 
@@ -1153,6 +1181,29 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_user_from_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_user_from_checkout`(IN item VARCHAR(20))
+BEGIN
+  SELECT last_name, first_name
+    FROM Checkout LEFT JOIN Owners ON
+    Checkout.user = Owners.wwid LEFT JOIN Items ON
+    Checkout.product_id = Items.id
+    WHERE serial_num = item;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `put_board` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1377,12 +1428,17 @@ CREATE PROCEDURE `scan_item`(IN new_user VARCHAR(8),
  IN item VARCHAR(20))
 BEGIN
   SET @pid = (SELECT id
-         FROM Items
-         WHERE serial_num = item);
+    FROM Items
+    WHERE serial_num = item);
   
-    SET @checked_in = (SELECT checked_in
-            FROM Items
-                        WHERE id = @pid);
+  SET @checked_in = (SELECT checked_in
+    FROM Items
+    WHERE id = @pid);
+
+  SET @user = (SELECT user
+    FROM Checkout LEFT JOIN Items ON
+    Checkout.product_id = Items.id
+    WHERE serial_num = item);
 
   UPDATE Items i
     SET i.checked_in = NOT @checked_in
@@ -1396,10 +1452,9 @@ BEGIN
   END IF;
 
   SELECT
-    email_address, cart_summary_email_setting, first_name, last_name, serial_num, item_type, checked_in, NOW() AS order_date
+    item_type, checked_in, @user AS user
   FROM
-    Items LEFT JOIN Owners
-        ON Owners.wwid = new_user
+    Items
   WHERE
     serial_num = item;
 
