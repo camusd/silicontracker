@@ -133,7 +133,6 @@ module.exports = function(app, pool) {
 									
 									conn.query("CALL get_addr("+wwid+");",
 										function(error, results, fields) {
-											console.log(first_name);
 											if(error) {
 												throw error;
 											}
@@ -163,20 +162,20 @@ module.exports = function(app, pool) {
 										cartTemplate(addr, first_name, last_name, serial_nums, item_type, status, date);
 									}
 								});
-						conn.release();
-						req.session.destroy(function (err) {
-							if(err) {
-						    console.log(err)
-					    } else {
-					    	res.clearCookie('my.tracker.sid');
-								res.redirect('/kiosk');
-					    }
-					  });
-					}  
-				});
+							conn.release();
+							req.session.destroy(function (err) {
+								if(err) {
+									console.log(err)
+								} else {
+									res.clearCookie('my.tracker.sid');
+									res.redirect('/kiosk');
+								}
+							});
+						}  
+					});
       }.bind(pool, i));
     }
-	});
+  });
 
 
 	/* 

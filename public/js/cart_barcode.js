@@ -1,3 +1,25 @@
+var val_array = [];
+
+function submitData(data) {
+  $.post('/kiosk/submit', {data});
+  var len = data.length;
+  if(len === 1) {
+    alert("The transaction of "+len+" item has completed successfully");
+  } else {
+    alert("The transaction of "+len+" items has completed successfully");
+  }
+  window.location="/kiosk/";
+};
+
+function arrayFind(arr, fn) {
+  for(var i = 0; i < arr.length; i++) {
+    if(fn(arr[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 $(document).ready(function() {
   var pressed = false; 
   var chars = [];
@@ -11,6 +33,7 @@ $(document).ready(function() {
     bLengthChange: false,
     retrieve: true
   });
+  $('#scan-error').hide();
   $(window).keypress(function(e) {
     chars.push(String.fromCharCode(e.which));
     if (pressed == false) {
@@ -20,21 +43,35 @@ $(document).ready(function() {
         var barcode = chars.join("");
         barcode = barcode.replace("\r","");
         // There was an item scanned. Enter response code here.
-        // TODO: instead of alerting after ajax call, make call to either
-        //       loading a popup or inline on page... basically something
-        //       prettier than an alert.
-        $.get('/cart/serial/'+barcode, function(data) {
-          if(data.length == 0) {
-            alert("Item not found in database");
-          }
-          $.each(data, function(idx, elem) {
-            if(elem) {
+        $.get('/serial/'+barcode, function(data) {
+          if(data.err == 'Item Not Found') {
+            $('#scan-error').html("<div>Item not found in database</div>");
+            if($('#scan-error').is(":hidden")) {
+              $('#scan-error').show();
+            }
+          } else if(data.scrapped == 'Scrapped') {
+            $('#scan-error').html("<div>Scrapped items cannot be checked in or out</div>");
+            if($('#scan-error').is(":hidden")) {
+              $('#scan-error').show();
+            }
+          } else if(arrayFind(val_array, function(n) {
+            return n == data.serial_num;
+          }) != -1) {
+            $('#scan-error').html("<div>Item is already in the cart</div>");
+            if($('#scan-error').is(":hidden")) {
+              $('#scan-error').show();
+            }
+          } else {
+            if($('#scan-error').is(":visible")) {
+              $('#scan-error').hide();
+            }
+            if(data.checked_in === 'Checked In') {
               t_out.row.add([barcode]).draw();
             } else {
               t_in.row.add([barcode]).draw();
             }
             val_array.push(barcode);
-          });
+          }
         });
       }
       chars = [];
