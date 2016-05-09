@@ -6,37 +6,104 @@ var validate = require('../validators');
 module.exports = function(app, pool) {
   
   // Middleware: Enforce admin privileges to add items.
-  //app.use('/add/*', enforceAdminLogin, function(req, res) {});
+  
+  /* 
+   * checkSerials: checks for duplicate entries in the textbox,
+   * and if the serial number exists in the database.
+   */
+  function checkSerials(req, res, next) {
+  	pool.getConnection(function(err, conn) {
+  		var serailNumsString = "'\\'" + req.body.serial_num.toString().replace(/,/g, "\\',\\'") + "\\''";
+			var errorList = [];
+
+  		conn.query("CALL check_serial("+serailNumsString+");",
+  			function(error, results, fields) {
+  				if (error) {
+  					throw error;
+  				}
+  				conn.release();
+
+  				if (results[0].length !== 0) {
+  					for (var i = 0; i < results[0].length; i++) {
+  						errorList.push(results[0][i].serial_num + ' already exists.');
+  					}
+  				}
+
+  				var occurrences = { };
+					for (var i = 0, j = req.body.serial_num.length; i < j; i++) {
+					   occurrences[req.body.serial_num[i]] = (occurrences[req.body.serial_num[i]] || 0) + 1;
+					}
+
+					for (var key in occurrences) {
+						if (occurrences.hasOwnProperty(key)) {
+							if (occurrences[key] > 1) {
+								errorList.push(key+' was entered more than once.');
+							}
+						}
+					}
+
+  				if (errorList.length > 0) {
+  					res.status(400).send({serial_num: errorList});  					
+  				} else {
+  					next();
+  				}
+  			});
+  	});
+  }
+
+	/*
+	 * scrubAndValidate: sanitizes and validates the user input.
+	 */
+	function scrubAndValidate(itemType) {
+		var verrors;
+		return function(req,res,next) {
+			if (itemType === 'CPU')    {
+				req.body = scrub.CPU(req.body);
+				verrors = validate.CPU(req.body);
+			} else if (itemType === 'SSD') {
+				req.body = scrub.SSD(req.body);
+				verrors = validate.SSD(req.body);
+			} else if (itemType === 'Memory') {
+				req.body = scrub.Memory(req.body);
+				verrors = validate.Memory(req.body);
+			} else if (itemType === 'Flash') {
+				req.body = scrub.Flash(req.body);
+				verrors = validate.Flash(req.body);
+			} else if (itemType === 'Board') {
+				req.body = scrub.Board(req.body);
+				verrors = validate.Board(req.body);
+			}
+
+		  if (verrors) {
+		    res.status(400).send(verrors);
+		  } else {
+		  	next();
+		  }
+		}
+	}
 
   /* Posts for the web interface
    * These are when someone submits 
    * a form and POSTS the data. */
 
-  app.post('/update/cpu', function(req, res) {
-  	req.body = scrub.CPU(req.body);
-    var verrors = validate.CPU(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-  	    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
-          +req.body.spec+"','"+req.body.mm+"','"
-          +req.body.frequency+"','"+req.body.stepping+"','"
-          +req.body.llc+"','"+req.body.cores+"','"
-          +req.body.codename+"','"+req.body.cpu_class+"','"
-          +req.body.external_name+"','"+req.body.architecture+"','"
-          +req.body.notes+"','"+req.body.scrapped+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-          conn.release();
-        });
+  app.post('/update/cpu', scrubAndValidate('CPU'), function(req, res) {
+  	pool.getConnection(function(err, conn) {
+	    conn.query("CALL update_cpu('"+req.body.serial_num+"','"
+        +req.body.spec+"','"+req.body.mm+"','"
+        +req.body.frequency+"','"+req.body.stepping+"','"
+        +req.body.llc+"','"+req.body.cores+"','"
+        +req.body.codename+"','"+req.body.cpu_class+"','"
+        +req.body.external_name+"','"+req.body.architecture+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+        conn.release();
       });
-      res.status(200).send(req.body);
-    }
-  });
+    });
+    res.status(200).send(req.body);
+	});
 
   app.post('/update/cpu/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
@@ -51,27 +118,20 @@ module.exports = function(app, pool) {
     res.end();
   });
 
-  app.post('/update/ssd', function(req, res) {
-    req.body = scrub.SSD(req.body);
-    var verrors = validate.SSD(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL update_ssd('"+req.body.serial_num+"','"
-          +req.body.capacity+"','"+req.body.manufacturer+"','"
-          +req.body.model+"','"
-          +req.body.notes+"','"+req.body.scrapped+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-            conn.release();
-        });
+  app.post('/update/ssd', scrubAndValidate('SSD'), function(req, res) {
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_ssd('"+req.body.serial_num+"','"
+        +req.body.capacity+"','"+req.body.manufacturer+"','"
+        +req.body.model+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
       });
-      res.status(200).send(req.body);
-    }
+    });
+    res.status(200).send(req.body);
   });
 
   app.post('/update/ssd/notes', function(req, res) {
@@ -87,35 +147,28 @@ module.exports = function(app, pool) {
     res.end();
   });
 
-  app.post('/update/memory', function(req, res) {
-    req.body = scrub.Memory(req.body);
-    var verrors = validate.Memory(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL update_memory('"+
-          req.body.serial_num+"','"+
-          req.body.manufacturer+"','"+
-          req.body.physical_size+"','"+
-          req.body.ecc+"','"+
-          req.body.ranks+"','"+
-          req.body.memory_type+"','"+
-          req.body.capacity+"','"+
-          req.body.speed+"','"+
-          req.body.notes+"','"+
-          req.body.scrapped+"');",
-          function(error, results, fields){
-            console.log(results);
-            if(error) {
-              throw error;
-            }
-            conn.release();
-        });
+  app.post('/update/memory', scrubAndValidate('Memory'), function(req, res) {
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_memory('"+
+        req.body.serial_num+"','"+
+        req.body.manufacturer+"','"+
+        req.body.physical_size+"','"+
+        req.body.ecc+"','"+
+        req.body.ranks+"','"+
+        req.body.memory_type+"','"+
+        req.body.capacity+"','"+
+        req.body.speed+"','"+
+        req.body.notes+"','"+
+        req.body.scrapped+"');",
+        function(error, results, fields){
+          console.log(results);
+          if(error) {
+            throw error;
+          }
+          conn.release();
       });
-      res.status(200).send(req.body);
-    }
+    });
+    res.status(200).send(req.body);
   });
 
   app.post('/update/memory/notes', function(req, res) {
@@ -131,26 +184,19 @@ module.exports = function(app, pool) {
     res.end();
   });
 
-  app.post('/update/flash', function(req, res) {
-    req.body = scrub.Flash(req.body);
-    var verrors = validate.Flash(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL update_flash('"+req.body.serial_num+"','"
-          +req.body.capacity+"','"+req.body.manufacturer+"','"
-          +req.body.notes+"','"+req.body.scrapped+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-            conn.release();
-        });
+  app.post('/update/flash', scrubAndValidate('Flash'), function(req, res) {
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_flash('"+req.body.serial_num+"','"
+        +req.body.capacity+"','"+req.body.manufacturer+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
       });
-      res.status(200).send(req.body);
-    }
+    });
+    res.status(200).send(req.body);
   });
 
   app.post('/update/flash/notes', function(req, res) {
@@ -166,27 +212,20 @@ module.exports = function(app, pool) {
     res.end();
   });
 
-  app.post('/update/board', function(req, res) {
-    req.body = scrub.Board(req.body);
-    var verrors = validate.Board(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL update_board('"+req.body.serial_num+"','"
-          +req.body.fpga+"','"+req.body.bios+"','"
-          +req.body.mac+"','"+req.body.fab+"','"
-          +req.body.notes+"','"+req.body.scrapped+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-            conn.release();
-        });
+  app.post('/update/board', scrubAndValidate('Board'), function(req, res) {
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL update_board('"+req.body.serial_num+"','"
+        +req.body.fpga+"','"+req.body.bios+"','"
+        +req.body.mac+"','"+req.body.fab+"','"
+        +req.body.notes+"','"+req.body.scrapped+"');",
+        function(error, results, fields){
+          if(error) {
+            throw error;
+          }
+          conn.release();
       });
-      res.status(200).send(req.body);
-    }
+    });
+    res.status(200).send(req.body);
   });
 
   app.post('/update/board/notes', function(req, res) {
@@ -202,165 +241,92 @@ module.exports = function(app, pool) {
     res.end();
   });
 
-  app.post('/add/cpu', function(req, res) {
-    req.body = scrub.CPU(req.body);
-    var verrors = validate.CPU(req.body);
+  app.post('/add/cpu', [scrubAndValidate('CPU'), checkSerials], function(req, res) {
+    var stringifySerials = req.body.serial_num.toString();
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_cpu('"+stringifySerials+"','"
+        +req.body.spec+"','"+req.body.mm+"','"
+        +req.body.frequency+"','"+req.body.stepping+"','"
+        +req.body.llc+"','"+req.body.cores+"','"
+        +req.body.codename+"','"+req.body.cpu_class+"','"
+        +req.body.external_name+"','"+req.body.architecture+"','"
+        +req.body.notes+"');",
+      	function(error, results, fields){
+        	if(error) {
+          	throw error;
+        	}
+    	});
 
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial('"+req.body.serial_num+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-            
-            if(results[0].length == 0) {
-              conn.query("CALL put_cpu('"+req.body.serial_num+"','"
-                +req.body.spec+"','"+req.body.mm+"','"
-                +req.body.frequency+"','"+req.body.stepping+"','"
-                +req.body.llc+"','"+req.body.cores+"','"
-                +req.body.codename+"','"+req.body.cpu_class+"','"
-                +req.body.external_name+"','"+req.body.architecture+"','"
-                +req.body.notes+"');",
-              function(error, results, fields){
-                if(error) {
-                  throw error;
-                }
-              });
-            }
-            conn.release();
-            res.status(200).send(req.body);
-        });
-      });
-    } 
+  		conn.release();
+    	res.status(200).send(req.body);
+  	});
   });
 
-  app.post('/add/ssd', function(req, res) {
-    req.body = scrub.SSD(req.body);
-    var verrors = validate.SSD(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial('"+req.body.serial_num+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-
-          if(results[0].length == 0) {
-            conn.query("CALL put_ssd('"+req.body.serial_num+"','"
-              +req.body.manufacturer+"','"+req.body.model+"','"
-              +req.body.capacity+"','"+req.body.notes+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
-          }
-          conn.release();
-          res.status(200).send(req.body);
-        });
+  app.post('/add/ssd', [scrubAndValidate('SSD'), checkSerials], function(req, res) {
+    var stringifySerials = req.body.serial_num.toString();
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_ssd('"+stringifySerials+"','"
+        +req.body.manufacturer+"','"+req.body.model+"','"
+        +req.body.capacity+"','"+req.body.notes+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
       });
-    }
+
+      conn.release();
+      res.status(200).send(req.body);
+    });
   });
 
-  app.post('/add/memory', function(req, res) {
-    req.body = scrub.Memory(req.body);
-    var verrors = validate.Memory(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial('"+req.body.serial_num+"');",
-          function(error, results, fields){
-            if(error) {
-              throw error;
-            }
-
-            if(results[0].length == 0) {
-              conn.query("CALL put_memory('"+req.body.serial_num+"','"
-                +req.body.manufacturer+"','"+req.body.physical_size+"','"
-                +req.body.memory_type+"','"+req.body.capacity+"','"
-                +req.body.speed+"','"+req.body.ecc+"','"
-                +req.body.ranks+"','"+req.body.notes+"');",
-              function(error, results, fields){
-                if(error) {
-                  throw error;
-                }
-              });
-            }
-            conn.release();
-            res.status(200).send(req.body);
-        });
+  app.post('/add/memory', [scrubAndValidate('Memory'), checkSerials], function(req, res) {
+    var stringifySerials = req.body.serial_num.toString();
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_memory('"+stringifySerials+"','"
+        +req.body.manufacturer+"','"+req.body.physical_size+"','"
+        +req.body.memory_type+"','"+req.body.capacity+"','"
+        +req.body.speed+"','"+req.body.ecc+"','"
+        +req.body.ranks+"','"+req.body.notes+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
       });
-    }
+      conn.release();
+      res.status(200).send(req.body);
+    });
   });
 
-  app.post('/add/flash', function(req, res) {
-    req.body = scrub.Flash(req.body);
-    var verrors = validate.Flash(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial('"+req.body.serial_num+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-
-          if(results[0].length == 0) {
-            conn.query("CALL put_flash_drive('"+req.body.serial_num+"','"
-              +req.body.manufacturer+"','"+req.body.capacity+"','"
-              +req.body.notes+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
-          }
-          conn.release();
-          res.status(200).send(req.body);
-        });
+  app.post('/add/flash', [scrubAndValidate('Flash'), checkSerials], function(req, res) {
+    var stringifySerials = req.body.serial_num.toString();
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_flash_drive('"+stringifySerials+"','"
+        +req.body.manufacturer+"','"+req.body.capacity+"','"
+        +req.body.notes+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
       });
-    }
+      conn.release();
+      res.status(200).send(req.body);
+    });
   });
 
-  app.post('/add/board', function(req, res) {
-    req.body = scrub.Board(req.body);
-    var verrors = validate.Board(req.body);
-
-    if (verrors) {
-      res.status(400).send(verrors);
-    } else {
-      pool.getConnection(function(err, conn) {
-        conn.query("CALL check_serial('"+req.body.serial_num+"');",
-        function(error, results, fields){
-          if(error) {
-            throw error;
-          }
-
-          if(results[0].length == 0) {
-            conn.query("CALL put_board('"+req.body.serial_num+"','"
-              +req.body.fpga+"','"+req.body.bios+"','"
-              +req.body.mac+"','"+req.body.fab+"','"+req.body.notes+"');",
-            function(error, results, fields){
-              if(error) {
-                throw error;
-              }
-            });
-          }
-          conn.release();
-          res.status(200).send(req.body);
-        });
+  app.post('/add/board', [scrubAndValidate('Board'), checkSerials], function(req, res) {
+    var stringifySerials = req.body.serial_num.toString();
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_board('"+stringifySerials+"','"
+        +req.body.fpga+"','"+req.body.bios+"','"
+        +req.body.mac+"','"+req.body.fab+"','"+req.body.notes+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
       });
-    }
+      conn.release();
+      res.status(200).send(req.body);
+    });
   });
 
   app.post('/scrap/submit', function(req, res) {

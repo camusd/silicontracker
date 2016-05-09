@@ -37,6 +37,13 @@ function scrubCPU(cpu) {
 			for (var i = 0; i < cpu.serial_num.length; i++) {
 				cpu.serial_num[i] = cpu.serial_num[i].trimWords();
 			}
+
+			for (var i = 0; i < cpu.serial_num.length; i++) {
+				if (cpu.serial_num[i] === '') {
+					cpu.serial_num.splice(i, 1);
+					i--;
+				}
+			}
 		} else {
 			cpu.serial_num = [];
 		}

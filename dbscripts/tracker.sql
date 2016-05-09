@@ -388,6 +388,40 @@ UNLOCK TABLES;
 --
 -- Dumping routines for database 'tracker'
 --
+/*!50003 DROP FUNCTION IF EXISTS `formatCSL` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE FUNCTION `formatCSL`(
+_text TEXT
+) RETURNS text CHARSET latin1
+    NO SQL
+BEGIN
+ 
+IF _text IS NULL THEN
+    RETURN NULL;
+END IF;
+ 
+SET _text = TRIM(_text);
+ 
+WHILE INSTR(_text, ' ,') DO
+    SET _text = REPLACE(_text, ' ,', ',');
+END WHILE;
+ 
+WHILE INSTR(_text, ', ') DO
+    SET _text = REPLACE(_text, ', ', ',');
+END WHILE;
+ 
+RETURN _text;
+ 
+END ;;
+DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -424,12 +458,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `check_serial`(IN which_serial VARCHAR(20))
+CREATE PROCEDURE `check_serial`(IN serial_nums TEXT)
 BEGIN
-  SELECT serial_num
-    FROM Items
-    WHERE serial_num = which_serial;
-
+  SET @q = CONCAT('SELECT serial_num FROM Items WHERE serial_num IN (', serial_nums, ')');
+  
+    PREPARE stmt FROM @q;
+  EXECUTE stmt;
+  DEALLOCATE PREPARE stmt;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1128,23 +1163,32 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `put_board`(IN new_serial_num VARCHAR(20),
+CREATE PROCEDURE `put_board`(IN new_serial_nums TEXT,
  IN new_fpga VARCHAR(8),
  IN new_bios VARCHAR(8),
  IN new_mac VARCHAR(17),
  IN new_fab VARCHAR(5),
  IN new_notes TEXT)
 BEGIN
-  INSERT INTO Items
+  SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_serial_nums = formatCSL(new_serial_nums);
+   
+  WHILE new_serial_nums != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_serial_nums, @separator, 1);
+    INSERT INTO Items
     (item_type, serial_num, notes, scrapped, checked_in)
-  VALUES
-    ('board', new_serial_num, new_notes, 0, 1);
-  INSERT INTO Board
+    VALUES
+    ('board', @currentValue, new_notes, 0, 1);
+    INSERT INTO Board
     (product_id, fpga,
-         bios, mac, fab)
-  VALUES
+       bios, mac, fab)
+    VALUES
     (LAST_INSERT_ID(), new_fpga,
-         new_bios, new_mac, new_fab);
+       new_bios, new_mac, new_fab);
+             
+    SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+  END WHILE;
 
 END ;;
 DELIMITER ;
@@ -1160,24 +1204,33 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `put_cpu`(IN `new_serial_num` VARCHAR(20), IN `new_spec` VARCHAR(5), IN `new_mm` VARCHAR(7), IN `new_frequency` VARCHAR(5), IN `new_stepping` VARCHAR(6), IN `new_llc` FLOAT, IN `new_cores` INT(4), IN `new_codename` VARCHAR(25), IN `new_cpu_class` VARCHAR(10), IN `new_external_name` VARCHAR(25), IN `new_architecture` VARCHAR(25), IN `new_notes` TEXT)
-BEGIN
-	INSERT INTO Items
-		(item_type, serial_num, notes, scrapped, checked_in)
-	VALUES
-		('cpu', new_serial_num, new_notes, 0, 1);
-	INSERT INTO Processor
-		(product_id, spec, mm, frequency,
-         stepping, llc, cores, codename, cpu_class,
-         external_name, architecture)
-	VALUES
-		(LAST_INSERT_ID(), new_spec,
-         new_mm, new_frequency, new_stepping, new_llc,
-         new_cores, new_codename, new_cpu_class,
-         new_external_name, new_architecture);
-
+CREATE PROCEDURE `put_cpu`(IN `new_serial_nums` TEXT, IN `new_spec` VARCHAR(5), IN `new_mm` VARCHAR(7), IN `new_frequency` VARCHAR(5), IN `new_stepping` VARCHAR(6), IN `new_llc` FLOAT, IN `new_cores` INT(4), IN `new_codename` VARCHAR(25), IN `new_cpu_class` VARCHAR(10), IN `new_external_name` VARCHAR(25), IN `new_architecture` VARCHAR(25), IN `new_notes` TEXT)
+BEGIN    
+    SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_serial_nums = formatCSL(new_serial_nums);
+   
+  WHILE new_serial_nums != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_serial_nums, @separator, 1);
+        INSERT INTO Items
+      (item_type, serial_num, notes, scrapped, checked_in)
+    VALUES
+      ('cpu', @currentValue, new_notes, 0, 1);
+            
+    INSERT INTO Processor
+      (product_id, spec, mm, frequency,
+       stepping, llc, cores, codename, cpu_class,
+       external_name, architecture)
+    VALUES
+      (LAST_INSERT_ID(), new_spec,
+       new_mm, new_frequency, new_stepping, new_llc,
+       new_cores, new_codename, new_cpu_class,
+       new_external_name, new_architecture);
+   
+    SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+  END WHILE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1192,23 +1245,31 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `put_flash_drive`(IN new_serial_num VARCHAR(20),
+CREATE PROCEDURE `put_flash_drive`(IN new_serial_nums TEXT,
  IN new_manufacturer VARCHAR(15),
  IN new_capacity INT(5),
  IN new_notes TEXT)
 BEGIN
-	INSERT INTO Items
-		(item_type, serial_num, notes, scrapped, checked_in)
-	VALUES
-		('flash', new_serial_num, new_notes, 0, 1);
-	INSERT INTO Flash_Drive
-		(product_id, manufacturer, capacity)
-	VALUES
-		(LAST_INSERT_ID(),
-         new_manufacturer, new_capacity);
-
+  SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_serial_nums = formatCSL(new_serial_nums);
+   
+  WHILE new_serial_nums != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_serial_nums, @separator, 1);
+        
+    INSERT INTO Items
+      (item_type, serial_num, notes, scrapped, checked_in)
+    VALUES
+      ('flash', @currentValue, new_notes, 0, 1);
+    INSERT INTO Flash_Drive
+      (product_id, manufacturer, capacity)
+    VALUES
+      (LAST_INSERT_ID(),
+       new_manufacturer, new_capacity);
+    SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+  END WHILE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1223,9 +1284,9 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `put_memory`(IN new_serial_num VARCHAR(20),
+CREATE PROCEDURE `put_memory`(IN new_serial_nums TEXT,
  IN new_manufacturer VARCHAR(15),
  IN new_physical_size VARCHAR(15),
  IN new_memory_type VARCHAR(12),
@@ -1235,18 +1296,25 @@ CREATE PROCEDURE `put_memory`(IN new_serial_num VARCHAR(20),
  IN new_ranks INT(3),
  IN new_notes TEXT)
 BEGIN
-	INSERT INTO Items
-		(item_type, serial_num, notes, scrapped, checked_in)
-	VALUES
-		('memory', new_serial_num, new_notes, 0, 1);
-	INSERT INTO RAM
-		(product_id, manufacturer, physical_size,
-         memory_type, capacity, speed, ecc, ranks)
-	VALUES
-		(LAST_INSERT_ID(), new_manufacturer,
-         new_physical_size, new_memory_type, new_capacity,
-         new_speed, new_ecc, new_ranks);
-
+  SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_serial_nums = formatCSL(new_serial_nums);
+   
+  WHILE new_serial_nums != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_serial_nums, @separator, 1);
+    INSERT INTO Items
+      (item_type, serial_num, notes, scrapped, checked_in)
+    VALUES
+      ('memory', @currentValue, new_notes, 0, 1);
+    INSERT INTO RAM
+      (product_id, manufacturer, physical_size,
+       memory_type, capacity, speed, ecc, ranks)
+    VALUES
+      (LAST_INSERT_ID(), new_manufacturer,
+       new_physical_size, new_memory_type, new_capacity,
+       new_speed, new_ecc, new_ranks);
+    SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+  END WHILE;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1261,23 +1329,33 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `put_ssd`(IN new_serial_num VARCHAR(20),
+CREATE PROCEDURE `put_ssd`(IN new_serial_nums TEXT,
  IN new_manufacturer VARCHAR(15),
  IN new_model VARCHAR(15),
  IN new_capacity INT(5),
  IN new_notes TEXT)
 BEGIN
-	INSERT INTO Items
-		(item_type, serial_num, notes, scrapped, checked_in)
-	VALUES
-		('ssd', new_serial_num, new_notes, 0, 1);
-	INSERT INTO SSD
-		(product_id, manufacturer, model, capacity)
-	VALUES
-		(LAST_INSERT_ID(), new_manufacturer,
+  SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_serial_nums = formatCSL(new_serial_nums);
+   
+  WHILE new_serial_nums != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_serial_nums, @separator, 1);
+        
+  INSERT INTO Items
+    (item_type, serial_num, notes, scrapped, checked_in)
+  VALUES
+    ('ssd', @currentValue, new_notes, 0, 1);
+  INSERT INTO SSD
+    (product_id, manufacturer, model, capacity)
+  VALUES
+    (LAST_INSERT_ID(), new_manufacturer,
          new_model, new_capacity);
+
+  SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+END WHILE;
          
 END ;;
 DELIMITER ;
@@ -1295,7 +1373,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `scan_item`(IN new_user VARCHAR(8),
+CREATE PROCEDURE `scan_item`(IN new_user VARCHAR(8),
  IN item VARCHAR(20))
 BEGIN
   SET @pid = (SELECT id
