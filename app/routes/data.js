@@ -24,15 +24,15 @@ module.exports = function(app, pool) {
         jsonToSend.num_scrapped =  results[0][0].num_scrapped;
         jsonToSend.num_active = results[0][0].num_active;
         jsonToSend.num_total = jsonToSend.num_scrapped + jsonToSend.num_active;
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
-        if (req.session.first_name) {
+        if (req.session.webLogin && req.session.first_name) {
           jsonToSend.first_name = req.session.first_name;
         }
-        if (req.session.last_name) {
+        if (req.session.webLogin && req.session.last_name) {
           jsonToSend.last_name = req.session.last_name;
         }
         res.json(jsonToSend);
@@ -51,7 +51,7 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
@@ -82,7 +82,7 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
@@ -110,7 +110,7 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
@@ -139,7 +139,7 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
@@ -168,7 +168,7 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.wwid) {
+        if (req.session.webLogin && req.session.wwid) {
           jsonToSend.is_admin = req.session.is_admin;
         } else {
           jsonToSend.is_admin = 0;
@@ -332,7 +332,7 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.wwid) {
+          if (req.session.webLogin && req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
             jsonToSend.is_admin = 0;
@@ -363,7 +363,7 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.wwid) {
+          if (req.session.webLogin && req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
             jsonToSend.is_admin = 0;
@@ -391,7 +391,7 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.wwid) {
+          if (req.session.webLogin && req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
             jsonToSend.is_admin = 0;
@@ -420,7 +420,7 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.wwid) {
+          if (req.session.webLogin && req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
             jsonToSend.is_admin = 0;
@@ -449,7 +449,7 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.wwid) {
+          if (req.session.webLogin && req.session.wwid) {
             jsonToSend.is_admin = req.session.is_admin;
           } else {
             jsonToSend.is_admin = 0;
