@@ -37,6 +37,12 @@ var db_options = {
 	database: process.env.DB || 'tracker'
 };
 
+if (process.env.DB_SSL === true) {
+	db_options.ssl = {
+		ca: fs.readFileSync(process.env.ROOT_DIR + '/ssl/silicontracker_xyz.crt')
+	}
+}
+
 var pool;
 // handleConnection()
 // When the database/server connection is lost due to connection issues,
