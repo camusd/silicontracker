@@ -215,6 +215,7 @@ module.exports = function(app, pool) {
 		 				req.session.last_name = results[0][0].last_name;
 		 				req.session.first_name = results[0][0].first_name;
 		 				req.session.is_admin = results[0][0].is_admin;
+		 				req.session.kioskLogin = true;
 		 				req.session.save();
 					} else {
 						// Got no results
@@ -241,7 +242,7 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-	if (req.session.wwid) {
+	if (req.session.kioskLogin) {
 		next();
 	} else {
 		res.redirect('/kiosk');

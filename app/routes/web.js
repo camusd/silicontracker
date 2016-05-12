@@ -451,12 +451,13 @@ module.exports = function(app, pool) {
   });
 
   app.get('/logout', function(req, res) {
-    req.session.destroy(function (err) {
-      if (err) {
-        console.log(err)
-      };
-    });
-    res.clearCookie('my.tracker.sid');
+    // req.session.destroy(function (err) {
+    //   if (err) {
+    //     console.log(err)
+    //   };
+    // });
+    req.session.webLogin = false;
+    // res.clearCookie('my.tracker.sid');
     res.redirect('/');
   });
 
@@ -499,6 +500,7 @@ module.exports = function(app, pool) {
             req.session.last_name = results[0][0].last_name;
             req.session.first_name = results[0][0].first_name;
             req.session.is_admin = results[0][0].is_admin;
+            req.session.webLogin = true;
             req.session.save();
           } else {
             // Got no results
@@ -526,7 +528,7 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-  if (req.session.wwid) {
+  if (req.session.webLogin) {
     next();
   } else {
     res.redirect('/login');
@@ -534,7 +536,7 @@ function enforceLogin(req, res, next) {
 }
 
 function enforceAdminLogin(req, res, next) {
-  if (req.session.wwid && req.session.is_admin) {
+  if (req.session.webLogin && req.session.is_admin) {
     next();
   } else {
     res.redirect('/login');
