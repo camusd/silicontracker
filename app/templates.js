@@ -26,7 +26,7 @@ module.exports = function() {
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: addr,
-			subject: "Silicon Tracker Checkout Reminder",
+			subject: "[Si-Tracker] Silicon Tracker Reminder",
 			text: intro+order+outro
 		};
 		transporter.sendMail(mailOptions, function(error, info){
@@ -62,7 +62,7 @@ module.exports = function() {
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: addr,
-			subject: "Silicon Tracker Checkout Summary",
+			subject: "[Si-Tracker] Silicon Tracker Checkout Summary",
 			text: intro+order
 		};
 		transporter.sendMail(mailOptions, function(error, info){
@@ -91,7 +91,7 @@ module.exports = function() {
 		var mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: addr,
-			subject: "Silicon Tracker Item Notification",
+			subject: "[Si-Tracker] Silicon Tracker Item Notification",
 			text: intro+order
 		};
 		transporter.sendMail(mailOptions, function(error, info){
