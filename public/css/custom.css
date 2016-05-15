@@ -41,6 +41,10 @@ background-color: #f5f5f5;
     text-align: center;
 }
 
+.content-wrap {
+  padding: 10px;
+}
+
 /* Hide for mobile, show later */
 .sidebar {
   display: none;

@@ -437,8 +437,20 @@ module.exports = function(app, pool) {
 
   // TODO: Add new attributes to the database
   app.post('/settings/attributes', enforceAdminLogin, function(req, res) {
-    console.log(req.body);
-    res.send({redirect: '/settings'});
+    if (process.env.ENV === 'dev') {
+      console.log(req.body);
+    }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_dd_attributes('"+req.body.item_type+"','"
+        +req.body.attr_type+"','"+req.body.attr_vals.toString()+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+      });
+      conn.release();
+      res.status(200).send();
+    });
   });
 
    // For testing purposes. Will need to be deleted.

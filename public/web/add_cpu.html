@@ -111,7 +111,8 @@
 
         <div class="col-md-6 form-group">
           <label class="control-label" for="cpu_class">Class <span class="req-field">*</span></label>  
-          <input id="cpu_class" name="cpu_class" class="form-control" maxlength="10" tabindex="9" type="text">
+          <input id="cpu_class" name="cpu_class" class="form-control" maxlength="10" list="dd_cpu_class" tabindex="9">
+          <datalist id="dd_cpu_class"></datalist> <!-- list options generated using jquery. -->
           <div id="cpu_class_help"></div>
         </div>
 
