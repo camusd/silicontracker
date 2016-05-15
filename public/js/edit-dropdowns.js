@@ -1,62 +1,66 @@
 $(document).ready(function() {
-  var uniqueAttrs = [];
   var currentAttr = '';
   var currentItem = '';
   var dd = {
-    cpu: [],
-    ssd: [],
-    memory: [],
-    flash_drive: [],
-    board: []
+    cpu: {
+    	codename: [],
+    	cpu_class: []
+    },
+    ssd: {},
+    memory: {},
+    flash_drive: {},
+    board: {}
   };
 
-  function getUniqueAttrs(attributes) {
-    var attrsToFilter = [];
-
-    for (var i = 0; i < attributes.length; i++) {
-      attrsToFilter.push(attributes[i].attr_key);
-    }
-
-    return attrsToFilter.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
-  }
-
-  function loadTable(itemType, attribute) {
-    var attributes = dd[itemType];
-
+  function loadTable() {
     // clearing out the current table
     $('#attr_table tbody tr').remove();
-    // adding new table items
-    for (var i = 0; i < attributes.length; i++) {
-      if (attributes[i].attr_key === attribute) {
-        $('#attr_table tbody').append(
-                      '<tr><td contenteditable>' + attributes[i].attr_value +
-                      '</td><td><button class="del btn btn-link">delete</button></td></tr>');
-        // Setting up the delete button for each row.
-        $('#attr_table tbody tr').on('click', '.del', function() {
-            var attrToRemove = $(this).parent().parent();
-            attrToRemove.remove();
-        });
-      }
+
+    // adding new table items. for each attribute, add a new editable row.
+    var attributeVals = dd[currentItem][currentAttr];
+    for (var i = 0; i < attributeVals.length; i++) {
+    	$('#attr_table tbody').append(
+        '<tr><td contenteditable>' + attributeVals[i] +
+        '</td><td><button class="del btn btn-link">delete</button></td></tr>');
+      // Setting up the delete button for each row.
+      $('#attr_table tbody tr').on('click', '.del', function() {
+          var attrToRemove = $(this).parent().parent();
+          attrToRemove.remove();
+      });
     }
   }
 
-  function loadAttr(attributes) {
+  function loadAttr() {
+  	var attributes = dd[currentItem];
+		currentAttr = Object.keys(attributes)[0];
+
+  	// Removing the disable on the attribute dropdown.
     if ($('#dd_attr').attr('disabled') === 'disabled') {
       $('#dd_attr').removeAttr('disabled');
     }
-    // populating the attributes dropdown
+
+		// removing old attributes    
     $('#dd_attr').find('option').remove();
-    uniqueAttrs = getUniqueAttrs(attributes);
-    currentAttr = uniqueAttrs[0];
-    if (uniqueAttrs.length === 0) {
-      $('#addAttribute').attr('disabled', 'disabled');
+    
+    // populating the attributes dropdown
+    var attrCount = 0;
+    for (attr in attributes) {
+    	$('#dd_attr').append('<option value="'+attr+'">'+attrNames[attr]+'</option>')
+    	attrCount++;
+
+    	// Enable buttons.
+    	$('#addAttribute').removeAttr('disabled');
+    	$('#submitAttributes').removeAttr('disabled');
+    	$('#dd_attr').removeAttr('disabled');
+		}
+
+		// No dropdown attributes for this item. Disable buttons.
+		if (attrCount === 0) {	
       $('#dd_attr').append('<option>(None)</option>');
-    } else {
-      $('#addAttribute').removeAttr('disabled');  
-      $.each(uniqueAttrs, function(idx, elem) {
-        $('#dd_attr').append('<option value="'+elem+'">'+attrNames[elem]+'</option>');
-      });
-    }
+      $('#dd_attr').attr('disabled', 'disabled');
+      $('#addAttribute').attr('disabled', 'disabled');
+      $('#submitAttributes').attr('disabled', 'disabled');
+		}
   }
 
   // Submitting the edited attributes. When invoked, it will create an
@@ -70,6 +74,7 @@ $(document).ready(function() {
           alert('new attributes saved');
       });
   });
+
   // Adding a new text field to the list of attributes.
   $('#addAttribute').click(function() {
       if (currentAttr !== '' || currentAttr !== '(None)') {
@@ -79,13 +84,14 @@ $(document).ready(function() {
       }
   });
 
-  // Getting all the current attributes.
+  // Getting all the current attributes from the server.
   $.get('/dd/keys', function(data) {
     $.each(data, function(idx, elem) {
-      dd[elem.item_type].push({attr_key: elem.attr_type, attr_value: elem.attr_value});
+      dd[elem.item_type][elem.attr_type].push(elem.attr_value);
     });
   });
 
+  // This executes when the Item type is changed.
   $('#dd_item_type').change(function(e) {
     // remove the blank option from the list of items
     var first = $(this).find('option').first();
@@ -94,13 +100,14 @@ $(document).ready(function() {
     }
 
     currentItem = $('#dd_item_type').val();
-    $('#submitAttributes').removeAttr('disabled');
-    loadAttr(dd[currentItem]);
-    loadTable(currentItem, currentAttr);
+    loadAttr();
+    loadTable();
   });
 
+
+  // This executes when the attribute is changed.
   $('#dd_attr').change(function(e) {
     currentAttr = $('#dd_attr').val();
-    loadTable(currentItem, currentAttr);
+    loadTable();
   });
 });

@@ -59,9 +59,9 @@
   <div class="content-wrap">
     <div class="row">
       <!-- Content -->
-      <div class="col-md-6 col-xs-12">
-        <div class="col-md-6 col-xs-12">
-          <label class="control-label" for="choose_attr">Choose an Item</label>
+      <div class="col-md-6 col-md-offset-3 col-xs-12">
+        <div class="col-md-3 col-xs-12">
+          <label class="control-label" for="choose_attr">Item</label>
           <select id="dd_item_type">
             <option></option>
             <option value="cpu">CPU</option>
@@ -71,12 +71,16 @@
             <option value="board">Board</option>
           </select>
         </div>
-        <div class="col-md-6 col-xs-12">
-          <label class="control-label" for="choose_attr">Choose an Attribute</label>
+        <div class="col-md-3 col-xs-12">
+          <label class="control-label" for="choose_attr">Attribute</label>
           <select id="dd_attr" disabled>
             <option></option>
             <option>123456789</option>
           </select>
+        </div>
+        <div class="col-md-6 col-xs-12 top-margin">
+          <button class="btn btn-primary" id="submitAttributes" disabled>Submit</button>
+          <button class="btn btn-default" id="addAttribute" disabled>Add New</button>
         </div>
         <table id="attr_table" class="table">
           <thead>
@@ -88,8 +92,6 @@
           <tbody></tbody>
           <tfoot></tfoot>
         </table>
-        <button class="btn btn-primary" id="submitAttributes" disabled>Submit</button>
-        <button class="btn btn-default" id="addAttribute" disabled>Add New</button>
       </div>
     </div>
   </div>
