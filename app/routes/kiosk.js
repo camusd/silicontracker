@@ -102,6 +102,7 @@ module.exports = function(app, pool) {
 	app.post('/kiosk/submit', function(req, res) {	
 		var item_type = [];
 		var status = [];
+		var items = [];
 		var wwid = req.session.wwid;
 		var serial_nums = req.body.data;
 		var total_finished = 0;
@@ -109,70 +110,69 @@ module.exports = function(app, pool) {
     for(var i=0; i < serial_nums.length; i++) {
     	pool.getConnection(function(i, err, conn) {
       	conn.query("CALL scan_item("+ wwid +",'"+serial_nums[i]+"');",
-      		function(error, results, fields) {
-      			if(error) {
-      				throw error;
-      			}
+  		function(error, results, fields) {
+  			if(error) {
+  				throw error;
+  			}
 
-						item_type[i] = results[0][0].item_type;
-						status[i] = results[0][0].checked_in;
-						user = results[0][0].user;
-						total_finished++;
+  			items[i] = {};
+  			items[i].serial_num = serial_nums[i];
+			items[i].item_type = results[0][0].item_type;
+			items[i].status = results[0][0].checked_in;
+			user = results[0][0].user;
+			total_finished++;
 
-						if(user != null && user != wwid) {
-							conn.query("CALL get_addr("+user+");",
-								function(error, results, fields) {
-									if(error) {
-										throw error;
-									}
+			if(user != null && user != wwid) {
+				conn.query("CALL get_addr("+user+");",
+				function(error, results, fields) {
+					if(error) {
+						throw error;
+					}
 
-									addr = results[0][0].email_address;
-									their_last_name = results[0][0].last_name;
-									their_first_name = results[0][0].first_name;
-									date = results[0][0].order_date;
-									
-									conn.query("CALL get_addr("+wwid+");",
-										function(error, results, fields) {
-											if(error) {
-												throw error;
-											}
-											var my_first_name = results[0][0].first_name;
-											var my_last_name = results[0][0].last_name;
-											console.log("Sending checkin email to "+addr+"...");
-											checkinTemplate(addr, their_first_name, their_last_name, my_first_name, my_last_name, serial_nums[i], item_type[i], status[i], date);
-										});
-								});
+					addr = results[0][0].email_address;
+					their_last_name = results[0][0].last_name;
+					their_first_name = results[0][0].first_name;
+					date = results[0][0].order_date;
+					
+					conn.query("CALL get_addr("+wwid+");",
+					function(error, results, fields) {
+						if(error) {
+							throw error;
 						}
-
-						if(total_finished == serial_nums.length) {
-							conn.query("CALL get_addr("+wwid+");",
-								function(error, results, fields) {
-									if(error) {
-										throw error;
-									}
-
-									addr = results[0][0].email_address;
-									setting = results[0][0].cart_summary_email_setting;
-									last_name = results[0][0].last_name;
-									first_name = results[0][0].first_name;
-									date = results[0][0].order_date;
-
-									if(setting === 1) {
-										console.log("Sending cart summary email to "+addr+"...");
-										cartTemplate(addr, first_name, last_name, serial_nums, item_type, status, date);
-									}
-								});
-							conn.release();
-							req.session.destroy(function (err) {
-								if(err) {
-									console.log(err)
-								} else {
-									res.clearCookie('my.tracker.sid');
-									res.redirect('/kiosk');
-								}
-							});
-						}  
+						var my_first_name = results[0][0].first_name;
+						var my_last_name = results[0][0].last_name;
+						console.log("Sending checkin email to "+addr+"...");
+						checkinTemplate(addr, their_first_name, their_last_name, my_first_name, my_last_name, serial_nums[i], item_type[i], status[i], date);
 					});
+				});
+			}
+
+			if(total_finished === serial_nums.length) {
+				conn.query("CALL get_addr("+wwid+");",
+				function(error, results, fields) {
+					if(error) {
+						throw error;
+					}
+
+					addr = results[0][0].email_address;
+					setting = results[0][0].cart_summary_email_setting;
+					last_name = results[0][0].last_name;
+					first_name = results[0][0].first_name;
+					date = results[0][0].order_date;
+
+					if(setting === 1) {
+						if (process.env.ENV === 'dev') {
+							console.log("Sending cart summary email to "+addr+"...");
+						}
+						cartTemplate(addr, first_name, last_name, serial_nums, item_type, status, date);
+					}
+				});
+				conn.release();
+				req.session.kioskLogin = false;
+				console.log(items);
+				res.status(200).json(items);
+			}  
+		});
       }.bind(pool, i));
     }
   });

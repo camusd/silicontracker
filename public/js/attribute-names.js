@@ -1,3 +1,11 @@
+var itemTypes = {
+  cpu: 'CPU',
+  ssd: 'SSD',
+  memory: 'Memory',
+  flash_drive: 'Flash Drive',
+  board: 'Board'
+};
+
 var attrNames = {
   // CPU
   serial_num:   'Serial Number',

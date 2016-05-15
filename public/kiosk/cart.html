@@ -10,13 +10,12 @@
 <link rel="stylesheet" href="../css/custom.css">
 <link rel="stylesheet" href="../css/navbar.css">
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script> 
-<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script>
-<script src="../js/cart_barcode.js"></script>
+<script src="../js/attribute-names.js"></script>
+<script src="../js/cart.js"></script>
 
 </head>
 
@@ -73,12 +72,39 @@
     </div> 
   </div>  
   <div class="col-md-4-c" style=" text-align: center">
-    <button id="submit" name="submit" type="button" class="btn btn-primary" onclick="submitData(val_array)">Submit</button>
+    <button id="submit" name="submit" type="button" class="btn btn-primary">Submit</button>
   </div>
 </div>
 
 <div class="footer footer-intel">
   <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
+</div>
+
+<!-- Modals -->
+<div id="SuccessModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Checkout Successful!</h4>
+      </div>
+      <div class="modal-body">
+        <table id="submit-results" class="table">
+        <thead>
+          <tr>
+            <th>Serial Number</th>
+            <th>Item Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>
