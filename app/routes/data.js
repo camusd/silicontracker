@@ -3,6 +3,17 @@
 var rootdir = process.env.ROOT_DIR;
 var models = require(rootdir + '/app/models');
 
+function isLoggedIn(session) {
+	if (session.hasOwnProperty('web')) {
+		if (session.web.hasOwnProperty('loggedIn')) {
+			if (session.web.loggedIn === true) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 module.exports = function(app, pool) {
 
   /* 
@@ -24,16 +35,16 @@ module.exports = function(app, pool) {
         jsonToSend.num_scrapped =  results[0][0].num_scrapped;
         jsonToSend.num_active = results[0][0].num_active;
         jsonToSend.num_total = jsonToSend.num_scrapped + jsonToSend.num_active;
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
-        if (req.session.webLogin && req.session.first_name) {
-          jsonToSend.first_name = req.session.first_name;
+        if (isLoggedIn(req.session) && req.session.web.first_name) {
+          jsonToSend.first_name = req.session.web.first_name;
         }
-        if (req.session.webLogin && req.session.last_name) {
-          jsonToSend.last_name = req.session.last_name;
+        if (isLoggedIn(req.session) && req.session.web.last_name) {
+          jsonToSend.last_name = req.session.web.last_name;
         }
         res.json(jsonToSend);
       });
@@ -51,8 +62,8 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
@@ -82,8 +93,8 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
@@ -110,8 +121,8 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
@@ -139,8 +150,8 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
@@ -168,8 +179,8 @@ module.exports = function(app, pool) {
 
         // We send admin stats for the table because there are admin-specific
         // elements to the table.
-        if (req.session.webLogin && req.session.wwid) {
-          jsonToSend.is_admin = req.session.is_admin;
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
         } else {
           jsonToSend.is_admin = 0;
         }
@@ -332,8 +343,8 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.webLogin && req.session.wwid) {
-            jsonToSend.is_admin = req.session.is_admin;
+          if (isLoggedIn(req.session) && req.session.web.wwid) {
+            jsonToSend.is_admin = req.session.web.is_admin;
           } else {
             jsonToSend.is_admin = 0;
           }
@@ -363,8 +374,8 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.webLogin && req.session.wwid) {
-            jsonToSend.is_admin = req.session.is_admin;
+          if (isLoggedIn(req.session) && req.session.web.wwid) {
+            jsonToSend.is_admin = req.session.web.is_admin;
           } else {
             jsonToSend.is_admin = 0;
           }
@@ -391,8 +402,8 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.webLogin && req.session.wwid) {
-            jsonToSend.is_admin = req.session.is_admin;
+          if (isLoggedIn(req.session) && req.session.web.wwid) {
+            jsonToSend.is_admin = req.session.web.is_admin;
           } else {
             jsonToSend.is_admin = 0;
           }
@@ -420,8 +431,8 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.webLogin && req.session.wwid) {
-            jsonToSend.is_admin = req.session.is_admin;
+          if (isLoggedIn(req.session) && req.session.web.wwid) {
+            jsonToSend.is_admin = req.session.web.is_admin;
           } else {
             jsonToSend.is_admin = 0;
           }
@@ -449,8 +460,8 @@ module.exports = function(app, pool) {
             throw error;
           }
           conn.release();
-          if (req.session.webLogin && req.session.wwid) {
-            jsonToSend.is_admin = req.session.is_admin;
+          if (isLoggedIn(req.session) && req.session.web.wwid) {
+            jsonToSend.is_admin = req.session.web.is_admin;
           } else {
             jsonToSend.is_admin = 0;
           }

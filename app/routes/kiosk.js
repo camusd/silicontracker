@@ -114,7 +114,7 @@ module.exports = function(app, pool) {
 	});
 
 	app.post('/kiosk/logout', function(req, res) {
-		req.session.kioskLogin = false;
+		req.session.kiosk.loggedIn = false;
 		req.session.saveForLater = [];
 		res.end();
 	});
@@ -148,7 +148,7 @@ module.exports = function(app, pool) {
 		var item_type = [];
 		var status = [];
 		var items = [];
-		var wwid = req.session.wwid;
+		var wwid = req.session.kiosk.wwid;
 		var serial_nums = req.body.data;
 		var total_finished = 0;
 		var addr, setting, first_name, last_name, date, user;
@@ -213,7 +213,7 @@ module.exports = function(app, pool) {
 					}
 				});
 				conn.release();
-				req.session.kioskLogin = false;
+				req.session.kiosk.loggedIn = false;
 				req.session.saveForLater = [];
 				res.status(200).json(items);
 			}  
@@ -239,8 +239,9 @@ module.exports = function(app, pool) {
 	 			}
 	 			// Checking if the user exists in AD.
 	 			if (body !== '') {
+	 				req.session.kiosk = new models.SessionUser();
 	 				// We have a user in the AD system. Parse out the wwid.
-	 				req.session.wwid = body;
+	 				req.session.kiosk.wwid = body;
 	 				next();
 	 			} else {
 	 				// No wwid found, send user back to login page.
@@ -250,17 +251,17 @@ module.exports = function(app, pool) {
 	}, function(req,res,next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
       	pool.getConnection(function(err, conn) {
-			conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+			conn.query('CALL get_user_from_wwid('+req.session.kiosk.wwid+')', function(error, results, fields) {
 					if (error) {
 						throw error;
 					}
 		 			conn.release();
 					
 					if (results[0].length === 1) {
-		 				req.session.last_name = results[0][0].last_name;
-		 				req.session.first_name = results[0][0].first_name;
-		 				req.session.is_admin = results[0][0].is_admin;
-		 				req.session.kioskLogin = true;
+		 				req.session.kiosk.last_name = results[0][0].last_name;
+		 				req.session.kiosk.first_name = results[0][0].first_name;
+		 				req.session.kiosk.is_admin = results[0][0].is_admin;
+		 				req.session.kiosk.loggedIn = true;
 		 				req.session.save();
 					} else {
 						// Got no results
@@ -277,9 +278,9 @@ module.exports = function(app, pool) {
 
 		//TEST LOGS
 		if (process.env.ENV === 'dev') {
-			console.log(req.session.wwid);
-			console.log(req.session.last_name);
-			console.log(req.session.first_name);
+			console.log(req.session.kiosk.wwid);
+			console.log(req.session.kiosk.last_name);
+			console.log(req.session.kiosk.first_name);
 		}
 		
 		res.redirect('/cart');
@@ -287,7 +288,7 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-	if (req.session.kioskLogin) {
+	if (req.session.kiosk.loggedIn) {
 		next();
 	} else {
 		res.redirect('/kiosk');
