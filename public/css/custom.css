@@ -8,6 +8,15 @@ body {
     margin-bottom: 50px;
     background: #ececec;
 }
+.row-body {
+  display: table;
+}
+
+.row-body-cell {
+  float: none;
+  display: table-cell;
+  vertical-align: middle;
+}
 
 .footer {
 position: absolute;

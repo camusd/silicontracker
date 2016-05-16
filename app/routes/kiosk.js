@@ -98,7 +98,52 @@ module.exports = function(app, pool) {
 		});
 	});
 
+	// After the user is in the cart, get all the saved items.
+	app.get('/kiosk/saveforlater', function(req, res) {
+		// get status
+		res.status(200).json(req.session.saveForLater);
+		req.session.saveForLater = [];
+	});
+
 	/* Posts on the kiosk */
+
+	// Cancel serial numbers that were saved for later.
+	app.post('/kiosk/deletesaved', function(req, res) {
+		req.session.saveForLater = [];
+		res.end();
+	});
+
+	app.post('/kiosk/logout', function(req, res) {
+		req.session.kioskLogin = false;
+		req.session.saveForLater = [];
+		res.end();
+	});
+
+	// Adding item to check in/out later after the user logs in.
+	app.post('/kiosk/saveforlater', function(req, res) {
+		if (!req.session.hasOwnProperty('saveForLater')) {
+			req.session.saveForLater = [];
+		}
+
+		var sfl = req.session.saveForLater;
+		var alreadySaved = false;
+
+		for (var i = 0; i < sfl.length; i++) {
+			if (req.body.serial_num === sfl[i].serial_num) {
+				alreadySaved = true;
+				break;
+			}
+		}
+		if (!alreadySaved) {
+			req.session.saveForLater.push({serial_num: req.body.serial_num, checked_in: req.body.checked_in});
+		}
+		if (process.env.ENV === 'dev') {
+			console.log(req.session.saveForLater);
+		}
+
+		res.end();
+	});
+
 	app.post('/kiosk/submit', function(req, res) {	
 		var item_type = [];
 		var status = [];
@@ -169,7 +214,7 @@ module.exports = function(app, pool) {
 				});
 				conn.release();
 				req.session.kioskLogin = false;
-				console.log(items);
+				req.session.saveForLater = [];
 				res.status(200).json(items);
 			}  
 		});

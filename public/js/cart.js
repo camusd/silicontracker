@@ -30,6 +30,17 @@ $(document).ready(function() {
   });
   $('#scan-error').hide();
 
+  $.get('/kiosk/saveforlater', function(data) {
+    $.each(data, function(idx, elem) {
+      if(elem.checked_in === 'Checked In') {
+        t_out.row.add([elem.serial_num]).draw();
+      } else {
+        t_in.row.add([elem.serial_num]).draw();
+      }
+      val_array.push(elem.serial_num);
+    });
+  });
+
 
   // Add the rows to the modal table.
   function addModalRows(dataArr) {
@@ -46,6 +57,8 @@ $(document).ready(function() {
         // Success! display the modal.
         addModalRows(returnData);
         $('#SuccessModal').modal();
+
+        val_array = [];
 
         // After 5 seconds, close the modal.
         setTimeout(function() {
@@ -65,6 +78,20 @@ $(document).ready(function() {
     window.location="/kiosk";
   });
 
+  $('#silicontracker').click(function() {
+    $.post('/kiosk/logout', function() {
+      window.location = '/kiosk';
+    });
+  });
+
+  var unl = false;
+  $(window).on('beforeunload', function() {
+    if (val_array.length > 0 && unl === false) {
+      unl = true;
+      return "Items are still in the cart. Are you sure?";
+    }
+  });
+  
   // Barcode Scanner logic
   $(window).keypress(function(e) {
     chars.push(String.fromCharCode(e.which));

@@ -9,8 +9,9 @@
  */
 
 $(document).ready(function() {
-  var pressed = false; 
-  var chars = []; 
+  var pressed = false;
+  var chars = [];
+  var currentItem = {serial_num: '', checked_in: ''};
   $(window).keypress(function(e) {
       chars.push(String.fromCharCode(e.which));
       if (pressed == false) {
@@ -21,6 +22,8 @@ $(document).ready(function() {
                   // There was an item scanned. Enter response code here.
                   var itemInfo = "";
                   $.get('/serial/'+barcode, function(data) {
+                    currentItem.serial_num = data.serial_num;
+                    currentItem.checked_in = data.checked_in;
                     if(data.checked_in == "Checked Out") {
                       $.get('/user/'+barcode, function(user) {
                         data.first_name = user.first_name;
@@ -31,7 +34,7 @@ $(document).ready(function() {
                         else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
                         else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
                         else {$('#item-info').html(ErrorInfo());}
-                      })
+                      });
                     } else {
                       if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
                       else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
@@ -48,6 +51,27 @@ $(document).ready(function() {
       }
       pressed = true;
   });
+
+  $('#save-for-later').click(function() {
+    $.post('/kiosk/saveforlater', currentItem)
+      .done(function() {
+        $('#save-for-later').blur();
+
+        $('#save-for-later').popover({
+          animation: true,
+          content: 'Item saved for later.',
+          placement: 'top auto'
+        }).popover('show');
+
+        setTimeout(function() {
+          $('#save-for-later').popover('destroy');
+        }, 2000);
+
+        // set timer to delete serials
+        countdown();
+      });
+  })
+
 });
 
 // Add id=barcode to your input field if you plan on
@@ -58,6 +82,14 @@ $("#barcode").keypress(function(e){
         e.preventDefault();
     }
 });
+
+function changeBtnText(data) {
+  if (data.checked_in === 'Checked In') {
+    $('#save-for-later span').text('Check Out');
+  } else {
+    $('#save-for-later span').text('Check In');
+  }
+}
 
 function UserInfo(info) {
   var user_data = ('<div class="col-sm-6 col-xs-12"><strong>Checked In/Out:</strong></div>'+
@@ -72,7 +104,8 @@ function UserInfo(info) {
 }
 
 function CPUInfo(info) {
-  console.log(info);
+  changeBtnText(info);
+  $('#save-for-later').removeAttr('disabled');
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -102,6 +135,8 @@ function CPUInfo(info) {
 }
 
 function SSDInfo(info) {
+  changeBtnText(info);
+  $('#save-for-later').removeAttr('disabled');
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -117,6 +152,8 @@ function SSDInfo(info) {
 }
 
 function MemoryInfo(info) {
+  changeBtnText(info);
+  $('#save-for-later').removeAttr('disabled');
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -140,7 +177,8 @@ function MemoryInfo(info) {
 }
 
 function FlashDriveInfo(info) {
-  console.log(info);
+  changeBtnText(info);
+  $('#save-for-later').removeAttr('disabled');
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -154,6 +192,8 @@ function FlashDriveInfo(info) {
 }
 
 function BoardInfo(info) {
+  changeBtnText(info);
+  $('#save-for-later').removeAttr('disabled');
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -171,6 +211,38 @@ function BoardInfo(info) {
 }
 
 function ErrorInfo() {
+  $('#save-for-later').attr('disabled', 'disabled');
   return  ('<div class="col-sm-6 col-xs-12"><strong>Error:</strong></div>'+
           '<div class="col-sm-6 col-xs-12">Item Not Found</div>');
+}
+var seconds = 60;
+var countdownSet = false;
+function countdown() {
+  if (countdownSet === false) {
+    countdownSet = true;
+    function tick() {
+      //This script expects an element with an ID = "counter". You can change that to what ever you want. 
+      var counter = document.getElementById("time");
+      seconds--;
+      counter.innerHTML = "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+      if(seconds > 0) {
+        setTimeout(tick, 1000);
+      } else {
+        countdownSet = false;
+        $.post('/kiosk/deletesaved', function() {
+          counter.innerHTML = 'Items not saved.';
+          setTimeout(function() {
+            counter.innerHTML = '';
+          }, 5000);
+        });
+      }
+    }
+    tick();
+  } else {
+    resetCountdown();
+  }
+  
+}
+function resetCountdown() {
+  seconds = 60;
 }
