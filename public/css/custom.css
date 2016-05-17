@@ -8,6 +8,15 @@ body {
     margin-bottom: 50px;
     background: #ececec;
 }
+.row-body {
+  display: table;
+}
+
+.row-body-cell {
+  float: none;
+  display: table-cell;
+  vertical-align: middle;
+}
 
 .footer {
 position: absolute;
@@ -39,6 +48,10 @@ background-color: #f5f5f5;
     border-radius: 0;
     color: #fff;
     text-align: center;
+}
+
+.content-wrap {
+  padding: 10px;
 }
 
 /* Hide for mobile, show later */
@@ -102,6 +115,9 @@ background-color: #f5f5f5;
   color: red;
 }
 
+.top-margin {
+  margin-top: 10px;
+}
 
 /*
 .barcode_wrapper {
@@ -136,4 +152,12 @@ table th {
 
 .white-space {
   padding-bottom: 30px;
+}
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
 }

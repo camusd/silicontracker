@@ -2,6 +2,7 @@ var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 var scrub = require('../scrubbers');
 var validate = require('../validators');
+var models = require(rootdir + '/app/models');
 
 module.exports = function(app, pool) {
   
@@ -437,8 +438,20 @@ module.exports = function(app, pool) {
 
   // TODO: Add new attributes to the database
   app.post('/settings/attributes', enforceAdminLogin, function(req, res) {
-    console.log(req.body);
-    res.send({redirect: '/settings'});
+    if (process.env.ENV === 'dev') {
+      console.log(req.body);
+    }
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL put_dd_attributes('"+req.body.item_type+"','"
+        +req.body.attr_type+"','"+req.body.attr_vals.toString()+"');",
+      function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+      });
+      conn.release();
+      res.status(200).send();
+    });
   });
 
    // For testing purposes. Will need to be deleted.
@@ -456,7 +469,7 @@ module.exports = function(app, pool) {
     //     console.log(err)
     //   };
     // });
-    req.session.webLogin = false;
+    req.session.web.loggedIn = false;
     // res.clearCookie('my.tracker.sid');
     res.redirect('/');
   });
@@ -478,8 +491,9 @@ module.exports = function(app, pool) {
 
         // Checking if the user exists in AD.
         if (body !== '') {
+        	req.session.web = new models.SessionUser();
           // We have a user in the AD system. Parse out the wwid.
-          req.session.wwid = body;
+          req.session.web.wwid = body;
         } else {
           // No wwid found, erase current session and create new session for user.
           req.session.regenerate();
@@ -490,17 +504,17 @@ module.exports = function(app, pool) {
   }, function(req,res,next) {
     // We know at this point we have a wwid, so let's try to get the user from our DB.
     pool.getConnection(function(err, conn) {
-      conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+      conn.query('CALL get_user_from_wwid('+req.session.web.wwid+')', function(error, results, fields) {
           if (error) {
             throw error;
           }
           conn.release();
           
           if (results[0].length === 1) {
-            req.session.last_name = results[0][0].last_name;
-            req.session.first_name = results[0][0].first_name;
-            req.session.is_admin = results[0][0].is_admin;
-            req.session.webLogin = true;
+            req.session.web.last_name = results[0][0].last_name;
+            req.session.web.first_name = results[0][0].first_name;
+            req.session.web.is_admin = results[0][0].is_admin;
+            req.session.web.loggedIn = true;
             req.session.save();
           } else {
             // Got no results
@@ -517,9 +531,9 @@ module.exports = function(app, pool) {
 
     //TEST LOGS
     if (process.env.ENV === 'dev') {
-      console.log(req.session.wwid);
-      console.log(req.session.last_name);
-      console.log(req.session.first_name);
+      console.log(req.session.web.wwid);
+      console.log(req.session.web.last_name);
+      console.log(req.session.web.first_name);
     }
     
     res.redirect('/');
@@ -528,7 +542,7 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-  if (req.session.webLogin) {
+  if (req.session.web.loggedIn) {
     next();
   } else {
     res.redirect('/login');
@@ -536,7 +550,7 @@ function enforceLogin(req, res, next) {
 }
 
 function enforceAdminLogin(req, res, next) {
-  if (req.session.webLogin && req.session.is_admin) {
+  if (req.session.web.loggedIn && req.session.web.is_admin) {
     next();
   } else {
     res.redirect('/login');

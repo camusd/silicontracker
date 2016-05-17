@@ -1,16 +1,5 @@
 var val_array = [];
 
-function submitData(data) {
-  $.post('/kiosk/submit', {data});
-  var len = data.length;
-  if(len === 1) {
-    alert("The transaction of "+len+" item has completed successfully");
-  } else {
-    alert("The transaction of "+len+" items has completed successfully");
-  }
-  window.location="/kiosk/";
-};
-
 function arrayFind(arr, fn) {
   for(var i = 0; i < arr.length; i++) {
     if(fn(arr[i])) {
@@ -19,6 +8,12 @@ function arrayFind(arr, fn) {
   }
   return -1;
 }
+
+function printStatus(status) {
+  return (status === 1) ? 'Checked in' : 'Checked out';
+}
+
+
 
 $(document).ready(function() {
   var pressed = false; 
@@ -34,6 +29,70 @@ $(document).ready(function() {
     retrieve: true
   });
   $('#scan-error').hide();
+
+  $.get('/kiosk/saveforlater', function(data) {
+    $.each(data, function(idx, elem) {
+      if(elem.checked_in === 'Checked In') {
+        t_out.row.add([elem.serial_num]).draw();
+      } else {
+        t_in.row.add([elem.serial_num]).draw();
+      }
+      val_array.push(elem.serial_num);
+    });
+  });
+
+
+  // Add the rows to the modal table.
+  function addModalRows(dataArr) {
+    $.each(dataArr, function(idx, elem) {
+      $('#submit-results tbody').append('<tr><td>'+elem.serial_num+'</td>'+
+        '<td>'+itemTypes[elem.item_type]+'</td><td>'+printStatus(elem.status)+'</td></tr>');
+    });
+  }
+
+  // Submit serial numbers to the server.
+  function submitData(data) {
+    $.post('/kiosk/submit', {data})
+      .done(function(returnData) {
+        // Success! display the modal.
+        addModalRows(returnData);
+        $('#SuccessModal').modal();
+
+        val_array = [];
+
+        // After 5 seconds, close the modal.
+        setTimeout(function() {
+          $('#SuccessModal').modal('hide');
+        }, 5000);
+      });
+  }
+
+  // Commit the check ins/outs.
+  $('#submit').on('click', function(event) {
+    submitData(val_array);
+  });
+
+  // After the modal goes away, redirect back to the homescreen.
+  // The user will be logged out at this point.
+  $('#SuccessModal').on('hidden.bs.modal', function(e) {
+    window.location="/kiosk";
+  });
+
+  $('#silicontracker').click(function() {
+    $.post('/kiosk/logout', function() {
+      window.location = '/kiosk';
+    });
+  });
+
+  var unl = false;
+  $(window).on('beforeunload', function() {
+    if (val_array.length > 0 && unl === false) {
+      unl = true;
+      return "Items are still in the cart. Are you sure?";
+    }
+  });
+  
+  // Barcode Scanner logic
   $(window).keypress(function(e) {
     chars.push(String.fromCharCode(e.which));
     if (pressed == false) {

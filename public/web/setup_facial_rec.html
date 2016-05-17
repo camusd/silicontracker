@@ -12,8 +12,21 @@
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="../js/stats.js"></script>
-<script src="../js/attribute-names.js"></script>
-<script src="../js/edit-dropdowns.js"></script>
+<script type="text/javascript" src="../js/webcam.js"></script>
+<script type="text/javascript" src="../js/webcam.min.js"></script>
+
+<script language="JavaScript">
+    function take_snapshot() {
+        // take snapshot and get image data
+        Webcam.snap( function(data_uri) {
+            // display results in page
+            document.getElementById('results').innerHTML = 
+                '<h2>Reference Image:</h2>' + 
+                '<img src="'+data_uri+'"/>';
+        } );
+    }
+</script>    
+    
 </head>
 
 <body>
@@ -55,47 +68,38 @@
 </nav>
 
 <!-- Main -->
-<div class="container">
-  <div class="content-wrap">
-    <div class="row">
-      <!-- Content -->
-      <div class="col-md-6 col-md-offset-3 col-xs-12">
-        <div class="col-md-3 col-xs-12">
-          <label class="control-label" for="choose_attr">Item</label>
-          <select id="dd_item_type">
-            <option></option>
-            <option value="cpu">CPU</option>
-            <option value="ssd">SSD</option>
-            <option value="memory">Memory</option>
-            <option value="flash_drive">Flash Drive</option>
-            <option value="board">Board</option>
-          </select>
-        </div>
-        <div class="col-md-3 col-xs-12">
-          <label class="control-label" for="choose_attr">Attribute</label>
-          <select id="dd_attr" disabled>
-            <option></option>
-            <option>123456789</option>
-          </select>
-        </div>
-        <div class="col-md-6 col-xs-12 top-margin">
-          <button class="btn btn-primary" id="submitAttributes" disabled>Submit</button>
-          <button class="btn btn-default" id="addAttribute" disabled>Add New</button>
-        </div>
-        <table id="attr_table" class="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-          <tfoot></tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
+<div class="container-fluid">
+	<div class="col-md-6">
+	  <!-- Features -->
+	  <div class="col-sm-10 col-sm-offset-1"> 
+          <h2 style="text-align: center;">Reference Image Setup</h2>
+          <div id="my_camera" class ="center-block"></div> 
+	      <!-- Configure and attach camera -->
+	      <script language="JavaScript">
+	        Webcam.set({
+	          width: 320,
+	          height: 240,
+	          image_format: 'jpeg',
+	          jpeg_quality: 90
+	        });
+	        Webcam.attach( '#my_camera' );
+	      </script>
+	      <div class="divider divider-top"></div>
+            
+          <button class="btn btn-lg btn-primary btn-block" type="submit" value="Take Snapshot" onClick="take_snapshot()">Save Image</button>
+	  </div>
+        
+
+	  <!-- Main -->
+        
+	</div>
+	<div class="col-sm-6">
+		<div class="col-sm-10 col-sm-offset-1">
+			<div id="results"><h2 style="text-align;">Reference Image:</h2></div>
+		</div>
+	</div>
 </div>
+    
 
 <!-- Footer -->
 <div class="footer footer-intel">

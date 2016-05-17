@@ -86,9 +86,10 @@ CREATE TABLE `Dropdown_Attributes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `attr_type` varchar(20) NOT NULL,
   `attr_value` varchar(40) NOT NULL,
+  `item_type` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +98,7 @@ CREATE TABLE `Dropdown_Attributes` (
 
 LOCK TABLES `Dropdown_Attributes` WRITE;
 /*!40000 ALTER TABLE `Dropdown_Attributes` DISABLE KEYS */;
-INSERT INTO `Dropdown_Attributes` VALUES (1,'codename','Sandy Bridge'),(2,'codename','Jaketown'),(3,'codename','Haswell'),(4,'codename','Crystal Well'),(5,'codename','Bay Trail'),(6,'codename','Haswell Server'),(7,'codename','Broadwell'),(8,'codename','Skylake'),(9,'cpu class','Mobile'),(10,'cpu class','EP'),(11,'cpu class','Desktop'),(12,'cpu class','Atom'),(13,'cpu class','ULT');
+INSERT INTO `Dropdown_Attributes` VALUES (22,'codename','Sandy Fridge','cpu'),(23,'codename','Jaketown','cpu'),(24,'codename','Haswell','cpu'),(25,'codename','Crystal Well','cpu'),(26,'codename','Bay Trail','cpu'),(27,'codename','Haswell Server','cpu'),(28,'codename','Broadwell','cpu'),(29,'codename','Skylake','cpu'),(30,'codename','My new Attribute','cpu'),(31,'cpu_class','Mobile','cpu'),(32,'cpu_class','EP','cpu'),(33,'cpu_class','Desktop','cpu'),(34,'cpu_class','Atom','cpu'),(35,'cpu_class','ULT','cpu'),(36,'cpu_class','New Class','cpu');
 /*!40000 ALTER TABLE `Dropdown_Attributes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +145,7 @@ CREATE TABLE `Items` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `serial_num_UNIQUE` (`serial_num`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -824,7 +825,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE PROCEDURE `get_dropdown_keys`()
 BEGIN
-  SELECT DISTINCT attr_type
+  SELECT item_type, attr_type, attr_value
   FROM  Dropdown_Attributes;
 END ;;
 DELIMITER ;
@@ -1310,6 +1311,40 @@ BEGIN
        new_external_name, new_architecture);
    
     SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
+  END WHILE;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `put_dd_attributes` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `put_dd_attributes`(IN new_item_type VARCHAR(20), IN new_attr_key VARCHAR(30), IN new_vals TEXT)
+BEGIN
+  SET @separator = ',';
+  SET @separatorLength = CHAR_LENGTH(@separator);
+    SET new_vals = formatCSL(new_vals);
+    
+    DELETE FROM Dropdown_Attributes
+    WHERE item_type = new_item_type
+    AND attr_type = new_attr_key;
+    
+    WHILE new_vals != '' > 0 DO
+    SET @currentValue = SUBSTRING_INDEX(new_vals, @separator, 1);
+        
+        INSERT INTO Dropdown_Attributes (item_type, attr_type, attr_value)
+        VALUES (new_item_type, new_attr_key, @currentValue);
+   
+    SET new_vals = SUBSTRING(new_vals, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
   END WHILE;
 END ;;
 DELIMITER ;

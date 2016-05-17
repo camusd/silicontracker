@@ -98,81 +98,130 @@ module.exports = function(app, pool) {
 	// 	});
 	// });
 
+	// After the user is in the cart, get all the saved items.
+	app.get('/kiosk/saveforlater', function(req, res) {
+		// get status
+		res.status(200).json(req.session.saveForLater);
+		req.session.saveForLater = [];
+	});
+
 	/* Posts on the kiosk */
+
+	// Cancel serial numbers that were saved for later.
+	app.post('/kiosk/deletesaved', function(req, res) {
+		if (process.env.ENV === 'dev') {console.log('deleted items saved for later.')};
+
+		var itemsDeleted = (req.session.saveForLater.length > 0) ? {value: true} : {value: false};
+		req.session.saveForLater = [];
+		res.status(200).send(itemsDeleted);
+	});
+
+	app.post('/kiosk/logout', function(req, res) {
+		req.session.kiosk.loggedIn = false;
+		req.session.saveForLater = [];
+		res.end();
+	});
+
+	// Adding item to check in/out later after the user logs in.
+	app.post('/kiosk/saveforlater', function(req, res) {
+		if (!req.session.hasOwnProperty('saveForLater')) {
+			req.session.saveForLater = [];
+		}
+
+		var sfl = req.session.saveForLater;
+		var alreadySaved = false;
+
+		for (var i = 0; i < sfl.length; i++) {
+			if (req.body.serial_num === sfl[i].serial_num) {
+				alreadySaved = true;
+				break;
+			}
+		}
+		if (!alreadySaved) {
+			req.session.saveForLater.push({serial_num: req.body.serial_num, checked_in: req.body.checked_in});
+		}
+		if (process.env.ENV === 'dev') { console.log(req.session.saveForLater); }
+
+		res.status(200).send({
+			numItems: req.session.saveForLater.length,
+			alreadySaved: alreadySaved
+		});
+	});
+
 	app.post('/kiosk/submit', function(req, res) {	
 		var item_type = [];
 		var status = [];
-		var wwid = req.session.wwid;
+		var items = [];
+		var wwid = req.session.kiosk.wwid;
 		var serial_nums = req.body.data;
 		var total_finished = 0;
 		var addr, setting, first_name, last_name, date, user;
     for(var i=0; i < serial_nums.length; i++) {
     	pool.getConnection(function(i, err, conn) {
       	conn.query("CALL scan_item("+ wwid +",'"+serial_nums[i]+"');",
-      		function(error, results, fields) {
-      			if(error) {
-      				throw error;
-      			}
+  		function(error, results, fields) {
+  			if(error) {
+  				throw error;
+  			}
 
-						item_type[i] = results[0][0].item_type;
-						status[i] = results[0][0].checked_in;
-						user = results[0][0].user;
-						total_finished++;
+  			items[i] = {};
+  			items[i].serial_num = serial_nums[i];
+			items[i].item_type = results[0][0].item_type;
+			items[i].status = results[0][0].checked_in;
+			user = results[0][0].user;
+			total_finished++;
 
-						if(user != null && user != wwid) {
-							conn.query("CALL get_addr("+user+");",
-								function(error, results, fields) {
-									if(error) {
-										throw error;
-									}
+			if(user != null && user != wwid) {
+				conn.query("CALL get_addr("+user+");",
+				function(error, results, fields) {
+					if(error) {
+						throw error;
+					}
 
-									addr = results[0][0].email_address;
-									their_last_name = results[0][0].last_name;
-									their_first_name = results[0][0].first_name;
-									date = results[0][0].order_date;
-									
-									conn.query("CALL get_addr("+wwid+");",
-										function(error, results, fields) {
-											if(error) {
-												throw error;
-											}
-											var my_first_name = results[0][0].first_name;
-											var my_last_name = results[0][0].last_name;
-											console.log("Sending checkin email to "+addr+"...");
-											checkinTemplate(addr, their_first_name, their_last_name, my_first_name, my_last_name, serial_nums[i], item_type[i], status[i], date);
-										});
-								});
+					addr = results[0][0].email_address;
+					their_last_name = results[0][0].last_name;
+					their_first_name = results[0][0].first_name;
+					date = results[0][0].order_date;
+					
+					conn.query("CALL get_addr("+wwid+");",
+					function(error, results, fields) {
+						if(error) {
+							throw error;
 						}
-
-						if(total_finished == serial_nums.length) {
-							conn.query("CALL get_addr("+wwid+");",
-								function(error, results, fields) {
-									if(error) {
-										throw error;
-									}
-
-									addr = results[0][0].email_address;
-									setting = results[0][0].cart_summary_email_setting;
-									last_name = results[0][0].last_name;
-									first_name = results[0][0].first_name;
-									date = results[0][0].order_date;
-
-									if(setting === 1) {
-										console.log("Sending cart summary email to "+addr+"...");
-										cartTemplate(addr, first_name, last_name, serial_nums, item_type, status, date);
-									}
-								});
-							conn.release();
-							req.session.destroy(function (err) {
-								if(err) {
-									console.log(err)
-								} else {
-									res.clearCookie('my.tracker.sid');
-									res.redirect('/kiosk');
-								}
-							});
-						}  
+						var my_first_name = results[0][0].first_name;
+						var my_last_name = results[0][0].last_name;
+						console.log("Sending checkin email to "+addr+"...");
+						checkinTemplate(addr, their_first_name, their_last_name, my_first_name, my_last_name, serial_nums[i], item_type[i], status[i], date);
 					});
+				});
+			}
+
+			if(total_finished === serial_nums.length) {
+				conn.query("CALL get_addr("+wwid+");",
+				function(error, results, fields) {
+					if(error) {
+						throw error;
+					}
+
+					addr = results[0][0].email_address;
+					setting = results[0][0].cart_summary_email_setting;
+					last_name = results[0][0].last_name;
+					first_name = results[0][0].first_name;
+					date = results[0][0].order_date;
+
+					if(setting === 1) {
+						if (process.env.ENV === 'dev') {
+							console.log("Sending cart summary email to "+addr+"...");
+						}
+						cartTemplate(addr, first_name, last_name, serial_nums, item_type, status, date);
+					}
+				});
+				conn.release();
+				req.session.kiosk.loggedIn = false;
+				req.session.saveForLater = [];
+				res.status(200).json(items);
+			}  
+		});
       }.bind(pool, i));
     }
   });
@@ -194,8 +243,9 @@ module.exports = function(app, pool) {
 	 			}
 	 			// Checking if the user exists in AD.
 	 			if (body !== '') {
+	 				req.session.kiosk = new models.SessionUser();
 	 				// We have a user in the AD system. Parse out the wwid.
-	 				req.session.wwid = body;
+	 				req.session.kiosk.wwid = body;
 	 				next();
 	 			} else {
 	 				// No wwid found, send user back to login page.
@@ -205,17 +255,17 @@ module.exports = function(app, pool) {
 	}, function(req,res,next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
       	pool.getConnection(function(err, conn) {
-			conn.query('CALL get_user_from_wwid('+req.session.wwid+')', function(error, results, fields) {
+			conn.query('CALL get_user_from_wwid('+req.session.kiosk.wwid+')', function(error, results, fields) {
 					if (error) {
 						throw error;
 					}
 		 			conn.release();
 					
 					if (results[0].length === 1) {
-		 				req.session.last_name = results[0][0].last_name;
-		 				req.session.first_name = results[0][0].first_name;
-		 				req.session.is_admin = results[0][0].is_admin;
-		 				req.session.kioskLogin = true;
+		 				req.session.kiosk.last_name = results[0][0].last_name;
+		 				req.session.kiosk.first_name = results[0][0].first_name;
+		 				req.session.kiosk.is_admin = results[0][0].is_admin;
+		 				req.session.kiosk.loggedIn = true;
 		 				req.session.save();
 					} else {
 						// Got no results
@@ -232,9 +282,9 @@ module.exports = function(app, pool) {
 
 		//TEST LOGS
 		if (process.env.ENV === 'dev') {
-			console.log(req.session.wwid);
-			console.log(req.session.last_name);
-			console.log(req.session.first_name);
+			console.log(req.session.kiosk.wwid);
+			console.log(req.session.kiosk.last_name);
+			console.log(req.session.kiosk.first_name);
 		}
 		
 		res.redirect('/cart');
@@ -242,7 +292,7 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-	if (req.session.kioskLogin) {
+	if (req.session.kiosk.loggedIn) {
 		next();
 	} else {
 		res.redirect('/kiosk');

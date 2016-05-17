@@ -1,5 +1,15 @@
 module.exports = {
 
+  SessionUser: function() {
+    var self = this;
+
+    self.wwid = '';
+    self.first_name = '';
+    self.last_name = '';
+    self.is_admin = false;
+    self.loggedIn = false;
+  },
+
   CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores,
     codename, cpu_class, external_name, architecture, user, checked_in, notes, scrapped, user_name) {
     var self = this;
