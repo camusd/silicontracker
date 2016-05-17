@@ -8,10 +8,15 @@
  *
  */
 
+var pressed = false;
+var goToNextPage = false;
+var btnText = 'Check Out';
+var itemCounter = 0;
+var chars = [];
+var currentItem = {serial_num: '', checked_in: ''};
+
 $(document).ready(function() {
-  var pressed = false;
-  var chars = [];
-  var currentItem = {serial_num: '', checked_in: ''};
+  inactivityTime();
   $(window).keypress(function(e) {
       chars.push(String.fromCharCode(e.which));
       if (pressed == false) {
@@ -52,26 +57,54 @@ $(document).ready(function() {
       pressed = true;
   });
 
+  // If the page is refreshed, delete the items saved for later.
+  $(window).on('beforeunload', function() {
+    if (goToNextPage === false) {
+      $.post('/kiosk/deletesaved')
+        .done(function(data) {});
+    }
+  });
+
+  $('#login-form').submit(function(event) {
+    goToNextPage = true;
+    var submitData = {
+      username: $('#username').val(),
+      pass: $('#pass').val()
+    };
+    $.post('/kiosk/login', submitData)
+      .done(function() {
+      window.location = '/cart';
+    });
+
+    event.preventDefault();
+  });
+
   $('#save-for-later').click(function() {
     $.post('/kiosk/saveforlater', currentItem)
-      .done(function() {
+      .done(function(data) {
         $('#save-for-later').blur();
 
+        var popText = (data.alreadySaved === true) ? 
+                      'Item already saved.' : 
+                      'Item saved for later.';
+
+        // show popover
         $('#save-for-later').popover({
           animation: true,
-          content: 'Item saved for later.',
+          content: popText,
           placement: 'top auto'
         }).popover('show');
+
+        // update button text
+        itemCounter = data.numItems;
+        $('#save-for-later span').text(btnText+' ('+itemCounter.toString()+')');
+
 
         setTimeout(function() {
           $('#save-for-later').popover('destroy');
         }, 2000);
-
-        // set timer to delete serials
-        countdown();
       });
   })
-
 });
 
 // Add id=barcode to your input field if you plan on
@@ -84,11 +117,13 @@ $("#barcode").keypress(function(e){
 });
 
 function changeBtnText(data) {
-  if (data.checked_in === 'Checked In') {
-    $('#save-for-later span').text('Check Out');
-  } else {
-    $('#save-for-later span').text('Check In');
+  if (data.hasOwnProperty('checked_in') && data.checked_in === 'Checked In') {
+    btnText = 'Check Out';
+  } else if (data.hasOwnProperty('checked_in') && data.checked_in === 'Checked Out') {
+    btnText = 'Check In';
   }
+
+  $('#save-for-later span').text(btnText+' ('+itemCounter.toString()+')');
 }
 
 function UserInfo(info) {
@@ -215,34 +250,42 @@ function ErrorInfo() {
   return  ('<div class="col-sm-6 col-xs-12"><strong>Error:</strong></div>'+
           '<div class="col-sm-6 col-xs-12">Item Not Found</div>');
 }
-var seconds = 60;
-var countdownSet = false;
-function countdown() {
-  if (countdownSet === false) {
-    countdownSet = true;
-    function tick() {
-      //This script expects an element with an ID = "counter". You can change that to what ever you want. 
-      var counter = document.getElementById("time");
-      seconds--;
-      counter.innerHTML = "0:" + (seconds < 10 ? "0" : "") + String(seconds);
-      if(seconds > 0) {
-        setTimeout(tick, 1000);
-      } else {
-        countdownSet = false;
-        $.post('/kiosk/deletesaved', function() {
-          counter.innerHTML = 'Items not saved.';
-          setTimeout(function() {
-            counter.innerHTML = '';
-          }, 5000);
+
+
+// InactivityTime: deletes items saved for later if the screen has been inactive for one minute.
+var inactivityTime = function () {
+    var t;
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+
+    function deleteSaved() {
+        $.post('/kiosk/deletesaved', function(data) {
+          $('#item-info').html('');
+
+          // if there were items deleted from the session
+          if (data.value === true || itemCounter > 0) {
+            // show popover
+            $('#save-for-later').popover({
+              animation: true,
+              content: 'Item not saved.',
+              placement: 'top auto'
+            }).popover('show');
+
+            // reset button count
+            itemCounter = 0;
+            $('#save-for-later span').text(btnText+' ('+itemCounter.toString()+')');
+
+            setTimeout(function() {
+              $('#save-for-later').popover('destroy');
+            }, 2000);
+          }
         });
-      }
     }
-    tick();
-  } else {
-    resetCountdown();
-  }
-  
-}
-function resetCountdown() {
-  seconds = 60;
-}
+
+    function resetTimer() {
+        clearTimeout(t);
+        t = setTimeout(deleteSaved, 30*1000) // 30 seconds
+        // 1000 milisec = 1 sec
+    }
+};

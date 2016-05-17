@@ -109,8 +109,11 @@ module.exports = function(app, pool) {
 
 	// Cancel serial numbers that were saved for later.
 	app.post('/kiosk/deletesaved', function(req, res) {
+		if (process.env.ENV === 'dev') {console.log('deleted items saved for later.')};
+
+		var itemsDeleted = (req.session.saveForLater.length > 0) ? {value: true} : {value: false};
 		req.session.saveForLater = [];
-		res.end();
+		res.status(200).send(itemsDeleted);
 	});
 
 	app.post('/kiosk/logout', function(req, res) {
@@ -137,11 +140,12 @@ module.exports = function(app, pool) {
 		if (!alreadySaved) {
 			req.session.saveForLater.push({serial_num: req.body.serial_num, checked_in: req.body.checked_in});
 		}
-		if (process.env.ENV === 'dev') {
-			console.log(req.session.saveForLater);
-		}
+		if (process.env.ENV === 'dev') { console.log(req.session.saveForLater); }
 
-		res.end();
+		res.status(200).send({
+			numItems: req.session.saveForLater.length,
+			alreadySaved: alreadySaved
+		});
 	});
 
 	app.post('/kiosk/submit', function(req, res) {	
