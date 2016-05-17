@@ -57,13 +57,19 @@ module.exports = function(app, pool) {
           jsonToSend.is_admin = 0;
         }
         var a = [];
+        var user_name = null;
         for (var i in results[0]) {
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name = null;
+          } else {
+            user_name = results[0][i].first_name + " " + results[0][i].last_name;
+          }
           a.push(new models.CPU(results[0][i].serial_num, results[0][i].spec,
             results[0][i].mm, results[0][i].frequency, results[0][i].stepping,
             results[0][i].llc, results[0][i].cores, results[0][i].codename,
             results[0][i].cpu_class, results[0][i].external_name, results[0][i].architecture,
             results[0][i].user, results[0][i].checked_in, results[0][i].notes,
-            results[0][i].scrapped));
+            results[0][i].scrapped, user_name));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -88,10 +94,16 @@ module.exports = function(app, pool) {
           jsonToSend.is_admin = 0;
         }
         var a = [];
+        var user_name = null;
         for (var i in results[0]) {
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name = null;
+          } else {
+            user_name = results[0][i].first_name + " " + results[0][i].last_name;
+          }
           a.push(new models.SSD(results[0][i].serial_num, results[0][i].manufacturer, 
             results[0][i].model, results[0][i].capacity, results[0][i].user,
-            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped, user_name));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -116,11 +128,17 @@ module.exports = function(app, pool) {
           jsonToSend.is_admin = 0;
         }
         var a = [];
+        var user_name = null;
         for (var i in results[0]) {
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name = null;
+          } else {
+            user_name = results[0][i].first_name + " " + results[0][i].last_name;
+          }
           a.push(new models.Memory(results[0][i].serial_num, results[0][i].manufacturer,
             results[0][i].physical_size, results[0][i].memory_type, results[0][i].capacity, 
             results[0][i].speed, results[0][i].ecc, results[0][i].ranks, results[0][i].user,
-            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped));
+            results[0][i].checked_in, results[0][i].notes, results[0][i].scrapped, user_name));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -145,11 +163,17 @@ module.exports = function(app, pool) {
           jsonToSend.is_admin = 0;
         }
         var a = [];
+        var user_name = null;
         for (var i in results[0]) {
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name = null;
+          } else {
+            user_name = results[0][i].first_name + " " + results[0][i].last_name;
+          }
           a.push(new models.Flash_Drive(results[0][i].serial_num, 
             results[0][i].capacity, results[0][i].manufacturer,
             results[0][i].user, results[0][i].checked_in, results[0][i].notes,
-            results[0][i].scrapped));
+            results[0][i].scrapped, user_name));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
@@ -174,11 +198,17 @@ module.exports = function(app, pool) {
           jsonToSend.is_admin = 0;
         }
         var a = [];
+        var user_name = null;
         for (var i in results[0]) {
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name = null;
+          } else {
+            user_name = results[0][i].first_name + " " + results[0][i].last_name;
+          }
           a.push(new models.Board(results[0][i].serial_num, results[0][i].fpga,
             results[0][i].bios, results[0][i].mac, results[0][i].fab,
             results[0][i].user, results[0][i].checked_in, results[0][i].notes,
-            results[0][i].scrapped));
+            results[0][i].scrapped, user_name));
         }
         jsonToSend.items = a;
         res.json(jsonToSend);

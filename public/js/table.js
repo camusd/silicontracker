@@ -49,6 +49,7 @@ $(document).ready(function() {
       {"data" : "cpu_class"},
       {"data" : "external_name"},
       {"data" : "architecture"},
+      {"data" : "user_name"},
       {
         "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,
@@ -174,6 +175,7 @@ $(document).ready(function() {
       {"data" : "capacity"},
       {"data" : "manufacturer"},
       {"data" : "model"},
+      {"data" : "user_name"},
       {
         "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,
@@ -296,6 +298,7 @@ $(document).ready(function() {
       {"data" : "memory_type"},
       {"data" : "capacity"},
       {"data" : "speed"},
+      {"data" : "user_name"},
       {
         "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,
@@ -418,6 +421,7 @@ $(document).ready(function() {
       {"data" : "serial_num"},
       {"data" : "capacity"},
       {"data" : "manufacturer"},
+      {"data" : "user_name"},
       {
         "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,
@@ -536,6 +540,7 @@ $(document).ready(function() {
       {"data" : "bios"},
       {"data" : "mac"},
       {"data" : "fab"},
+      {"data" : "user_name"},
       {
         "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-file-o"></i></button>',
         "orderable": false,

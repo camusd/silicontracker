@@ -1,7 +1,7 @@
 module.exports = {
 
   CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores,
-    codename, cpu_class, external_name, architecture, user, checked_in, notes, scrapped) {
+    codename, cpu_class, external_name, architecture, user, checked_in, notes, scrapped, user_name) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -19,10 +19,11 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
+    self.user_name = user_name;
   },
 
   SSD: function(serial_num, manufacturer, model, capacity, user,
-    checked_in, notes, scrapped) {
+    checked_in, notes, scrapped, user_name) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -33,10 +34,11 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
+    self.user_name = user_name;
   },
 
   Memory: function(serial_num, manufacturer, physical_size, memory_type,
-    capacity, speed, ecc, ranks, user, checked_in, notes, scrapped) {
+    capacity, speed, ecc, ranks, user, checked_in, notes, scrapped, user_name) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -51,9 +53,11 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
+    self.user_name = user_name;
   },
 
-  Flash_Drive: function(serial_num, capacity, manufacturer, user, checked_in, notes, scrapped) {
+  Flash_Drive: function(serial_num, capacity, manufacturer, user, checked_in, notes,
+    scrapped, user_name) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -63,9 +67,10 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
+    self.user_name = user_name;
   },
 
-  Board: function(serial_num, fpga, bios, mac, fab, user, checked_in, notes, scrapped) {
+  Board: function(serial_num, fpga, bios, mac, fab, user, checked_in, notes, scrapped, user_name) {
     var self = this;
 
     self.serial_num = serial_num;
@@ -77,5 +82,6 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
+    self.user_name;
   }
 }

@@ -79,24 +79,24 @@ module.exports = function(app, pool) {
 		 });
   });
 
-	 /* Getters for json data on items in the cart */
-	app.get('/cart/serial/:serial', function(req, res) {
-	 	var serial = req.params.serial;
-    pool.getConnection(function(err, conn) {
-		 	conn.query("CALL get_checkout_status(\'" + serial + "\');",
-		 		function(error, results, fields){
-		 			if(error) {
-		 				throw error;
-		 			}
-		 			conn.release();
+	//  /* Getters for json data on items in the cart */
+	// app.get('/cart/serial/:serial', function(req, res) {
+	//  	var serial = req.params.serial;
+ //    pool.getConnection(function(err, conn) {
+	// 	 	conn.query("CALL get_checkout_status(\'" + serial + "\');",
+	// 	 		function(error, results, fields){
+	// 	 			if(error) {
+	// 	 				throw error;
+	// 	 			}
+	// 	 			conn.release();
 
-		 			if (process.env.ENV == 'dev')
-		 				console.log(results[0]);
+	// 	 			if (process.env.ENV == 'dev')
+	// 	 				console.log(results[0]);
 		 			
-		 			res.send(results[0][0]);
-		 		});
-		});
-	});
+	// 	 			res.send(results[0][0]);
+	// 	 		});
+	// 	});
+	// });
 
 	/* Posts on the kiosk */
 	app.post('/kiosk/submit', function(req, res) {	

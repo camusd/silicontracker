@@ -596,7 +596,7 @@ DELIMITER ;;
 CREATE PROCEDURE `get_overdue_owner`()
 BEGIN
   SELECT 
-    wwid
+    wwid, checkout_date
   FROM
     Owners JOIN Checkout
       ON Checkout.user = Owners.wwid LEFT JOIN Items
@@ -604,7 +604,7 @@ BEGIN
   GROUP BY
     wwid
   HAVING
-    TIMESTAMPDIFF(DAY, NOW(), Checkout.checkout_date) >= overdue_item_email_frequency AND
+    TIMESTAMPDIFF(DAY, NOW(), checkout_date) >= overdue_item_email_frequency AND
     overdue_item_email_setting = 1;
 
 END ;;
@@ -628,11 +628,12 @@ BEGIN
 	SELECT
 		serial_num, spec, mm, frequency, stepping, 
       llc, cores, codename, cpu_class, external_name,
-		  architecture, Checkout.user, checked_in, notes, scrapped
+		  architecture, Checkout.user, checked_in, notes, scrapped, first_name, last_name
 	FROM 
 		Processor INNER JOIN Items
         ON Processor.product_id = Items.id LEFT JOIN Checkout
-        ON Checkout.product_id = Items.id
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
   WHERE
 		scrapped = 0
         AND Items.item_type = 'cpu';
@@ -845,11 +846,12 @@ CREATE PROCEDURE `get_flash`()
 BEGIN
 	SELECT
 		serial_num, manufacturer, capacity,
-        Checkout.user, checked_in, notes, scrapped
+        Checkout.user, checked_in, notes, scrapped, first_name, last_name
 	FROM 
 		Flash_Drive INNER JOIN Items
         ON Flash_Drive.product_id = Items.id LEFT JOIN Checkout
-        ON Checkout.product_id = Items.id
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
   WHERE
 		scrapped = 0
         AND Items.item_type = 'flash';
@@ -875,11 +877,13 @@ BEGIN
 	SELECT
 		serial_num, manufacturer, physical_size,
         memory_type, capacity, speed, ecc, ranks,
-        Checkout.user, checked_in, notes, scrapped
+        Checkout.user, checked_in, notes, scrapped,
+        first_name, last_name
 	FROM 
 		RAM INNER JOIN Items
         ON RAM.product_id = Items.id LEFT JOIN Checkout
-        ON Checkout.product_id = Items.id
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
   WHERE
 		scrapped = 0
         AND Items.item_type = 'memory';
@@ -1144,11 +1148,13 @@ CREATE PROCEDURE `get_ssd`()
 BEGIN
 	SELECT
 		serial_num, manufacturer, model,
-        capacity, Checkout.user, checked_in, notes, scrapped
+        capacity, Checkout.user, checked_in, notes, scrapped,
+        first_name, last_name
 	FROM 
 		SSD INNER JOIN Items
         ON SSD.product_id = Items.id LEFT JOIN Checkout
-        ON Checkout.product_id = Items.id
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
   WHERE
 		scrapped = 0
         AND Items.item_type = 'ssd';
@@ -1194,6 +1200,29 @@ DELIMITER ;;
 CREATE PROCEDURE `get_user_from_checkout`(IN item VARCHAR(20))
 BEGIN
   SELECT last_name, first_name
+    FROM Checkout LEFT JOIN Owners ON
+    Checkout.user = Owners.wwid LEFT JOIN Items ON
+    Checkout.product_id = Items.id
+    WHERE serial_num = item;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_reservation` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_reservation`(IN item VARCHAR(20))
+BEGIN
+  SELECT waiting_user, 
     FROM Checkout LEFT JOIN Owners ON
     Checkout.user = Owners.wwid LEFT JOIN Items ON
     Checkout.product_id = Items.id
@@ -1408,6 +1437,37 @@ BEGIN
   SET new_serial_nums = SUBSTRING(new_serial_nums, CHAR_LENGTH(@currentValue) + @separatorLength + 1);
 END WHILE;
          
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `reserve_item` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `reserve_item`(IN new_user VARCHAR(8),
+ IN item VARCHAR(20))
+BEGIN
+  SET @pid = (SELECT id
+    FROM Items
+    WHERE serial_num = item);
+
+  SET @user = (SELECT user
+    FROM Checkout LEFT JOIN Items ON
+    Checkout.product_id = Items.id
+    WHERE serial_num = item);
+
+  INSERT INTO Reservations (product_id, current_user, waiting_user, reservation_date)
+  VALUES (@pid, @user, new_user, NOW());
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1728,6 +1788,32 @@ DELIMITER ;;
 CREATE PROCEDURE `delete_checkout`(IN item INT(11))
 BEGIN 
   DELETE FROM Checkout WHERE Checkout.product_id = item;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_reservation` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `delete_reservation`(IN item varchar(20), IN new_user varchar(8))
+BEGIN
+
+  DELETE Reservations
+  FROM Reservations JOIN Items ON
+    Reservations.product_id = Items.id
+  WHERE
+    Items.serial_num = item AND
+    Reservations.waiting_user = new_user;
 
 END ;;
 DELIMITER ;
