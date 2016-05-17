@@ -65,6 +65,9 @@ $(document).ready(function() {
     }
   });
 
+  // Submitting the username/password:
+  // This sets the goToNextPage flag before logging the user in.
+  // The flag lets the system know to keep the items saved for later.
   $('#login-form').submit(function(event) {
     goToNextPage = true;
     var submitData = {
