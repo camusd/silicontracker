@@ -36,7 +36,7 @@ $(document).ready(function() {
                         if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
                         else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
                         else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
-                        else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
+                        else if (data.item_type === 'flash') {$('#item-info').html(FlashDriveInfo(data));}
                         else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
                         else {$('#item-info').html(ErrorInfo());}
                       });
@@ -44,7 +44,7 @@ $(document).ready(function() {
                       if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
                       else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
                       else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
-                      else if (data.item_type === 'flash_drive') {$('#item-info').html(FlashDriveInfo(data));}
+                      else if (data.item_type === 'flash') {$('#item-info').html(FlashDriveInfo(data));}
                       else if (data.item_type === 'board') {$('#item-info').html(BoardInfo(data));}
                       else {$('#item-info').html(ErrorInfo());}
                     }

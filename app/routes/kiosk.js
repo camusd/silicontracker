@@ -42,7 +42,7 @@ module.exports = function(app, pool) {
             				results.physical_size, results.memory_type, results.capacity, 
             				results.speed, results.ecc, results.ranks, results.user,
             				results.checked_in, results.notes);
-			 		} else if (results.item_type === 'flash_drive') {
+			 		} else if (results.item_type === 'flash') {
 			 			jsonToSend = new models.Flash_Drive(results.serial_num, results.capacity,
             				results.manufacturer, results.user, results.checked_in, results.notes);
 			 		} else if (results.item_type === 'board') {
@@ -109,9 +109,11 @@ module.exports = function(app, pool) {
 
 	// Cancel serial numbers that were saved for later.
 	app.post('/kiosk/deletesaved', function(req, res) {
+		var itemsDeleted;
 		if (process.env.ENV === 'dev') {console.log('deleted items saved for later.')};
-
-		var itemsDeleted = (req.session.saveForLater.length > 0) ? {value: true} : {value: false};
+		if(req.session.hasOwnProperty('saveForLater')) {
+			itemsDeleted = (req.session.saveForLater.length > 0) ? {value: true} : {value: false};
+		}
 		req.session.saveForLater = [];
 		res.status(200).send(itemsDeleted);
 	});

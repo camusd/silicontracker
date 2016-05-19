@@ -92,6 +92,6 @@ module.exports = {
     self.checked_in = checked_in;
     self.notes = notes;
     self.scrapped = scrapped;
-    self.user_name;
+    self.user_name = user_name;
   }
 }

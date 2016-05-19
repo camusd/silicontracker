@@ -300,16 +300,16 @@ DROP TABLE IF EXISTS `Reservations`;
 CREATE TABLE `Reservations` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `product_id` int(11) unsigned NOT NULL,
-  `current_user` varchar(8) NOT NULL,
+  `present_user` varchar(8) NOT NULL,
   `waiting_user` varchar(8) NOT NULL,
   `reservation_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `product_id_INDEX` (`product_id`),
-  KEY `current_user_INDEX` (`current_user`),
+  KEY `present_INDEX` (`present_user`),
   KEY `waiting_user_INDEX` (`waiting_user`),
   CONSTRAINT `fk_Reservations_Items1` FOREIGN KEY (`product_id`) REFERENCES `Items` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Reservations_Owners1` FOREIGN KEY (`current_user`) REFERENCES `Owners` (`wwid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Reservations_Owners1` FOREIGN KEY (`present_user`) REFERENCES `Owners` (`wwid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_Reservations_Owners2` FOREIGN KEY (`waiting_user`) REFERENCES `Owners` (`wwid`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -512,11 +512,12 @@ CREATE PROCEDURE `get_board`()
 BEGIN
   SELECT
     serial_num, fpga, bios, mac, fab,
-    Checkout.user, checked_in, notes, scrapped
+    Checkout.user, checked_in, notes, scrapped, first_name, last_name
   FROM 
     Board INNER JOIN Items
-        ON Board.product_id = Items.id JOIN Checkout
-        ON Checkout.product_id = Items.id
+        ON Board.product_id = Items.id LEFT JOIN Checkout
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
     WHERE
     scrapped = 0
         AND Items.item_type = 'board';
@@ -1500,7 +1501,7 @@ BEGIN
     Checkout.product_id = Items.id
     WHERE serial_num = item);
 
-  INSERT INTO Reservations (product_id, current_user, waiting_user, reservation_date)
+  INSERT INTO Reservations (product_id, present_user, waiting_user, reservation_date)
   VALUES (@pid, @user, new_user, NOW());
 
 END ;;

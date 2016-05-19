@@ -139,7 +139,8 @@ $(document).ready(function() {
         external_name: row.data().external_name,
         architecture: row.data().architecture,
         notes: row.data().notes,
-        scrapped: row.data().scrapped
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
       };
       $('#editCPUModal').modal('show');
     });
@@ -260,7 +261,8 @@ $(document).ready(function() {
         manufacturer: row.data().manufacturer,
         model: row.data().model,
         notes: row.data().notes,
-        scrapped: row.data().scrapped
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
       };
       $('#editSSDModal').modal('show');
     });
@@ -387,7 +389,8 @@ $(document).ready(function() {
         capacity: row.data().capacity,
         speed: row.data().speed,
         notes: row.data().notes,
-        scrapped: row.data().scrapped
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
       };
       $('#editMemoryModal').modal('show');
     });
@@ -505,7 +508,8 @@ $(document).ready(function() {
         capacity: row.data().capacity,
         manufacturer: row.data().manufacturer,
         notes: row.data().notes,
-        scrapped: row.data().scrapped
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
       };
       $('#editFlashModal').modal('show');
     });
@@ -626,7 +630,8 @@ $(document).ready(function() {
         mac: row.data().mac,
         fab: row.data().fab,
         notes: row.data().notes,
-        scrapped: row.data().scrapped
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
       };
       $('#editBoardModal').modal('show');
     });

@@ -154,11 +154,11 @@ module.exports = function(app, pool) {
         req.body.serial_num+"','"+
         req.body.manufacturer+"','"+
         req.body.physical_size+"','"+
-        req.body.ecc+"','"+
-        req.body.ranks+"','"+
         req.body.memory_type+"','"+
         req.body.capacity+"','"+
         req.body.speed+"','"+
+        req.body.ecc+"','"+
+        req.body.ranks+"','"+
         req.body.notes+"','"+
         req.body.scrapped+"');",
         function(error, results, fields){
