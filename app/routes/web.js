@@ -106,7 +106,7 @@ module.exports = function(app, pool) {
     res.status(200).send(req.body);
 	});
 
-  app.post('/update/cpu/notes', function(req, res) {
+  app.post('/update/notes', function(req, res) {
     pool.getConnection(function(err, conn) {
       conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
         function(error, results, fields) {
@@ -135,19 +135,6 @@ module.exports = function(app, pool) {
     res.status(200).send(req.body);
   });
 
-  app.post('/update/ssd/notes', function(req, res) {
-    pool.getConnection(function(err, conn) {
-      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-        function(error, results, fields) {
-          if(error) {
-            throw error;
-          }
-          conn.release();
-      });
-    });
-    res.end();
-  });
-
   app.post('/update/memory', scrubAndValidate('Memory'), function(req, res) {
     pool.getConnection(function(err, conn) {
       conn.query("CALL update_memory('"+
@@ -172,19 +159,6 @@ module.exports = function(app, pool) {
     res.status(200).send(req.body);
   });
 
-  app.post('/update/memory/notes', function(req, res) {
-    pool.getConnection(function(err, conn) {
-      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-        function(error, results, fields) {
-          if(error) {
-            throw error;
-          }
-          conn.release();
-      });
-    });
-    res.end();
-  });
-
   app.post('/update/flash', scrubAndValidate('Flash'), function(req, res) {
     pool.getConnection(function(err, conn) {
       conn.query("CALL update_flash('"+req.body.serial_num+"','"
@@ -198,19 +172,6 @@ module.exports = function(app, pool) {
       });
     });
     res.status(200).send(req.body);
-  });
-
-  app.post('/update/flash/notes', function(req, res) {
-    pool.getConnection(function(err, conn) {
-      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-        function(error, results, fields) {
-          if(error) {
-            throw error;
-          }
-          conn.release();
-      });
-    });
-    res.end();
   });
 
   app.post('/update/board', scrubAndValidate('Board'), function(req, res) {
@@ -227,19 +188,6 @@ module.exports = function(app, pool) {
       });
     });
     res.status(200).send(req.body);
-  });
-
-  app.post('/update/board/notes', function(req, res) {
-    pool.getConnection(function(err, conn) {
-      conn.query("CALL update_notes('"+req.body.serial_num+"', '"+req.body.notes+"');",
-        function(error, results, fields) {
-          if(error) {
-            throw error;
-          }
-          conn.release();
-      });
-    });
-    res.end();
   });
 
   app.post('/add/cpu', [scrubAndValidate('CPU'), checkSerials], function(req, res) {

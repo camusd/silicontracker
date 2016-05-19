@@ -1,5 +1,5 @@
 function format(notes) {
-  return '<form id="form-notes" action="/update/cpu/notes" method="post">\
+  return '<form id="form-notes" action="/update/notes" method="post">\
             <div id="fg" class="form-group">\
               <textarea rows="4" cols="80" id="notes" placeholder="Add Notes Here">'+notes+'</textarea>\
             </div>\
@@ -110,7 +110,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/cpu/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -237,7 +237,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/ssd/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -359,7 +359,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/memory/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -481,7 +481,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/flash/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -599,7 +599,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/board/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {

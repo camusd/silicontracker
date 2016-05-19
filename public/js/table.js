@@ -1,5 +1,5 @@
 function format(notes) {
-  return '<form id="form-notes" action="/update/cpu/notes" method="post">\
+  return '<form id="form-notes" action="/update/notes" method="post">\
             <div id="fg" class="form-group">\
               <textarea rows="4" cols="80" id="notes" placeholder="Add Notes Here">'+notes+'</textarea>\
             </div>\
@@ -61,6 +61,12 @@ $(document).ready(function() {
         "className": "btn-edit",
         "visible": false,
       },
+      {
+        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>',
+        "orderable": false,
+        "className": "btn-reserve",
+        "visible": false,
+      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -71,6 +77,7 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
+      cpu_table.column(-2).visible(true);
       cpu_table.column(-1).visible(true);
     }
     // setting the column search bar width
@@ -111,7 +118,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/cpu/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -143,6 +150,28 @@ $(document).ready(function() {
         user_name: row.data().user_name
       };
       $('#editCPUModal').modal('show');
+    });
+    cpu_table.on('click', '.btn-reserve', function() {
+      var tr = $(this).closest('tr');
+      var row = cpu_table.row(tr);
+      cpu_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        spec: row.data().spec,
+        mm: row.data().mm,
+        frequency: row.data().frequency,
+        stepping: row.data().stepping,
+        llc: row.data().llc,
+        cores: row.data().cores,
+        codename: row.data().codename,
+        cpu_class: row.data().cpu_class,
+        external_name: row.data().external_name,
+        architecture: row.data().architecture,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name
+      };
+      $('#reserveCPUModal').modal('show');
     });
 
     // Placing the table in a horizontally scrollable box.
@@ -240,7 +269,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/ssd/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -364,7 +393,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/memory/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -488,7 +517,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/flash/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -608,7 +637,7 @@ $(document).ready(function() {
             serial_num: row.data().serial_num,
             notes: newNotes
           };
-          $.post('/update/board/notes', dataToSend, function(data, status, jqXHR) {
+          $.post('/update/notes', dataToSend, function(data, status, jqXHR) {
             if (status !== 'success') {
               alert('Error: Could not save notes.');
             } else {
@@ -667,6 +696,72 @@ $(document).ready(function() {
   $('#editCPUSave').on('click', function() {
     var form = $(this).closest('.modal-content').find('form');
     cpu_data.spec = form.find('#spec').val();
+    cpu_data.mm = form.find('#mm').val();
+    cpu_data.frequency = form.find('#frequency').val();
+    cpu_data.stepping = form.find('#stepping').val();
+    cpu_data.llc = form.find('#llc').val();
+    cpu_data.cores = form.find('#cores').val();
+    cpu_data.codename = form.find('#codename').val();
+    cpu_data.cpu_class = form.find('#cpu_class').val();
+    cpu_data.external_name = form.find('#external_name').val();
+    cpu_data.architecture = form.find('#architecture').val();
+    cpu_data.notes = form.find('#notes').val();
+    if(document.getElementById('scrap_cpu').checked) {
+      cpu_data.scrapped = 1;
+    } else {
+      cpu_data.scrapped = 0;
+    };
+
+    // Getting the keys and values of all the fields in the form
+    var obj = {};
+    $.each($('#CPU').serializeArray(), function(_, kv) {
+      obj[kv.name] = kv.value;
+    });
+
+    // Clearing all the old error messages
+    $.each(obj, function(key, o) {
+      var k = '#cpu_' + key + '_help';
+      $(k).html('');
+    });
+
+    $.post('/update/cpu', cpu_data, function(data, status, jqXHR) {
+      if(cpu_data.scrapped == 1) {
+        //Remove scrapped item and update banner to reflect that
+        cpu_table.row(cpu_data.index).remove();
+        $.get('/data/stats', function(data) {
+          $('#infoBanner').empty();
+          $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
+                                  data.num_active + ' active + ' +
+                                  data.num_scrapped + ' scrapped = ' +
+                                  data.num_total + '</span>');
+        });
+        cpu_table.draw();
+      } else {
+        cpu_table.row(cpu_data.index).data(cpu_data).draw();
+      }
+      $('#editCPUModal').modal('hide');
+    })
+    .fail(function(data) {
+      // get the list of errors
+      var errors = data.responseJSON;
+
+      // display the messages in the help divs
+      $.each(errors, function(key, messages) {
+        var k = '#cpu_' + key + '_help';
+
+        var repDOM = [];
+        $.each(messages, function(idx, m) {
+          repDOM.push('<span class="help-block"><p class="text-danger">'+m+'</p></span>')
+        });
+
+        $(k).append(repDOM);
+      });
+    });
+  });
+  $('#reserveCPUSave').on('click', function() {
+    var form = $(this).closest('.modal-content').find('form');
+    cpu_data.spec = form.find('#spec1').val();
     cpu_data.mm = form.find('#mm').val();
     cpu_data.frequency = form.find('#frequency').val();
     cpu_data.stepping = form.find('#stepping').val();

@@ -41,6 +41,7 @@ $(document).ready(function() {
                         else {$('#item-info').html(ErrorInfo());}
                       });
                     } else {
+                      if(data.scrapped === "Scrapped") {$('#save-for-later').attr('disabled', 'disabled');}
                       if (data.item_type === 'cpu') {$('#item-info').html(CPUInfo(data));}
                       else if (data.item_type === 'ssd') {$('#item-info').html(SSDInfo(data));}
                       else if (data.item_type === 'memory') {$('#item-info').html(MemoryInfo(data));}
@@ -143,7 +144,9 @@ function UserInfo(info) {
 
 function CPUInfo(info) {
   changeBtnText(info);
-  $('#save-for-later').removeAttr('disabled');
+  if(!(info.scrapped === "Scrapped" && info.checked_in === "Checked In")) {
+    $('#save-for-later').removeAttr('disabled');
+  }
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -174,7 +177,9 @@ function CPUInfo(info) {
 
 function SSDInfo(info) {
   changeBtnText(info);
-  $('#save-for-later').removeAttr('disabled');
+  if(!(info.scrapped === "Scrapped" && info.checked_in === "Checked In")) {
+    $('#save-for-later').removeAttr('disabled');
+  }
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -191,7 +196,9 @@ function SSDInfo(info) {
 
 function MemoryInfo(info) {
   changeBtnText(info);
-  $('#save-for-later').removeAttr('disabled');
+  if(!(info.scrapped === "Scrapped" && info.checked_in === "Checked In")) {
+    $('#save-for-later').removeAttr('disabled');
+  }
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -216,7 +223,9 @@ function MemoryInfo(info) {
 
 function FlashDriveInfo(info) {
   changeBtnText(info);
-  $('#save-for-later').removeAttr('disabled');
+  if(!(info.scrapped === "Scrapped" && info.checked_in === "Checked In")) {
+    $('#save-for-later').removeAttr('disabled');
+  }
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
@@ -231,7 +240,9 @@ function FlashDriveInfo(info) {
 
 function BoardInfo(info) {
   changeBtnText(info);
-  $('#save-for-later').removeAttr('disabled');
+  if(!(info.scrapped === "Scrapped" && info.checked_in === "Checked In")) {
+    $('#save-for-later').removeAttr('disabled');
+  }
   return  (UserInfo(info)+
           '<div class="row white-space"></div>'+
           '<div class="col-sm-6 col-xs-12"><strong>Serial Number:</strong></div>'+
