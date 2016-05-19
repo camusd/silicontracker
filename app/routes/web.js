@@ -498,8 +498,12 @@ function enforceLogin(req, res, next) {
 }
 
 function enforceAdminLogin(req, res, next) {
-  if (req.session.web.loggedIn && req.session.web.is_admin) {
-    next();
+  if(req.session.hasOwnProperty("web")) {
+    if (req.session.web.loggedIn && req.session.web.is_admin) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
   } else {
     res.redirect('/login');
   }

@@ -17,17 +17,6 @@ function arrayFind(arr, fn) {
   return -1;
 }
 
-function submitData(data, cpu_len, ssd_len, mem_len, flash_len) {
-  $.post("/scrap/submit", data); 
-  var len = cpu_len + ssd_len + mem_len + flash_len;
-  if(len === 1) {
-    alert(len + " item was scrapped");
-  } else {
-    alert(len + " items were scrapped");
-  }
-  window.location="/";
-};
-
 var jsonToSend = {};
 var cpu = [];
 var ssd = [];
@@ -55,6 +44,40 @@ $(document).ready(function() {
 
   var pressed = false; 
   var chars = [];
+  var len = 0;
+
+  function submitData(data) {
+    $.post("/scrap/submit", data)
+      .done(function(returnData) {
+        // Success! display the modal.
+        addModalRows(returnData);
+        $('#SuccessModal').modal();
+        
+        // After 5 seconds, close the modal.
+        setTimeout(function() {
+          $('#SuccessModal').modal('hide');
+        }, 5000);
+      });
+  };
+
+  // Add the rows to the modal table.
+  function addModalRows(dataArr) {
+    $.each(dataArr, function(idx, elem) {
+      $('#submit-results tbody').append('<tr><td>'+elem.serial_num+'</td>'+
+        '<td>'+itemTypes[elem.item_type]+'</td></tr>');
+    });
+  }
+
+  // Commit the scrapping.
+  $('#submit').on('click', function(event) {
+    submitData(jsonToSend);
+  });
+
+  // After the modal goes away, redirect back to the homescreen.
+  // The user will be logged out at this point.
+  $('#SuccessModal').on('hidden.bs.modal', function(e) {
+    window.location="/";
+  });
 
   $('#scrap-error').hide();
   $(window).keypress(function(e) {
@@ -93,6 +116,7 @@ $(document).ready(function() {
                       jsonToSend.cpu = cpu;
                       cpu_table.row.add(cpu[cpu.length - 1]);
                       cpu_table.draw();
+                      len = cpu.length + ssd.length + memory.length + flash.length + board.length;
                       // Switch the active table
                       $('#tab-table2').removeClass('active');
                       $('#tab-table3').removeClass('active');
@@ -104,6 +128,12 @@ $(document).ready(function() {
                       $('#flash-tab').removeClass('active');
                       $('#board-tab').removeClass('active');
                       $('#cpu-tab').addClass('active');
+                      $.get('/data/stats', function(data) {
+                        $('#infoBanner').empty();
+                        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+                        $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> '
+                          +len+'</span>');
+                      });
                     }
                   });
 
@@ -144,6 +174,12 @@ $(document).ready(function() {
                       $('#flash-tab').removeClass('active');
                       $('#board-tab').removeClass('active');
                       $('#ssd-tab').addClass('active');
+                      $.get('/data/stats', function(data) {
+                        $('#infoBanner').empty();
+                        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+                        $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> '
+                          +len+'</span>');
+                      });
                     }
                   });
 
@@ -184,6 +220,12 @@ $(document).ready(function() {
                       $('#flash-tab').removeClass('active');
                       $('#board-tab').removeClass('active');
                       $('#memory-tab').addClass('active');
+                      $.get('/data/stats', function(data) {
+                        $('#infoBanner').empty();
+                        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+                        $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> '
+                          +len+'</span>');
+                      });
                     }
                   });
 
@@ -224,6 +266,12 @@ $(document).ready(function() {
                       $('#memory-tab').removeClass('active');
                       $('#board-tab').removeClass('active');
                       $('#flash-tab').addClass('active');
+                      $.get('/data/stats', function(data) {
+                        $('#infoBanner').empty();
+                        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+                        $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> '
+                          +len+'</span>');
+                      });
                     }
                   });
 
@@ -270,6 +318,12 @@ $(document).ready(function() {
                       $('#memory-tab').removeClass('active');
                       $('#flash-tab').removeClass('active');
                       $('#board-tab').addClass('active');
+                      $.get('/data/stats', function(data) {
+                        $('#infoBanner').empty();
+                        $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
+                        $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> '
+                          +len+'</span>');
+                      });
                     }
                   });
               }

@@ -18,7 +18,7 @@ $(document).ready(function() {
         $('#navbar-left').append('<li id="scrap-items"><a href="/scrap-items">Mass Scrap</a></li>\
                                   <li id="view-scrapped"><a href="/view-scrapped">View Scrapped Items</a></li>');
         if (window.location.pathname === '/scrap-items') {
-          $('#infoBanner').append('<span>Scan an item to add it to the table of items to be scrapped</span>');
+          $('#infoBanner').append('<span><strong>Items Ready to be Scrapped:</strong> 0</span>');
           $('#scrap-items').addClass('active');
         }
         if (window.location.pathname === '/view-scrapped') {

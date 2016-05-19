@@ -73,21 +73,17 @@ $(document).ready(function() {
   });
 
   // After the modal goes away, redirect back to the homescreen.
-  // The user will be logged out at this point.
+  // The user will be logged out at this point. 
   $('#SuccessModal').on('hidden.bs.modal', function(e) {
     window.location="/kiosk";
   });
 
   $('#silicontracker').click(function() {
-    $.post('/kiosk/logout', function() {
-      window.location = '/kiosk';
-    });
+    $.post('/kiosk/logout');
   });
 
-  var unl = false;
   $(window).on('beforeunload', function() {
-    if (val_array.length > 0 && unl === false) {
-      unl = true;
+    if (val_array.length > 0) {
       return "Items are still in the cart. Are you sure?";
     }
   });

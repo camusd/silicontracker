@@ -249,7 +249,7 @@
     </div>
   </div>
   <div class="col-md-4-c" style=" text-align: center">
-    <button id="submit" name="submit" type="button" class="btn btn-primary" onclick="submitData(jsonToSend, cpu.length, ssd.length, memory.length, flash.length, board.length)">Submit</button>
+    <button id="submit" name="submit" type="button" class="btn btn-primary">Submit</button>
   </div>
 </div>
 
@@ -558,6 +558,32 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         <button id="editMemorySave" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="SuccessModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Scrapping Successful!</h4>
+      </div>
+      <div class="modal-body">
+        <table id="submit-results" class="table">
+        <thead>
+          <tr>
+            <th>Serial Number</th>
+            <th>Item Type</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
