@@ -3,6 +3,7 @@ var request = require('request');
 var scrub = require('../scrubbers');
 var validate = require('../validators');
 var models = require(rootdir + '/app/models');
+var fs = require('fs');
 
 module.exports = function(app, pool) {
   
@@ -86,6 +87,29 @@ module.exports = function(app, pool) {
   /* Posts for the web interface
    * These are when someone submits 
    * a form and POSTS the data. */
+
+  app.post('/web/image', function(req, res) {
+    if (process.env.ENV === 'dev') { console.log('getting image...'); }
+	
+	var wwid = req.session.web.wwid.toString();
+	var rgbUri, depthUri;
+	for (var i = 0; i < req.body.images.length; i++) {
+		if (req.body.images[i].type === 'rgb') {
+			rgbUri = req.body.images[i].uri;
+		} else if (req.body.images[i].type === 'depth') {
+			depthUri = req.body.images[i].uri;
+		}
+	}
+    pool.getConnection(function(err, conn) {
+    	conn.query("CALL update_images('"+wwid+"','"+rgbUri+"','"+depthUri+"');",
+    		function(error, results, fields) {
+    			if (error) { throw error; }
+    			conn.release();
+    		});
+    });
+    
+    res.end();
+  });
 
   app.post('/update/cpu', scrubAndValidate('CPU'), function(req, res) {
   	pool.getConnection(function(err, conn) {
@@ -431,6 +455,10 @@ module.exports = function(app, pool) {
 
   app.get('/settings/attributes', enforceAdminLogin, function(req, res) {
     res.sendFile(rootdir + '/public/web/edit_dropdowns.html');
+  });
+
+  app.get('/settings/facial-setup', enforceLogin, function(req, res) {
+    res.sendFile(rootdir + '/public/web/setup_facial_rec.html');
   });
 
   app.get('/scrap-items', enforceAdminLogin, function(req, res) {

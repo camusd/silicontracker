@@ -84,7 +84,7 @@ if (process.env.ENV === 'prod') {
 	sessOptions.cookie.secure = true;
 }
 app.use(session(sessOptions));
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.urlencoded({ extended: true, parameterLimit: 10000, limit: '50mb'}));
 app.use(express.static('public')); // All client-side code will be handled in the public folder.
 
 /* 

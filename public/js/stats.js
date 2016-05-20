@@ -7,9 +7,7 @@ $(document).ready(function() {
                                  <a href="#" id="drop-settings" data-toggle="dropdown" class="dropdown-toggle" \
                                  role="button">' + data.first_name + ' ' + data.last_name + ' ' + '<b class="caret"></b></a> \
                                  <ul id="settings-list" role="menu" class="dropdown-menu" aria-labelledby="drop-settings"> \
-                                   <li role="presentation"><a href="#">Edit Profile</a></li> \
-                                   <li role="presentation"><a href="#">Email Settings</a></li> \
-                                   <li role="presentation"><a href="#">Setup Facial Recognition</a></li> \
+                                   <li role="presentation"><a href="/settings/facial-setup">Setup Facial Recognition</a></li> \
                                  </ul> \
                                </li>');
       $('#navbar-left').append('<li id="reservations"><a href="/reservations">Reserve Items</a></li>');
@@ -18,8 +16,7 @@ $(document).ready(function() {
         $('#reservations').addClass('active');
       }
       if (data.is_admin) {
-        $('#settings-list').append('<li class="dropdown-header">Admin Settings</li>\
-                                    <li><a href="/settings/attributes">Edit Dropdowns</a></li>');
+        $('#settings-list').append('<li><a href="/settings/attributes">Edit Dropdowns</a></li>');
         $('#navbar-left').append('<li id="scrap-items"><a href="/scrap-items">Mass Scrap</a></li>\
                                   <li id="view-scrapped"><a href="/view-scrapped">View Scrapped Items</a></li>');
         if (window.location.pathname === '/scrap-items') {

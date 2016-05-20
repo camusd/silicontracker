@@ -119,19 +119,10 @@ background-color: #f5f5f5;
   margin-top: 10px;
 }
 
-/*
-.barcode_wrapper {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+.camera {
+  visibility: hidden;
+  position: absolute;
 }
-
-.camera_wrapper {
-    width: 50%;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}*/
 
 .dataTables_filter {
     display: none;

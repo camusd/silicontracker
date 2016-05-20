@@ -434,6 +434,7 @@ var Webcam = {
 			}
 			
 			// render to user canvas if desired
+			console.log(user_canvas);
 			if (user_canvas) {
 				var user_context = user_canvas.getContext('2d');
 				user_context.drawImage( canvas, 0, 0 );

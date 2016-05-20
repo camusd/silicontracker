@@ -36,13 +36,27 @@ server.listen(port, ip, function(){
 app.post('/', function(req, res) {
 	var userExists = 0;
 	var sendData = '';
-	username = req.body.username;
-	password = req.body.pass; // currently does nothing with the password.
-	for (var i = 0; i < users.length; i++) {
-		if (users[i].user === username) {
-			sendData = users[i].wwid;
-			break;
+		 			
+	if (req.body.username && req.body.password) {
+		var username = req.body.username;
+		var password = req.body.pass; // currently does nothing with the password.
+
+		for (var i = 0; i < users.length; i++) {
+			if (users[i].user === username) {
+				sendData = users[i].wwid;
+				break;
+			}
+		}
+	} else if (req.body.wwid) {
+		var wwid = req.body.wwid;
+		for (var i = 0; i < users.length; i++) {
+			if (users[i].wwid === wwid) {
+
+				sendData = users[i].wwid.toString();
+				break;
+			}
 		}
 	}
+	
 	res.send(sendData);		
 });

@@ -1,7 +1,8 @@
 var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 var models = require(rootdir + '/app/models');
-
+var fs = require('fs');
+var util = require('util');
 require('../templates')();
 
 module.exports = function(app, pool) {
@@ -249,7 +250,6 @@ module.exports = function(app, pool) {
 	  }
   });
 
-
 	/* 
 	 * Middleware for logging into the kiosk. We need a few things done in sequential order.
 	 *
@@ -258,6 +258,126 @@ module.exports = function(app, pool) {
 	 *
 	 * After that, we have the user's name and wwid stored in session, and can allow them into the cart.
 	 */
+
+	app.use('/kiosk/image', function(req, res, next) {
+		var thewwid = -1;
+		var rgbUri;
+		var depthUri;
+
+		var dir = './tmp';
+		if (!fs.existsSync(dir)){
+		    fs.mkdirSync(dir);
+		}
+
+		// Get the images just taken by the user.
+		for (var i = 0; i < req.body.images.length; i++) {
+			if (req.body.images[i].type === 'rgb') {
+				var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
+				var buf = new Buffer(raw, 'base64');
+				fs.writeFile('./tmp/rcompare.jpg', buf);
+			}
+			if (req.body.images[i].type === 'depth') {
+				var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
+				var buf = new Buffer(raw, 'base64');
+				fs.writeFile('./tmp/dcompare.jpg', buf);
+			}
+		}
+
+		pool.getConnection(function(err, conn) {
+		 	conn.query('CALL get_all_user_images();', 
+		 		function(error, results, fields) {
+				if(error) {
+					throw error;
+				}
+				conn.release();
+
+				// check images here, get wwid back.
+				for (var i = 0; i < results[0].length; i++) {
+					if (results[0][i].rgb_image_uri && results[0][i].depth_image_uri) {
+						var rawRGB = results[0][i].rgb_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+						var rawDepth = results[0][i].depth_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+
+						var rgbBuffer = new Buffer(rawRGB, 'base64');
+						var depthBuffer = new Buffer(rawDepth, 'base64');
+						fs.writeFile('./tmp/r'+results[0][i].wwid+'.jpg', rgbBuffer);
+						fs.writeFile('./tmp/d'+results[0][i].wwid+'.jpg', depthBuffer);
+					}
+
+					if (i === results[0].length-1) {
+
+						// delete all the tmp files
+						// fs.readdir('./tmp', function(err, files) {
+						// 	deleteTmpFiles(files, function() {});
+						// });
+
+						if (thewwid === -1) {
+							res.redirect('/kiosk');
+						} else {
+							request.post({url: process.env.CRED_ADDR, form: {'wwid': thewwid}},
+								function(error, response, body) {					
+									if (error) {
+						 				console.log(error);
+						 			}
+						 			// Checking if the user exists in AD.
+						 			if (body !== '') {
+
+						 				req.session.kiosk = new models.SessionUser();
+						 				// We have a user in the AD system. Parse out the wwid.
+						 				req.session.kiosk.wwid = body;
+						 				next();
+						 			} else {
+						 				// No wwid found, send user back to login page.
+						 				res.redirect('/kiosk');
+						 			}
+								});
+						}
+					}
+				}
+
+			});
+		 });
+
+
+		
+	}, function(req, res, next) {
+		// We know at this point we have a wwid, so let's try to get the user from our DB.
+      	pool.getConnection(function(err, conn) {
+			conn.query('CALL get_user_from_wwid('+req.session.kiosk.wwid+')', function(error, results, fields) {
+					if (error) {
+						throw error;
+					}
+		 			conn.release();
+					
+					if (results[0].length === 1) {
+		 				req.session.kiosk.last_name = results[0][0].last_name;
+		 				req.session.kiosk.first_name = results[0][0].first_name;
+		 				req.session.kiosk.is_admin = results[0][0].is_admin;
+		 				req.session.kiosk.loggedIn = true;
+		 				req.session.save();
+					} else {
+						// Got no results
+						res.redirect('/kiosk');
+					}
+					next();
+		 		});
+		});
+	});
+
+	app.post('/kiosk/image', function(req, res) {
+		// If we made it this far through the middleware,
+		// It must mean success. Send them to the cart!
+
+		//TEST LOGS
+		if (process.env.ENV === 'dev') {
+			console.log(req.session.kiosk.wwid);
+			console.log(req.session.kiosk.last_name);
+			console.log(req.session.kiosk.first_name);
+		}
+
+		res.redirect('/cart');
+	});
+
+	
 	app.use('/kiosk/login', function(req, res, next) {
 		request.post({url: process.env.CRED_ADDR, form: {'username': req.body.username, 'pass': req.body.pass}},
 	 		function(error, response, body) {
@@ -324,4 +444,19 @@ function enforceLogin(req, res, next) {
 	} else {
 		res.redirect('/kiosk');
 	}
+}
+
+function deleteTmpFiles(files, callback){
+  var i = files.length;
+  files.forEach(function(filepath){
+    fs.unlink('./tmp/'+filepath, function(err) {
+      i--;
+      if (err) {
+        callback(err);
+        return;
+      } else if (i <= 0) {
+        callback(null);
+      }
+    });
+  });
 }

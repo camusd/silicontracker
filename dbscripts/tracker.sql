@@ -206,6 +206,8 @@ CREATE TABLE `Owners` (
   `overdue_item_email_setting` tinyint(1) unsigned DEFAULT '1',
   `overdue_item_email_frequency` int(3) unsigned DEFAULT '30',
   `cart_summary_email_setting` tinyint(1) unsigned DEFAULT '1',
+  `rgb_image_uri` text,
+  `depth_image_uri` text,
   PRIMARY KEY (`wwid`),
   UNIQUE KEY `wwid_UNIQUE` (`wwid`),
   UNIQUE KEY `idsid_UNIQUE` (`idsid`)
@@ -218,7 +220,7 @@ CREATE TABLE `Owners` (
 
 LOCK TABLES `Owners` WRITE;
 /*!40000 ALTER TABLE `Owners` DISABLE KEYS */;
-INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0, 1, 30, 1),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1, 1, 30, 1),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0, 1, 30, 1),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com', 1, 1, 30, 0),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1, 1, 30, 1),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1, 1, 30, 1);
+INSERT INTO `Owners` VALUES ('1','1','test_user','test_user', 'test.silicon.tracker@gmail.com',0, 1, 30, 1, NULL, NULL),('123','123','Hayes','Brett','test.silicon.tracker@gmail.com',1, 1, 30, 1, NULL, NULL),('222','222','User','NonAdmin','test.silicon.tracker@gmail.com',0, 1, 30, 1, NULL, NULL),('456','456','Camus','Dylan','test.silicon.tracker@gmail.com', 1, 1, 30, 0, NULL, NULL),('789','789','Cronise','Joseph','test.silicon.tracker@gmail.com',1, 1, 30, 1, NULL, NULL),('282','282','Oehrlein','Scott','test.silicon.tracker@gmail.com',1, 1, 30, 1, NULL, NULL);
 /*!40000 ALTER TABLE `Owners` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1769,6 +1771,28 @@ BEGIN
     SET   capacity = new_capacity,
       manufacturer = new_manufacturer
     WHERE product_id = flash_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_images` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `update_images`(IN userID VARCHAR(8), IN rgb TEXT, IN depth TEXT)
+BEGIN
+  UPDATE Owners
+    SET rgb_image_uri = rgb,
+    depth_image_uri = depth
+  WHERE wwid = userID;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
