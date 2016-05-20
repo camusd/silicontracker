@@ -37,7 +37,7 @@ app.post('/', function(req, res) {
 	var userExists = 0;
 	var sendData = '';
 		 			
-	if (req.body.username && req.body.password) {
+	if (req.body.username && req.body.pass) {
 		var username = req.body.username;
 		var password = req.body.pass; // currently does nothing with the password.
 
