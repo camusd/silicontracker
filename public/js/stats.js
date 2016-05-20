@@ -9,7 +9,7 @@ $(document).ready(function() {
                                  <ul id="settings-list" role="menu" class="dropdown-menu" aria-labelledby="drop-settings"> \
                                    <li role="presentation"><a href="#">Edit Profile</a></li> \
                                    <li role="presentation"><a href="#">Email Settings</a></li> \
-                                   <li role="presentation"><a href="#">Setup Facial Recognition</a></li> \
+                                   <li role="presentation"><a href="/settings/facial-setup">Setup Facial Recognition</a></li> \
                                  </ul> \
                                </li>');
       if (data.is_admin) {
