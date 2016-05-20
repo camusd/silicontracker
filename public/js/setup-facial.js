@@ -77,7 +77,7 @@ $(document).ready(function() {
   // The end of the camera names determine the differences between the cameras.
   // This makes it so we have to determine ourselves which camera is being run.
   // We do an analysis on the images after the images are taken.
-  if (OSName === 'Linux') {
+  // if (OSName === 'Linux') {
     // Find all the cameras
     MediaStreamTrack.getSources(function(sourceInfos) {
       for (var i = 0; i != sourceInfos.length; ++i) {
@@ -131,59 +131,59 @@ $(document).ready(function() {
         });
       });
     });
-  }
+  // }
 
   // Unlike Linux, Windows keeps the full names of the cameras.
   // This makes things simpler to determine each camera.
-  if (OSName === 'Windows') {
-    MediaStreamTrack.getSources(function(sourceInfos) {
-      for (var i = 0; i != sourceInfos.length; ++i) {
-        var sourceInfo = sourceInfos[i];
-        if (sourceInfo.kind === 'video' && 
-            sourceInfo.label.includes('RealSense') &&
-            sourceInfo.label.includes('Depth')) {
-            // We have the depth camera
-            depthCamId = sourceInfo.id;
-        }
-        if (sourceInfo.kind === 'video' && 
-            sourceInfo.label.includes('RealSense') &&
-            sourceInfo.label.includes('RGB')) {
-            // We have the rgb camera
-            rgbCamId = sourceInfo.id;
-        }
-      }
-      // Attach the rgb camera.
-      Webcam.attach('#my_camera0', rgbCamId);
+  // if (OSName === 'Windows') {
+  //   MediaStreamTrack.getSources(function(sourceInfos) {
+  //     for (var i = 0; i != sourceInfos.length; ++i) {
+  //       var sourceInfo = sourceInfos[i];
+  //       if (sourceInfo.kind === 'video' && 
+  //           sourceInfo.label.includes('RealSense') &&
+  //           sourceInfo.label.includes('Depth')) {
+  //           // We have the depth camera
+  //           depthCamId = sourceInfo.id;
+  //       }
+  //       if (sourceInfo.kind === 'video' && 
+  //           sourceInfo.label.includes('RealSense') &&
+  //           sourceInfo.label.includes('RGB')) {
+  //           // We have the rgb camera
+  //           rgbCamId = sourceInfo.id;
+  //       }
+  //     }
+  //     // Attach the rgb camera.
+  //     Webcam.attach('#my_camera0', rgbCamId);
       
-      $('#snapshot').click(function() {
-        // take snapshot and get image data from the rgb camera
-        Webcam.snap( function(data_uri0) {
-          $('#results0').html( 
-            '<img id="myimg0" src="'+data_uri0+'"/>');
+  //     $('#snapshot').click(function() {
+  //       // take snapshot and get image data from the rgb camera
+  //       Webcam.snap( function(data_uri0) {
+  //         $('#results0').html( 
+  //           '<img id="myimg0" src="'+data_uri0+'"/>');
           
-          // Attach the depth camera
-          Webcam.attach('#my_camera1', depthCamId);
-          setTimeout(function() {
-            // take snapshot of second camera
-            Webcam.snap( function(data_uri1) {
+  //         // Attach the depth camera
+  //         Webcam.attach('#my_camera1', depthCamId);
+  //         setTimeout(function() {
+  //           // take snapshot of second camera
+  //           Webcam.snap( function(data_uri1) {
 
-              $('#results1').html(
-                '<img id="myimg1" src="'+data_uri1+'"/>');
-            });
+  //             $('#results1').html(
+  //               '<img id="myimg1" src="'+data_uri1+'"/>');
+  //           });
             
-            // Grabbing all the images.
-            imagesToSend.push({type: 'rgb', uri: data_uri0});
-            imagesToSend.push({type: 'depth', uri: data_uri1});
+  //           // Grabbing all the images.
+  //           imagesToSend.push({type: 'rgb', uri: data_uri0});
+  //           imagesToSend.push({type: 'depth', uri: data_uri1});
 
-            // after we have our images, send them to the server
-            $.post('/web/image', {images: imagesToSend})
-              .done(function() {
-                alert("images saved!");
-                location.reload();
-              });
-          });
-        }, 1000);
-      });
-    });
-  }
+  //           // after we have our images, send them to the server
+  //           $.post('/web/image', {images: imagesToSend})
+  //             .done(function() {
+  //               alert("images saved!");
+  //               location.reload();
+  //             });
+  //         });
+  //       }, 1000);
+  //     });
+  //   });
+  // }
 });
