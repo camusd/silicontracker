@@ -11,7 +11,8 @@ module.exports = {
   },
 
   CPU: function(serial_num, spec, mm, frequency, stepping, llc, cores,
-    codename, cpu_class, external_name, architecture, user, checked_in, notes, scrapped, user_name) {
+    codename, cpu_class, external_name, architecture, user, checked_in, notes,
+    scrapped, user_name, button_type, reserve_status, reservation_date) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -30,6 +31,9 @@ module.exports = {
     self.notes = notes;
     self.scrapped = scrapped;
     self.user_name = user_name;
+    self.button_type = button_type;
+    this.reserve_status = reserve_status;
+    this.reservation_date = reservation_date;
   },
 
   SSD: function(serial_num, manufacturer, model, capacity, user,

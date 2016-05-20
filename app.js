@@ -68,17 +68,6 @@ function handleConnection() {
 
 handleConnection();
 
-// TODO: SSL for database
-// Secure Socket Layer (SSL) Credentials
-// var options = {
-//     key:    fs.readFileSync('ssl/server.key'),
-//     cert:   fs.readFileSync('ssl/server.crt'),
-//     ca:     fs.readFileSync('ssl/ca.crt'),
-//     requestCert:        true,
-//     rejectUnauthorized: false,
-//     passphrase: process.env.SSL_PASSPHRASE
-// };
-
 // Setting up Session environment
 
 var sessOptions = {

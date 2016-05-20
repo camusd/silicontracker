@@ -79,25 +79,6 @@ module.exports = function(app, pool) {
 		 });
   });
 
-	//  /* Getters for json data on items in the cart */
-	// app.get('/cart/serial/:serial', function(req, res) {
-	//  	var serial = req.params.serial;
- //    pool.getConnection(function(err, conn) {
-	// 	 	conn.query("CALL get_checkout_status(\'" + serial + "\');",
-	// 	 		function(error, results, fields){
-	// 	 			if(error) {
-	// 	 				throw error;
-	// 	 			}
-	// 	 			conn.release();
-
-	// 	 			if (process.env.ENV == 'dev')
-	// 	 				console.log(results[0]);
-		 			
-	// 	 			res.send(results[0][0]);
-	// 	 		});
-	// 	});
-	// });
-
 	// After the user is in the cart, get all the saved items.
 	app.get('/kiosk/saveforlater', function(req, res) {
 		// get status
@@ -172,6 +153,45 @@ module.exports = function(app, pool) {
 	      			items[i].status = results[0][0].checked_in;
 	      			user = results[0][0].user;
 	      			total_finished++;
+
+	      			conn.query("CALL get_reservation('"+ serial_nums[i] +"');",
+	      				function(error, results, fields) {
+	      					for(var j in results[0]) {
+		      					if(error) {
+		      						throw error;
+		      					}
+		      					var their_wwid = results[0][0].waiting_user;
+
+		      					conn.query("CALL get_addr("+their_wwid+");",
+		      						function(error, results, fields) {
+		      							if(error) {
+		      								throw error;
+		      							}
+		      							var their_addr = results[0][0].email_address;
+		      							var their_last_name_reservation = results[0][0].last_name;
+		      							var their_first_name_reservation = results[0][0].first_name;
+		      							var their_date = results[0][0].order_date;
+
+		      							conn.query("CALL get_addr("+wwid+");",
+		      								function(error, results, fields) {
+		      									if(error) {
+		      										throw error;
+		      									}
+		      									var my_first_name_reservation = results[0][0].first_name;
+		      									var my_last_name_reservation = results[0][0].last_name;
+		      									console.log("Sending reservation email to "+addr+"...");
+														reservationTemplate(their_addr, their_first_name_reservation, their_last_name_reservation,
+															my_first_name_reservation, my_last_name_reservation, serial_nums[i], "CPU", status[i], their_date); //TODO: get item_type
+														conn.query("CALL delete_reservation('"+serial_nums[i]+"','"+their_wwid+"');",
+															function(error, results, fields) {
+																if(error) {
+																	throw error;
+																}
+															});
+		      								});
+		      						});
+		      				}
+	      				});
 
 	      			if(user != null && user != wwid) {
 	      				conn.query("CALL get_addr("+user+");",

@@ -149,7 +149,6 @@ module.exports = function(app, pool) {
         req.body.notes+"','"+
         req.body.scrapped+"');",
         function(error, results, fields){
-          console.log(results);
           if(error) {
             throw error;
           }
@@ -278,72 +277,130 @@ module.exports = function(app, pool) {
     });
   });
 
+  app.post('/reserve', function(req, res) {
+    var wwid = req.session.web.wwid;
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL reserve_item('" + wwid + "','" + req.body.serial_num + "');",
+        function(error, results, fields) {
+          if(error) {
+            throw error;
+          }
+          conn.release();
+        })
+    })
+    res.end();
+  });
+
+
   app.post('/scrap/submit', function(req, res) {
+    var returnData = [];
+    var j = 0;
+    var total = 0;
+    var serial = null;
     if(req.body.hasOwnProperty('cpu')) {
-      pool.getConnection(function(err, conn) {
-        for(var i = 0; i < req.body.cpu.length; i++) {
-          conn.query("CALL scrap_item('"+req.body.cpu[i].serial_num+"');",
-          function(error, results, fields) {
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        conn.release();
-      });
+      total += req.body.cpu.length;
     }
     if(req.body.hasOwnProperty('ssd')) {
-      pool.getConnection(function(err, conn) {
-        for(var i = 0; i < req.body.ssd.length; i++) {
-          conn.query("CALL scrap_item('"+req.body.ssd[i].serial_num+"');",
-          function(error, results, fields) {
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        conn.release();
-      });
+      total += req.body.ssd.length;
     }
     if(req.body.hasOwnProperty('memory')) {
-      pool.getConnection(function(err, conn) {
-        for(var i = 0; i < req.body.memory.length; i++) {
-          conn.query("CALL scrap_item('"+req.body.memory[i].serial_num+"');",
-          function(error, results, fields) {
-            if(error) {
-              throw error;
-            }
-          });
-        }
-        conn.release();
-      });
+      total += req.body.memory.length;
     }
     if(req.body.hasOwnProperty('flash')) {
-      pool.getConnection(function(err, conn) {
+      total += req.body.flash.length;
+    }
+    if(req.body.hasOwnProperty('board')) {
+      total += req.body.board.length;
+    }
+    pool.getConnection(function(err, conn) {
+      if(req.body.hasOwnProperty('cpu')) {
+        for(var i = 0; i < req.body.cpu.length; i++) {
+          serial = req.body.cpu[i].serial_num;
+          conn.query("CALL scrap_item('"+serial+"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              returnData[j] = {};
+              returnData[j].serial_num = serial;
+              returnData[j].item_type = 'CPU';
+              j++;
+              if(j === total) {
+                res.status(200).send(returnData);
+              }
+            });
+        }
+      }
+      if(req.body.hasOwnProperty('ssd')) {
+        for(var i = 0; i < req.body.ssd.length; i++) {
+          conn.query("CALL scrap_item('"+req.body.ssd[i].serial_num+"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              returnData[j] = {};
+              returnData[j].serial_num = req.body.ssd[i].serial_num;
+              returnData[j].item_type = 'SSD';
+              j++;
+              if(j === total) {
+                res.status(200).send(returnData);
+              }
+            });
+        }
+      }
+      if(req.body.hasOwnProperty('memory')) {
+        for(var i = 0; i < req.body.memory.length; i++) {
+          conn.query("CALL scrap_item('"+req.body.memory[i].serial_num+"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              returnData[j] = {};
+              returnData[j].serial_num = req.body.memory[i].serial_num;
+              returnData[j].item_type = 'Memory';
+              j++;
+              if(j === total) {
+                res.status(200).send(returnData);
+              }
+            });
+        }
+      }
+      if(req.body.hasOwnProperty('flash')) {
         for(var i = 0; i < req.body.flash.length; i++) {
           conn.query("CALL scrap_item('"+req.body.flash[i].serial_num+"');",
             function(error, results, fields) {
-            if(error) {
-              throw error;
-            }
-          });
+              if(error) {
+                throw error;
+              }
+              returnData[j] ={};
+              returnData[j].serial_num = req.body.flash[i].serial_num;
+              returnData[j].item_type = 'Flash Drive';
+              j++;
+              if(j === total) {
+                res.status(200).send(returnData);
+              }
+            });
         }
-        conn.release();
-      });
-    }
-    if(req.body.hasOwnProperty('board')) {
-      pool.getConnection(function(err, conn) {
+      }
+      if(req.body.hasOwnProperty('board')) {
         for(var i = 0; i < req.body.flash.length; i++) {
           conn.query("CALL scrap_item('"+req.body.board[i].serial_num+"');",
             function(error, results, fields) {
-            if(error) {
-              throw error;
-            }
-          });
+              if(error) {
+                throw error;
+              }
+              returnData[j] = {};
+              returnData[j].serial_num = req.body.board[i].serial_num;
+              returnData[j].item_type = 'Board';
+              j++;
+              if(j === total) {
+                res.status(200).send(returnData);
+              }
+            });
         }
-        conn.release();
-      });
-    }
+      }
+      conn.release();
+    });
   });
 
   /* Routes for loading pages in the web interface */
@@ -382,6 +439,10 @@ module.exports = function(app, pool) {
 
   app.get('/view-scrapped', enforceAdminLogin, function(req, res) {
     res.sendFile(rootdir + '/public/web/view-scrapped.html');
+  })
+
+  app.get('/reservations', enforceLogin, function(req, res) {
+    res.sendFile(rootdir + '/public/web/reservations.html');
   })
 
   // TODO: Add new attributes to the database
@@ -442,12 +503,11 @@ module.exports = function(app, pool) {
         	req.session.web = new models.SessionUser();
           // We have a user in the AD system. Parse out the wwid.
           req.session.web.wwid = body;
+          next();
         } else {
           // No wwid found, erase current session and create new session for user.
-          req.session.regenerate();
           res.redirect('/login');
         }
-        next();
       });
   }, function(req,res,next) {
     // We know at this point we have a wwid, so let's try to get the user from our DB.
@@ -490,10 +550,14 @@ module.exports = function(app, pool) {
 };
 
 function enforceLogin(req, res, next) {
-  if (req.session.web.loggedIn) {
-    next();
+  if(req.session.hasOwnProperty("web")) {
+    if (req.session.web.loggedIn) {
+      next();
+    } else {
+      res.redirect('/login');
+    }
   } else {
-    res.redirect('/login');
+    res.redirect('/login');  
   }
 }
 

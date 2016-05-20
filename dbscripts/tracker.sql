@@ -450,6 +450,33 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `check_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `check_checkout`(IN item VARCHAR(20), IN user VARCHAR(8))
+BEGIN
+  SELECT
+    reservation_date
+  FROM
+    Reservations JOIN Items
+    ON Reservations.product_id = Items.id
+  WHERE
+    waiting_user = user AND
+    serial_num = item;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `check_serial` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -638,6 +665,37 @@ BEGIN
         ON Owners.wwid = Checkout.user
   WHERE
 		scrapped = 0
+        AND Items.item_type = 'cpu';
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_cpu_from_checkout` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE PROCEDURE `get_cpu_from_checkout`()
+BEGIN
+  SELECT
+    serial_num, spec, mm, frequency, stepping, 
+      llc, cores, codename, cpu_class, external_name,
+      architecture, Checkout.user, checked_in, notes, scrapped, first_name, last_name
+  FROM 
+    Processor INNER JOIN Items
+        ON Processor.product_id = Items.id JOIN Checkout
+        ON Checkout.product_id = Items.id LEFT JOIN Owners
+        ON Owners.wwid = Checkout.user
+  WHERE
+    scrapped = 0
         AND Items.item_type = 'cpu';
 
 END ;;
@@ -1113,7 +1171,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_scrapped_status` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_status` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1123,11 +1181,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE PROCEDURE `get_scrapped_status`()
+CREATE PROCEDURE `get_status`()
 BEGIN
   SELECT 
     (SELECT COUNT(*) FROM Items WHERE scrapped=1) AS num_scrapped,
-    (SELECT COUNT(*) FROM Items WHERE scrapped=0) AS num_active
+    (SELECT COUNT(*) FROM Items WHERE scrapped=0) AS num_active,
+    (SELECT COUNT(*) FROM Checkout) AS num_checkout,
+    (SELECT COUNT(*) FROM Reservations) AS num_reservations
   FROM Items
     GROUP BY scrapped;
 END ;;
@@ -1224,10 +1284,9 @@ DELIMITER ;
 DELIMITER ;;
 CREATE PROCEDURE `get_reservation`(IN item VARCHAR(20))
 BEGIN
-  SELECT waiting_user, 
-    FROM Checkout LEFT JOIN Owners ON
-    Checkout.user = Owners.wwid LEFT JOIN Items ON
-    Checkout.product_id = Items.id
+  SELECT waiting_user
+    FROM Reservations LEFT JOIN Items ON
+    Reservations.product_id = Items.id
     WHERE serial_num = item;
 END ;;
 DELIMITER ;
@@ -1578,6 +1637,7 @@ BEGIN
     Items.scrapped = 1
     WHERE
     serial_num = item;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

@@ -692,10 +692,8 @@ $(document).ready(function() {
         $.get('/data/stats', function(data) {
           $('#infoBanner').empty();
           $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
+          $('#infoBanner').append('<span><strong>Total Scrapped Items</strong>: ' +
+                                  data.num_scrapped + '</span>');;
         });
         cpu_table.draw();
       } else {
@@ -765,10 +763,8 @@ $(document).ready(function() {
         $.get('/data/stats', function(data) {
           $('#infoBanner').empty();
           $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
+          $('#infoBanner').append('<span><strong>Total Scrapped Items</strong>: ' +
+                                  data.num_scrapped + '</span>');
         });
         ssd_table.draw();
       } else {
@@ -846,10 +842,8 @@ $(document).ready(function() {
         $.get('/data/stats', function(data) {
           $('#infoBanner').empty();
           $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
+          $('#infoBanner').append('<span><strong>Total Scrapped Items</strong>: ' +
+                                  data.num_scrapped + '</span>');
         });
         memory_table.draw();
       } else {
@@ -917,10 +911,8 @@ $(document).ready(function() {
         $.get('/data/stats', function(data) {
           $('#infoBanner').empty();
           $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
+          $('#infoBanner').append('<span><strong>Total Scrapped Items</strong>: ' +
+                                  data.num_scrapped + '</span>');
         });
         flash_table.draw();
       } else {
@@ -992,10 +984,8 @@ $(document).ready(function() {
         $.get('/data/stats', function(data) {
           $('#infoBanner').empty();
           $('#infoBanner').prepend('<div>Welcome ' + data.first_name + '</div>');
-          $('#infoBanner').append('<span><strong>Total Items </strong>: ' +
-                                  data.num_active + ' active + ' +
-                                  data.num_scrapped + ' scrapped = ' +
-                                  data.num_total + '</span>');
+          $('#infoBanner').append('<span><strong>Total Scrapped Items</strong>: ' +
+                                  data.num_scrapped + '</span>');
         });
         board_table.draw();
       } else {

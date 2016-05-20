@@ -26,7 +26,7 @@ module.exports = function(app, pool) {
   app.get('/data/stats', function(req, res) {
     var jsonToSend = {};
     pool.getConnection(function(err, conn) {
-      conn.query("CALL get_scrapped_status();", function(error, results, fields) {
+      conn.query("CALL get_status();", function(error, results, fields) {
         if(error) {
           throw error;
         }
@@ -34,6 +34,7 @@ module.exports = function(app, pool) {
 
         jsonToSend.num_scrapped =  results[0][0].num_scrapped;
         jsonToSend.num_active = results[0][0].num_active;
+        jsonToSend.num_checkout = results[0][0].num_checkout - results[0][0].num_reservations;
         jsonToSend.num_total = jsonToSend.num_scrapped + jsonToSend.num_active;
         if (isLoggedIn(req.session) && req.session.web.wwid) {
           jsonToSend.is_admin = req.session.web.is_admin;
@@ -223,6 +224,97 @@ module.exports = function(app, pool) {
         }
         jsonToSend.items = a;
         res.json(jsonToSend);
+      });
+    });
+  });
+
+  app.get('/data/reserve/cpu', function(req, res) {
+    var jsonToSend = {};
+    var serial_num = [];
+    var spec = [];
+    var mm = [];
+    var frequency = [];
+    var stepping = [];
+    var llc = [];
+    var cores = [];
+    var codename = [];
+    var cpu_class = [];
+    var external_name = [];
+    var architecture = [];
+    var user = [];
+    var checked_in = [];
+    var notes = [];
+    var scrapped = [];
+    var reservation_date;
+    var reserve_status;
+    var button_class;
+    var j = 0;
+    var user_name = [];
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL get_cpu_from_checkout();", function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+
+        // We send admin stats for the table because there are admin-specific
+        // elements to the table.
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+        } else {
+          jsonToSend.is_admin = 0;
+        }
+        var a = [];
+        var total = results[0].length;
+        for (var i in results[0]) {
+          serial_num[i] = results[0][i].serial_num;
+          spec[i] = results[0][i].spec;
+          mm[i] = results[0][i].mm;
+          frequency[i] = results[0][i].frequency;
+          stepping[i] = results[0][i].stepping;
+          llc[i] = results[0][i].llc;
+          cores[i] = results[0][i].cores;
+          codename[i] = results[0][i].codename;
+          cpu_class[i] = results[0][i].cpu_class;
+          external_name[i] = results[0][i].external_name;
+          architecture[i] = results[0][i].architecture;
+          user[i] = results[0][i].user;
+          checked_in[i] = results[0][i].checked_in;
+          notes[i] = results[0][i].notes;
+          scrapped[i] = results[0][i].scrapped;
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name[i] = null;
+          } else {
+            user_name[i] = results[0][i].first_name + " " + results[0][i].last_name;
+          }
+          conn.query("CALL check_checkout('"+ serial_num[i] +"','"+ req.session.web.wwid +"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+
+              if(results[0].length > 0) {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
+                reserve_status = 1;
+                reservation_date = results[0][0].reservation_date;
+              } else {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>';
+                reserve_status = 0;
+              }
+              a.push(new models.CPU(serial_num[j], spec[j], mm[j], frequency[j], stepping[j],
+                llc[j], cores[j], codename[j], cpu_class[j], external_name[j], architecture[j],
+                user[j], checked_in[j], notes[j], scrapped[j], user_name[j], button_type, reserve_status, reservation_date));
+              j++;
+              if(j == total) {
+                conn.release();
+                jsonToSend.items = a;
+                res.json(jsonToSend);
+              }
+            });
+        }
+        if(total === 0) {
+          jsonToSend.items = a;
+          res.json(jsonToSend);
+        }
       });
     });
   });

@@ -16,8 +16,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script> 
 <script type="text/javascript" src="https://cdn.datatables.net/1.10.10/js/dataTables.bootstrap.min.js"></script> 
+<script src="../../js/reservations.js"></script>
 <script src="../../js/stats.js"></script>
-<script src="../../js/scrap-items.js"></script>
 </head>
 
 <body>
@@ -34,8 +34,8 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="/">Silicon Tracker</a>
-<!--       <a class="navbar-brand">
-        <img src="../images/client-logo_intel-197x140.png">
+      <!-- <a class="navbar-brand">
+        <img src="../images/Si-nav.png">
       </a> -->
     </div>
     <div id="navbar" class="navbar-collapse collapse">
@@ -60,13 +60,13 @@
 
 <!-- Banner -->
 <div id="banner-wrapper">
-  <img id="banner-img" src="../images/Si.png" class="img-responsive hidden-xs">
+	<img id="banner-img" src="../images/Si.png" class="img-responsive hidden-xs">
 </div>
 <div class="panel panel-intel">
   <h3 id="infoBanner"></h3>
 </div>
 <div class="container-fluid">
-  <div id="scrap-error" class="alert alert-danger" align="center"></div>
+
   <!-- Highlight Box -->
   <div class="row">
     <div class="col-xs-12">
@@ -94,6 +94,8 @@
               <tr id="cpuFilterCols">
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Spec</th>
                 <th>MM</th>
@@ -102,15 +104,19 @@
                 <th>LLC</th>
                 <th>Cores</th>
                 <th>Codename</th>
-                <th>CPU Class</th>
+                <th>Class</th>
                 <th>External Name</th>
                 <th>Architecture</th>
+                <th>User</th>
+                <th id="colBtn"></th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
               <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Spec</th>
                 <th>MM</th>
@@ -119,9 +125,11 @@
                 <th>LLC</th>
                 <th>Cores</th>
                 <th>Codename</th>
-                <th>CPU Class</th>
+                <th>Class</th>
                 <th>External Name</th>
                 <th>Architecture</th>
+                <th>User</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -139,6 +147,7 @@
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
+                <th>User</th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
@@ -149,6 +158,7 @@
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
+                <th>User</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -170,6 +180,7 @@
                 <th>Type</th>
                 <th>Capacity</th>
                 <th>Speed</th>
+                <th>User</th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
@@ -184,6 +195,7 @@
                 <th>Type</th>
                 <th>Capacity</th>
                 <th>Speed</th>
+                <th>User</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -200,6 +212,7 @@
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
+                <th>User</th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
@@ -209,6 +222,7 @@
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
+                <th>User</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -227,6 +241,7 @@
                 <th>BIOS</th>
                 <th>MAC Address</th>
                 <th>Fab</th>
+                <th>User</th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
@@ -238,6 +253,7 @@
                 <th>BIOS</th>
                 <th>MAC Address</th>
                 <th>Fab</th>
+                <th>User</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -248,9 +264,6 @@
       </div>
     </div>
   </div>
-  <div class="col-md-4-c" style=" text-align: center">
-    <button id="submit" name="submit" type="button" class="btn btn-primary">Submit</button>
-  </div>
 </div>
 
 <div class="footer footer-intel">
@@ -258,23 +271,37 @@
 </div>
 
 <!-- Modals -->
-<div id="SuccessModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="reserveModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Scrapping Successful!</h4>
+        <h4 class="modal-title">Reserve Item</h4>
       </div>
       <div class="modal-body">
-        <table id="submit-results" class="table">
-        <thead>
-          <tr>
-            <th>Serial Number</th>
-            <th>Item Type</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-        </table>
+        <div class="row">
+          <div align="center">Would you like to reserve this item?</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="reserveSave" type="button" class="btn btn-primary">Reserve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reservedModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reserve Item</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div align="center" id="reserved-message"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -291,8 +318,8 @@
         <h4 class="modal-title">Edit CPU</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <form id="CPU">
+      	<div class="row">
+	        <form id="CPU">
             <div class="col-md-6 form-group">
               <label class="control-label" for="spec">Spec <span class="req-field">*</span></label>  
               <input id="spec" name="spec" class="form-control"  maxlength="5" tabindex="2" type="text">
@@ -359,8 +386,12 @@
               <textarea id="notes" name="notes" class="form-control" class="form-control" tabindex="12" type="text"></textarea>
               <div id="cpu_notes_help"></div>
             </div>
-          </form>
-        </div>
+
+            <div class="col-md-6 checkbox">
+              <label><input id="scrap_cpu" name="scrap_cpu" type="checkbox">Scrap</label>
+            </div>
+      		</form>
+      	</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -405,7 +436,7 @@
             </div>
 
             <div class="col-md-6 checkbox">
-              <label><input id="scrap" name="scrap" type="checkbox">Scrap</label>
+              <label><input id="scrap_ssd" name="scrap_ssd" type="checkbox">Scrap</label>
             </div>
           </form>
         </div>
@@ -459,7 +490,7 @@
             </div>
 
             <div class="col-md-6 checkbox">
-              <label><input id="scrap" name="scrap" type="checkbox">Scrap</label>
+              <label><input id="scrap_board" name="scrap_board" type="checkbox">Scrap</label>
             </div>
           </form>
         </div>
@@ -501,7 +532,7 @@
             </div>
 
             <div class="col-md-6 checkbox">
-              <label><input id="scrap" name="scrap" type="checkbox" tabindex="5">Scrap</label>
+              <label><input id="scrap_flash" name="scrap_flash" type="checkbox" tabindex="5">Scrap</label>
             </div>
           </form>
         </div>
@@ -575,7 +606,7 @@
               <div id="memory_notes_help"></div>
 
             <div class="col-md-6 checkbox">
-              <label><input id="scrap" name="scrap" type="checkbox">Scrap</label>
+              <label><input id="scrap_memory" name="scrap_memory" type="checkbox">Scrap</label>
             </div>
           </form>
         </div>

@@ -12,6 +12,11 @@ $(document).ready(function() {
                                    <li role="presentation"><a href="#">Setup Facial Recognition</a></li> \
                                  </ul> \
                                </li>');
+      $('#navbar-left').append('<li id="reservations"><a href="/reservations">Reserve Items</a></li>');
+      if (window.location.pathname === '/reservations') {
+        $('#infoBanner').append('<span><strong>Items Available to Reserve:</strong> ' + data.num_checkout +'</span>');
+        $('#reservations').addClass('active');
+      }
       if (data.is_admin) {
         $('#settings-list').append('<li class="dropdown-header">Admin Settings</li>\
                                     <li><a href="/settings/attributes">Edit Dropdowns</a></li>');

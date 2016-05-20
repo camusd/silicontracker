@@ -61,12 +61,6 @@ $(document).ready(function() {
         "className": "btn-edit",
         "visible": false,
       },
-      {
-        "defaultContent": '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>',
-        "orderable": false,
-        "className": "btn-reserve",
-        "visible": false,
-      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -77,7 +71,6 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
-      cpu_table.column(-2).visible(true);
       cpu_table.column(-1).visible(true);
     }
     // setting the column search bar width
@@ -150,28 +143,6 @@ $(document).ready(function() {
         user_name: row.data().user_name
       };
       $('#editCPUModal').modal('show');
-    });
-    cpu_table.on('click', '.btn-reserve', function() {
-      var tr = $(this).closest('tr');
-      var row = cpu_table.row(tr);
-      cpu_data = {
-        index: row.index(),
-        serial_num: row.data().serial_num,
-        spec: row.data().spec,
-        mm: row.data().mm,
-        frequency: row.data().frequency,
-        stepping: row.data().stepping,
-        llc: row.data().llc,
-        cores: row.data().cores,
-        codename: row.data().codename,
-        cpu_class: row.data().cpu_class,
-        external_name: row.data().external_name,
-        architecture: row.data().architecture,
-        notes: row.data().notes,
-        scrapped: row.data().scrapped,
-        user_name: row.data().user_name
-      };
-      $('#reserveCPUModal').modal('show');
     });
 
     // Placing the table in a horizontally scrollable box.

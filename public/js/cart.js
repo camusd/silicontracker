@@ -10,7 +10,7 @@ function arrayFind(arr, fn) {
 }
 
 function printStatus(status) {
-  return (status === 1) ? 'Checked in' : 'Checked out';
+  return (status === 1) ? 'Checked In' : 'Checked Out';
 }
 
 
