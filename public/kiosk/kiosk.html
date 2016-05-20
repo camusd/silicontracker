@@ -14,7 +14,7 @@
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="../js/barcode.js"></script>
 <script type="text/javascript" src="../js/webcam.js"></script>
-<!-- <script type="text/javascript" src="../js/webcam.min.js"></script> -->
+<script type="text/javascript" src="../js/webcam-custom.js"></script>
 </head>
 
 <body>
@@ -35,27 +35,8 @@
 <!-- Main -->
 <div class="container-fluid">
 	<div class="col-md-6">
-	  <!-- Features -->
-	  <div class="row">
-	      <div id="my_camera" class ="center-block"></div>  
-	      <!-- Configure and attach camera -->
-	      <script language="JavaScript">
-	        Webcam.set({
-	          width: 320,
-	          height: 240,
-	          image_format: 'jpeg',
-	          jpeg_quality: 90
-	        });
-	        Webcam.attach( '#my_camera' );
-	      </script>
-	      <div class="divider divider-top"></div>
-            
-          <!--<button class="btn btn-lg btn-primary btn-block" type="submit" value="Take Snapshot" onClick="take_snapshot()">Sign in</button>-->
-	  </div>
-
-	  <!-- Main -->
 	  <div class="col-sm-10 col-sm-offset-1">
-	    <h2 style="text-align: center;">Please Login</h2>
+	    <h1 class="page-header" style="text-align: center;">Please Login</h1>
 	    <form id="login-form" method="post" action="/kiosk/login">
 	      <div class="form-group">
 	          <input id="username" name="username" class="form-control" required="" type="text" placeholder="Username">
@@ -67,6 +48,8 @@
 	        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 	      </div>
 	    </form>
+      <button id="snapshot" class="btn btn-lg btn-primary btn-block" style="margin-top: 10px;">Facial Recognition</button>
+
 	  </div>
 	</div>
 	<div class="col-sm-6">
@@ -88,5 +71,13 @@
 <div class="footer footer-intel">
   <p class="text-center">&copy; Copyright Silicon Tracker Group 2016</p>
 </div>
+
+<div id="my_camera0" class="camera"></div>
+<div id="my_camera1" class="camera"></div>
+<div id="results1" class="camera"></div>
+<div id="results0" class="camera"></div>
+
+<script type="text/javascript" src="../js/facial.js"></script>
+
 </body>
 </html>
