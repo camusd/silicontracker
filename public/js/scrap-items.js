@@ -63,7 +63,7 @@ $(document).ready(function() {
   // Add the rows to the modal table.
   function addModalRows(dataArr) {
     $.each(dataArr.serial_num, function(idx, elem) {
-      $('#submit-results tbody').append('<tr><td>'++'</td>'+
+      $('#submit-results tbody').append('<tr><td>'+'</td>'+
         '<td>'+elem.item_type+'</td></tr>');
     });
   }
@@ -73,8 +73,8 @@ $(document).ready(function() {
     submitData(jsonToSend);
   });
 
-  After the modal goes away, redirect back to the homescreen.
-  The user will be logged out at this point.
+  // After the modal goes away, redirect back to the homescreen.
+  // The user will be logged out at this point.
   $('#SuccessModal').on('hidden.bs.modal', function(e) {
     window.location="/";
   });
