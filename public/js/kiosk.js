@@ -14,9 +14,12 @@ var btnText = 'Check Out';
 var itemCounter = 0;
 var chars = [];
 var currentItem = {serial_num: '', checked_in: ''};
+var frTable;
 
 $(document).ready(function() {
   inactivityTime();
+  getFRUsers();
+
   $(window).keypress(function(e) {
       chars.push(String.fromCharCode(e.which));
       if (pressed == false) {
@@ -119,6 +122,41 @@ $("#barcode").keypress(function(e){
         e.preventDefault();
     }
 });
+
+
+// Loads the table of users that have set up facial recognition.
+function getFRUsers() {
+  $.get('/kiosk/frusers', function(data) {
+    frTable = $('#fr-users').DataTable({
+      'data': data,
+      'columns': [
+        {
+          'data': 'index',
+          'orderable': false,
+          'visible': false
+        },
+        { 'data': 'first_name' },
+        { 'data': 'last_name' }
+      ],
+      'bPaginate': false,
+      'scrollY': '150px',
+      'scrollCollapse': true
+    });
+
+    $('#fr-users_info').hide();
+
+    $('#fr-users tbody').on('click', 'tr', function() {
+      if ($(this).hasClass('row-select') ) {
+        $(this).removeClass('row-select');
+      } else {
+        frTable.$('tr.row-select').removeClass('row-select');
+        $(this).addClass('row-select');
+      }
+
+      $('#snapshot').removeAttr('disabled');
+    });
+  });
+}
 
 function changeBtnText(data) {
   if (data.hasOwnProperty('checked_in') && data.checked_in === 'Checked In') {
