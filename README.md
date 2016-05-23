@@ -91,3 +91,66 @@ The main server code can be viewed in `app.js`. This is the file that calls envi
 We also have a second app that we have created to mock the credential login system at Intel. It's a very simplified version of their credential system (It's not actually how Intel deals with security. Our code is more of a placeholder). You will need to run this app if you plan on logging in as a user. open up a separate terminal window and go to the `cred/` folder. There you will see a single file `cred.js`. Run this app with `node cred.js`.
 
 After setting up the server and downloading the dependencies, you should be able to start it up with `npm start`. Make sure you are in the root folder for the project before you run that command. You should be greeted with a message: `Silicon Tracker Server listening at <ip address>:<port>` In your broswer, navigate to that ip address. Don't forget the port! At this point you should be greeted with the Silicon Tracker website. Congratulations!
+
+## Facial Recognition
+Facial recognition is done using OpenBR which needs to be installed on the sever prior to facial recognition working. The instructions to do so are at the bottom of this section.
+
+Reference images are taken on the web interface, click your username in the top right and click setup facial recognition. At this screen center yourself in the frame and look directly at the camera with your eyes open and click save image. this will save your color and depth image as encoded strings and store them on the database. At the kiosk login page select your name from the table, center yourself in relation to the camera and look directly at it with your eyes open and click login. If this fails it is possible that your reference images were not good enough or you were looking down/had your eyes closed. (NOTE: Extra users in the frame, especially if they are visible to the depth camera, will cause the system to not recognize you.)
+
+OpenBR installation instructions:
+
+from the server follow these commands - more information can be found at http://openbiometrics.org/
+
+-INSTALL GCC4.9.2-
+'sudo apt-get update'
+'sudo apt-get install build-essential'
+
+-INSTALL CMAKE3.0.2-
+'sudo apt-get install cmake cmake-curses-gui'
+
+
+-DOWNLOAD AND INSTALL OPENCV2.4.11-
+download OpenCV 2.4.11 from https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.11/opencv-2.4.11.zip/download
+
+'unzip opencv-2.4.11.zip'
+'cd opencv-2.4.11'
+'mkdir build'
+'cd build'
+'cmake -DCMAKE_BUILD_TYPE=Release ..'
+'make -j4' NOTE: for faster install use more threads
+'sudo make install'
+'cd ../..'
+'rm -rf opencv-2.4.11*'
+
+-INSTALL QT5.4.1-
+'sudo apt-get install qt5-default libqt5svg5-dev qtcreator'
+
+
+-GET OPENBR-
+'git clone https://github.com/biometrics/openbr.git'
+'cd openbr'
+'git checkout v1.1.0'
+'git submodule init'
+'git submodule update'
+
+-BUILD OPENBR-
+'mkdir build'
+'cd build'
+'cmake -DCMAKE_BUILD_TYPE=Release ..'
+'make -j4' NOTE: for faster install use more threads
+'sudo make install'
+
+At this point you need to open the Qt Creator IDE using the command
+'qtcreator &' NOTE: this requires a gui interface to be installed on the server. this is NOT a command line utility, however once OpenBR is installed the gui is no longer required.
+
+-From the Qt Creator "File" menu select "Open File or Project...".
+-From the Qt Creator "File" menu select "Open File or Project...".
+-Browse to your pre-existing build directory "openbr/build" then select "Next".
+-Select "Run CMake" then "Finish".
+
+OpenBR should now be installed on the server and facial recognition should be functional.
+
+
+
+
+
