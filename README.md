@@ -81,6 +81,7 @@ At this point, we should have our database completely set up!
 
 ## The Server
 Our project is running on a Node.js server. If you haven't already, go download Node.js from their website: https://nodejs.org
+There is also a bash script in the root directory to easily download and install node. Look for nodeinstall.sh. The latest version of Node should be fine.
 
 It doesn't matter if you get the stable or the bleeding-edge version. Our app should work on both.
 
