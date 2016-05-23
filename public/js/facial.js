@@ -132,8 +132,12 @@ $(document).ready(function() {
 
               if (window.location.pathname === '/kiosk' ||
                   window.location.pathname === '/kiosk/') {
-                $.post('/kiosk/image', {images: imagesToSend})
+                $.post('/kiosk/image', {images: imagesToSend, index: frTable.row('.row-select').data().index})
                   .done(function() {
+                    // being able to access the cart depends on whether or not the user
+                    // is logged in via session. If they are logged in, they will be
+                    // taken to the cart. Otherwise, they will attemt to redirect, but
+                    // be redirected again to the login page.
                     window.location = '/cart';
                   });
               }
