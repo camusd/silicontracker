@@ -129,14 +129,12 @@ $(document).ready(function() {
                   window.location.pathname === '/settings/facial-setup/') {
                 $.post('/web/image', {images: imagesToSend})
                   .done(function() {
-                    // alert("images saved!");
                     $('#SuccessModal').modal();
         
                     // After 5 seconds, close the modal.
                     setTimeout(function() {
                       $('#SuccessModal').modal('hide');
                     }, 5000);
-                    // location.reload();
                   });
               }
 
