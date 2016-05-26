@@ -49,7 +49,7 @@ $(document).ready(function() {
   function submitData(data) {
     $.post("/scrap/submit", data)
       .done(function(returnData) {
-        // Success! display the modal.
+        // Success! display the modal.  
         addModalRows(returnData);
         $('#SuccessModal').modal();
         
@@ -62,8 +62,8 @@ $(document).ready(function() {
 
   // Add the rows to the modal table.
   function addModalRows(dataArr) {
-    $.each(dataArr.serial_num, function(idx, elem) {
-      $('#submit-results tbody').append('<tr><td>'+'</td>'+
+    $.each(dataArr, function(idx, elem) {
+      $('#submit-results tbody').append('<tr><td>'+elem.serial_num+'</td>'+
         '<td>'+elem.item_type+'</td></tr>');
     });
   }

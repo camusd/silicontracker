@@ -32,12 +32,13 @@ module.exports = {
     self.scrapped = scrapped;
     self.user_name = user_name;
     self.button_type = button_type;
-    this.reserve_status = reserve_status;
-    this.reservation_date = reservation_date;
+    self.reserve_status = reserve_status;
+    self.reservation_date = reservation_date;
   },
 
   SSD: function(serial_num, manufacturer, model, capacity, user,
-    checked_in, notes, scrapped, user_name) {
+    checked_in, notes, scrapped, user_name, button_type, reserve_status,
+    reservation_date) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -49,10 +50,14 @@ module.exports = {
     self.notes = notes;
     self.scrapped = scrapped;
     self.user_name = user_name;
+    self.button_type = button_type;
+    self.reserve_status = reserve_status;
+    self.reservation_date = reservation_date;
   },
 
   Memory: function(serial_num, manufacturer, physical_size, memory_type,
-    capacity, speed, ecc, ranks, user, checked_in, notes, scrapped, user_name) {
+    capacity, speed, ecc, ranks, user, checked_in, notes, scrapped, user_name,
+    button_type, reserve_status, reservation_date) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -68,10 +73,13 @@ module.exports = {
     self.notes = notes;
     self.scrapped = scrapped;
     self.user_name = user_name;
+    self.button_type = button_type;
+    self.reserve_status = reserve_status;
+    self.reservation_date = reservation_date;
   },
 
   Flash_Drive: function(serial_num, capacity, manufacturer, user, checked_in, notes,
-    scrapped, user_name) {
+    scrapped, user_name, button_type, reserve_status, reservation_date) {
     var self = this;
     
     self.serial_num = serial_num;
@@ -82,9 +90,13 @@ module.exports = {
     self.notes = notes;
     self.scrapped = scrapped;
     self.user_name = user_name;
+    self.button_type = button_type;
+    self.reserve_status = reserve_status;
+    self.reservation_date = reservation_date;    
   },
 
-  Board: function(serial_num, fpga, bios, mac, fab, user, checked_in, notes, scrapped, user_name) {
+  Board: function(serial_num, fpga, bios, mac, fab, user, checked_in, notes, scrapped,
+    user_name, reserve_status, reservation_date) {
     var self = this;
 
     self.serial_num = serial_num;
@@ -97,5 +109,8 @@ module.exports = {
     self.notes = notes;
     self.scrapped = scrapped;
     self.user_name = user_name;
+    self.button_type = button_type;
+    self.reserve_status = reserve_status;
+    self.reservation_date = reservation_date;
   }
 }

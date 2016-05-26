@@ -30,24 +30,32 @@ module.exports = function(app, pool) {
         if(error) {
           throw error;
         }
-        conn.release();
 
         jsonToSend.num_scrapped =  results[0][0].num_scrapped;
         jsonToSend.num_active = results[0][0].num_active;
-        jsonToSend.num_checkout = results[0][0].num_checkout - results[0][0].num_reservations;
         jsonToSend.num_total = jsonToSend.num_scrapped + jsonToSend.num_active;
-        if (isLoggedIn(req.session) && req.session.web.wwid) {
-          jsonToSend.is_admin = req.session.web.is_admin;
-        } else {
-          jsonToSend.is_admin = 0;
-        }
         if (isLoggedIn(req.session) && req.session.web.first_name) {
           jsonToSend.first_name = req.session.web.first_name;
         }
         if (isLoggedIn(req.session) && req.session.web.last_name) {
           jsonToSend.last_name = req.session.web.last_name;
         }
-        res.json(jsonToSend);
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+          conn.query("CALL get_reserve_status('"+req.session.web.wwid+"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              conn.release();
+              jsonToSend.num_reserve = results[0][0].num_reserve;
+              res.json(jsonToSend);
+            });
+        } else {
+          jsonToSend.is_admin = 0;
+          conn.release();
+          res.json(jsonToSend);
+        }
       });
     });
   });
@@ -251,7 +259,7 @@ module.exports = function(app, pool) {
     var j = 0;
     var user_name = [];
     pool.getConnection(function(err, conn) {
-      conn.query("CALL get_cpu_from_checkout();", function(error, results, fields){
+      conn.query("CALL get_cpu_from_checkout('"+req.session.web.wwid+"');", function(error, results, fields){
         if(error) {
           throw error;
         }
@@ -291,7 +299,6 @@ module.exports = function(app, pool) {
               if(error) {
                 throw error;
               }
-
               if(results[0].length > 0) {
                 button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
                 reserve_status = 1;
@@ -312,6 +319,323 @@ module.exports = function(app, pool) {
             });
         }
         if(total === 0) {
+          conn.release();
+          jsonToSend.items = a;
+          res.json(jsonToSend);
+        }
+      });
+    });
+  });
+
+  app.get('/data/reserve/ssd', function(req, res) {
+    var jsonToSend = {};
+    var serial_num = [];
+    var manufacturer = [];
+    var model = [];
+    var capacity = [];
+    var user = [];
+    var checked_in = [];
+    var notes = [];
+    var scrapped = [];
+    var reservation_date;
+    var reserve_status;
+    var button_class;
+    var j = 0;
+    var user_name = [];
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL get_ssd_from_checkout('"+req.session.web.wwid+"');", function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+
+        // We send admin stats for the table because there are admin-specific
+        // elements to the table.
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+        } else {
+          jsonToSend.is_admin = 0;
+        }
+        var a = [];
+        var total = results[0].length;
+        for (var i in results[0]) {
+          serial_num[i] = results[0][i].serial_num;
+          manufacturer[i] = results[0][i].manufacturer;
+          model[i] = results[0][i].model;
+          capacity[i] = results[0][i].capacity;
+          user[i] = results[0][i].user;
+          checked_in[i] = results[0][i].checked_in;
+          notes[i] = results[0][i].notes;
+          scrapped[i] = results[0][i].scrapped;
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name[i] = null;
+          } else {
+            user_name[i] = results[0][i].first_name + " " + results[0][i].last_name;
+          }
+          conn.query("CALL check_checkout('"+ serial_num[i] +"','"+ req.session.web.wwid +"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              if(results[0].length > 0) {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
+                reserve_status = 1;
+                reservation_date = results[0][0].reservation_date;
+              } else {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>';
+                reserve_status = 0;
+              }
+              a.push(new models.SSD(serial_num[j], manufacturer[j], model[j], capacity[j], user[j],
+                checked_in[j], notes[j], scrapped[j], user_name[j], button_type, reserve_status,
+                reservation_date));
+              j++;
+              if(j == total) {
+                conn.release();
+                jsonToSend.items = a;
+                res.json(jsonToSend);
+              }
+            });
+        }
+        if(total === 0) {
+          conn.release();
+          jsonToSend.items = a;
+          res.json(jsonToSend);
+        }
+      });
+    });
+  });
+
+  app.get('/data/reserve/memory', function(req, res) {
+    var jsonToSend = {};
+    var serial_num = [];
+    var manufacturer = [];
+    var physical_size = [];
+    var memory_type = [];
+    var capacity = [];
+    var speed = [];
+    var ecc = [];
+    var ranks = [];
+    var user = [];
+    var checked_in = [];
+    var notes = [];
+    var scrapped = [];
+    var reservation_date;
+    var reserve_status;
+    var button_class;
+    var j = 0;
+    var user_name = [];
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL get_memory_from_checkout('"+req.session.web.wwid+"');", function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+
+        // We send admin stats for the table because there are admin-specific
+        // elements to the table.
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+        } else {
+          jsonToSend.is_admin = 0;
+        }
+        var a = [];
+        var total = results[0].length;
+        for (var i in results[0]) {
+          serial_num[i] = results[0][i].serial_num;
+          manufacturer[i] = results[0][i].manufacturer;
+          physical_size[i] = results[0][i].physical_size;
+          memory_type[i] = results[0][i].memory_type;
+          capacity[i] = results[0][i].capacity;
+          speed[i] = results[0][i].speed;
+          ecc[i] = results[0][i].ecc;
+          ranks[i] = results[0][i].ranks;
+          user[i] = results[0][i].user;
+          checked_in[i] = results[0][i].checked_in;
+          notes[i] = results[0][i].notes;
+          scrapped[i] = results[0][i].scrapped;
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name[i] = null;
+          } else {
+            user_name[i] = results[0][i].first_name + " " + results[0][i].last_name;
+          }
+          conn.query("CALL check_checkout('"+ serial_num[i] +"','"+ req.session.web.wwid +"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              if(results[0].length > 0) {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
+                reserve_status = 1;
+                reservation_date = results[0][0].reservation_date;
+              } else {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>';
+                reserve_status = 0;
+              }
+              a.push(new models.Memory(serial_num[j], manufacturer[j], physical_size[j],
+                memory_type[j], capacity[j], speed[j], ecc[j], ranks[j], user[j], checked_in[j],
+                notes[j], scrapped[j], user_name[j], button_type, reserve_status, reservation_date));
+              j++;
+              if(j == total) {
+                conn.release();
+                jsonToSend.items = a;
+                res.json(jsonToSend);
+              }
+            });
+        }
+        if(total === 0) {
+          conn.release();
+          jsonToSend.items = a;
+          res.json(jsonToSend);
+        }
+      });
+    });
+  });
+
+  app.get('/data/reserve/flash', function(req, res) {
+    var jsonToSend = {};
+    var serial_num = [];
+    var capacity = [];
+    var manufacturer = [];
+    var user = [];
+    var checked_in = [];
+    var notes = [];
+    var scrapped = [];
+    var reservation_date;
+    var reserve_status;
+    var button_class;
+    var j = 0;
+    var user_name = [];
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL get_flash_from_checkout('"+req.session.web.wwid+"');", function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+
+        // We send admin stats for the table because there are admin-specific
+        // elements to the table.
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+        } else {
+          jsonToSend.is_admin = 0;
+        }
+        var a = [];
+        var total = results[0].length;
+        for (var i in results[0]) {
+          serial_num[i] = results[0][i].serial_num;
+          capacity[i] = results[0][i].capacity;
+          manufacturer[i] = results[0][i].manufacturer;
+          user[i] = results[0][i].user;
+          checked_in[i] = results[0][i].checked_in;
+          notes[i] = results[0][i].notes;
+          scrapped[i] = results[0][i].scrapped;
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name[i] = null;
+          } else {
+            user_name[i] = results[0][i].first_name + " " + results[0][i].last_name;
+          }
+          conn.query("CALL check_checkout('"+ serial_num[i] +"','"+ req.session.web.wwid +"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              if(results[0].length > 0) {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
+                reserve_status = 1;
+                reservation_date = results[0][0].reservation_date;
+              } else {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>';
+                reserve_status = 0;
+              }
+              a.push(new models.Flash_Drive(serial_num[j], capacity[j], manufacturer[j], user[j],
+                checked_in[j], notes[j], scrapped[j], user_name[j], button_type, reserve_status,
+                reservation_date));
+              j++;
+              if(j == total) {
+                conn.release();
+                jsonToSend.items = a;
+                res.json(jsonToSend);
+              }
+            });
+        }
+        if(total === 0) {
+          conn.release();
+          jsonToSend.items = a;
+          res.json(jsonToSend);
+        }
+      });
+    });
+  });
+
+  app.get('/data/reserve/board', function(req, res) {
+    var jsonToSend = {};
+    var serial_num = [];
+    var fpga = [];
+    var bios = [];
+    var mac = [];
+    var fab = [];
+    var user = [];
+    var checked_in = [];
+    var notes = [];
+    var scrapped = [];
+    var reservation_date;
+    var reserve_status;
+    var button_class;
+    var j = 0;
+    var user_name = [];
+    pool.getConnection(function(err, conn) {
+      conn.query("CALL get_board_from_checkout('"+req.session.web.wwid+"');", function(error, results, fields){
+        if(error) {
+          throw error;
+        }
+
+        // We send admin stats for the table because there are admin-specific
+        // elements to the table.
+        if (isLoggedIn(req.session) && req.session.web.wwid) {
+          jsonToSend.is_admin = req.session.web.is_admin;
+        } else {
+          jsonToSend.is_admin = 0;
+        }
+        var a = [];
+        var total = results[0].length;
+        for (var i in results[0]) {
+          serial_num[i] = results[0][i].serial_num;
+          fpga[i] = results[0][i].fgpa;
+          bios[i] = results[0][i].bios;
+          mac[i] = results[0][i].mac;
+          fab[i] = results[0][i].fab;
+          user[i] = results[0][i].user;
+          checked_in[i] = results[0][i].checked_in;
+          notes[i] = results[0][i].notes;
+          scrapped[i] = results[0][i].scrapped;
+          if(results[0][i].first_name == undefined || results[0][i].last_name == undefined) {
+            user_name[i] = null;
+          } else {
+            user_name[i] = results[0][i].first_name + " " + results[0][i].last_name;
+          }
+          conn.query("CALL check_checkout('"+ serial_num[i] +"','"+ req.session.web.wwid +"');",
+            function(error, results, fields) {
+              if(error) {
+                throw error;
+              }
+              if(results[0].length > 0) {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar-check-o"></i></button>';
+                reserve_status = 1;
+                reservation_date = results[0][0].reservation_date;
+              } else {
+                button_type = '<button class="btn btn-link"><i class="fa fa-lg fa-calendar"></i></button>';
+                reserve_status = 0;
+              }
+              a.push(new models.Board(serial_num[j], fpga[j], bios[j], mac[j], fab[j], user[j],
+                checked_in[j], notes[j], scrapped[j], user_name[j], button_type, reserve_status,
+                reservation_date));
+              j++;
+              if(j == total) {
+                conn.release();
+                jsonToSend.items = a;
+                res.json(jsonToSend);
+              }
+            });
+        }
+        if(total === 0) {
+          conn.release();
           jsonToSend.items = a;
           res.json(jsonToSend);
         }

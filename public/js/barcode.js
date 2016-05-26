@@ -294,6 +294,7 @@ var inactivityTime = function () {
               $('#save-for-later').popover('destroy');
             }, 2000);
           }
+          $('#save-for-later').attr('disabled', 'disabled');
         });
     }
 

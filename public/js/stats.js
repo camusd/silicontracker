@@ -12,7 +12,7 @@ $(document).ready(function() {
                                </li>');
       $('#navbar-left').append('<li id="reservations"><a href="/reservations">Reserve Items</a></li>');
       if (window.location.pathname === '/reservations') {
-        $('#infoBanner').append('<span><strong>Items Available to Reserve:</strong> ' + data.num_checkout +'</span>');
+        $('#infoBanner').append('<span><strong>Total Reserved Items:</strong> ' + data.num_reserve +'</span>');
         $('#reservations').addClass('active');
       }
       if (data.is_admin) {

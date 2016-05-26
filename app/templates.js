@@ -103,7 +103,7 @@ module.exports = function() {
 		});
 	};
 
-	this.reservationTemplate = function(addr, owner_first_name, owner_last_name, user_first_name, user_last_name, item_serial, item_type, status, date) {
+	this.reservationTemplate = function(addr, owner_first_name, owner_last_name, user_first_name, user_last_name, item_serial, item_type, date) {
 		var transporter = nodemailer.createTransport({
 			service: 'Gmail',
 			auth: {

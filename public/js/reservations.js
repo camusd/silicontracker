@@ -181,13 +181,17 @@ $(document).ready(function() {
         architecture: row.data().architecture,
         notes: row.data().notes,
         scrapped: row.data().scrapped,
+        user_name: row.data().user_name,
         reservation_date: row.data().reservation_date
       };
       if(row.data().reserve_status === 0) {
-        $('#reserveModal').modal('show');
+        $('#reserveCPUModal').modal('show');
       } else {
         $('#reserved-message').html('You reserved this item on ' + moment(cpu_data.reservation_date).format('MMMM Do YYYY, h:mm a'));
         $('#reservedModal').modal('show');
+        setTimeout(function() {
+          $('#reservedModal').modal('hide');
+        }, 5000);
       }
     });
 
@@ -199,10 +203,24 @@ $(document).ready(function() {
   });
 
 
-  $.get('/data/ssd', function(jsonData) {
+  $.get('/data/reserve/ssd', function(jsonData) {
     ssd_table = $('#ssd_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'reserve-status',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reserve_status",
+        "visible": false
+      },
+      {
+        "className": 'reservation-date',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reservation_date",
+        "visible": false
+      },  
       {
         "className": 'notes-control',
         "orderable": false,
@@ -233,6 +251,11 @@ $(document).ready(function() {
         "className": "btn-edit",
         "visible": false,
       },
+      {
+        "data": "button_type",
+        "orderable": false,
+        "className": "btn-reserve",
+      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -243,7 +266,7 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
-      ssd_table.column(-1).visible(true);
+      ssd_table.column(-2).visible(true);
     }
 
     // setting the column search bar width
@@ -311,6 +334,30 @@ $(document).ready(function() {
       };
       $('#editSSDModal').modal('show');
     });
+    ssd_table.on('click', '.btn-reserve', function() {
+      var tr = $(this).closest('tr');
+      var row = ssd_table.row(tr);
+      ssd_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        capacity: row.data().capacity,
+        manufacturer: row.data().manufacturer,
+        model: row.data().model,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name,
+        reservation_date: row.data().reservation_date
+      };
+      if(row.data().reserve_status === 0) {
+        $('#reserveSSDModal').modal('show');
+      } else {
+        $('#reserved-message').html('You reserved this item on ' + moment(ssd_data.reservation_date).format('MMMM Do YYYY, h:mm a'));
+        $('#reservedModal').modal('show');
+        setTimeout(function() {
+          $('#reservedModal').modal('hide');
+        }, 5000);
+      }
+    });
 
     // Placing the table in a horizontally scrollable box.
     // NOTE: Don't try using the scrollX DataTables option.
@@ -319,10 +366,24 @@ $(document).ready(function() {
     $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
   });
 
-  $.get('/data/memory', function(jsonData) {
+  $.get('/data/reserve/memory', function(jsonData) {
     memory_table = $('#memory_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'reserve-status',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reserve_status",
+        "visible": false
+      },
+      {
+        "className": 'reservation-date',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reservation_date",
+        "visible": false
+      },  
       {
         "className": 'notes-control',
         "orderable": false,
@@ -356,7 +417,12 @@ $(document).ready(function() {
         "orderable": false,
         "className": "btn-edit",
         "visible": false,
-      }
+      },
+      {
+        "data": "button_type",
+        "orderable": false,
+        "className": "btn-reserve",
+      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -367,7 +433,7 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
-      memory_table.column(-1).visible(true);
+      memory_table.column(-2).visible(true);
     }
 
     // setting the column search bar width
@@ -439,6 +505,34 @@ $(document).ready(function() {
       };
       $('#editMemoryModal').modal('show');
     });
+    memory_table.on('click', '.btn-reserve', function() {
+      var tr = $(this).closest('tr');
+      var row = memory_table.row(tr);
+      memory_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        manufacturer: row.data().manufacturer,
+        physical_size: row.data().physical_size,
+        ecc: row.data().ecc,
+        ranks: row.data().ranks,
+        memory_type: row.data().memory_type,
+        capacity: row.data().capacity,
+        speed: row.data().speed,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name,
+        reservation_date: row.data().reservation_date
+      };
+      if(row.data().reserve_status === 0) {
+        $('#reserveMemoryModal').modal('show');
+      } else {
+        $('#reserved-message').html('You reserved this item on ' + moment(memory_data.reservation_date).format('MMMM Do YYYY, h:mm a'));
+        $('#reservedModal').modal('show');
+        setTimeout(function() {
+          $('#reservedModal').modal('hide');
+        }, 5000);
+      }
+    });
 
     // Placing the table in a horizontally scrollable box.
     // NOTE: Don't try using the scrollX DataTables option.
@@ -448,10 +542,24 @@ $(document).ready(function() {
 
   });
 
-  $.get('/data/flash', function(jsonData) {
+  $.get('/data/reserve/flash', function(jsonData) {
     flash_table = $('#flash_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'reserve-status',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reserve_status",
+        "visible": false
+      },
+      {
+        "className": 'reservation-date',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reservation_date",
+        "visible": false
+      }, 
       {
         "className": 'notes-control',
         "orderable": false,
@@ -481,6 +589,11 @@ $(document).ready(function() {
         "className": "btn-edit",
         "visible": false,
       },
+      {
+        "data": "button_type",
+        "orderable": false,
+        "className": "btn-reserve",
+      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -491,7 +604,7 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
-      flash_table.column(-1).visible(true);
+      flash_table.column(-2).visible(true);
     }
 
     // setting the column search bar width
@@ -558,6 +671,29 @@ $(document).ready(function() {
       };
       $('#editFlashModal').modal('show');
     });
+    flash_table.on('click', '.btn-reserve', function() {
+      var tr = $(this).closest('tr');
+      var row = flash_table.row(tr);
+      flash_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        capacity: row.data().capacity,
+        manufacturer: row.data().manufacturer,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name,
+        reservation_date: row.data().reservation_date
+      };
+      if(row.data().reserve_status === 0) {
+        $('#reserveFlashModal').modal('show');
+      } else {
+        $('#reserved-message').html('You reserved this item on ' + moment(flash_data.reservation_date).format('MMMM Do YYYY, h:mm a'));
+        $('#reservedModal').modal('show');
+        setTimeout(function() {
+          $('#reservedModal').modal('hide');
+        }, 5000);
+      }
+    });
 
     // Placing the table in a horizontally scrollable box.
     // NOTE: Don't try using the scrollX DataTables option.
@@ -566,10 +702,24 @@ $(document).ready(function() {
     $('<div style="width: 100%; overflow: auto"></div>').append($('#' + tableId)).insertAfter($('#' + tableId + '_wrapper div').first());
   });
 
-  $.get('/data/board', function(jsonData) {
+  $.get('/data/reserve/board', function(jsonData) {
     board_table = $('#board_table').DataTable({
     "data": jsonData.items,
     "columns" : [
+      {
+        "className": 'reserve-status',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reserve_status",
+        "visible": false
+      },
+      {
+        "className": 'reservation-date',
+        "orderable": false,
+        "defaultContent": '',
+        "data": "reservation_date",
+        "visible": false
+      }, 
       {
         "className": 'notes-control',
         "orderable": false,
@@ -601,6 +751,11 @@ $(document).ready(function() {
         "className": "btn-edit",
         "visible": false,
       },
+      {
+        "data": "button_type",
+        "orderable": false,
+        "className": "btn-reserve",
+      },
     ],
     "paging"      : true,
     "pagingType"  : "simple_numbers",
@@ -611,7 +766,7 @@ $(document).ready(function() {
     }
     });
     if (jsonData.is_admin === 1) {
-      board_table.column(-1).visible(true);
+      board_table.column(-2).visible(true);
     }
 
     // setting the column search bar width
@@ -679,6 +834,31 @@ $(document).ready(function() {
         user_name: row.data().user_name
       };
       $('#editBoardModal').modal('show');
+    });
+    board_table.on('click', '.btn-reserve', function() {
+      var tr = $(this).closest('tr');
+      var row = board_table.row(tr);
+      board_data = {
+        index: row.index(),
+        serial_num: row.data().serial_num,
+        fpga: row.data().fpga,
+        bios: row.data().bios,
+        mac: row.data().mac,
+        fab: row.data().fab,
+        notes: row.data().notes,
+        scrapped: row.data().scrapped,
+        user_name: row.data().user_name,
+        reservation_date: row.data().reservation_date
+      };
+      if(row.data().reserve_status === 0) {
+        $('#reserveBoardModal').modal('show');
+      } else {
+        $('#reserved-message').html('You reserved this item on ' + moment(board_data.reservation_date).format('MMMM Do YYYY, h:mm a'));
+        $('#reservedModal').modal('show');
+        setTimeout(function() {
+          $('#reservedModal').modal('hide');
+        }, 5000);
+      }
     });
 
     // Placing the table in a horizontally scrollable box.
@@ -775,14 +955,54 @@ $(document).ready(function() {
       });
     });
   });
-  $('#reserveSave').on('click', function() {
+  $('#reserveCPUSave').on('click', function() {
     var serial_num = cpu_data.serial_num;
     jsonToSend = {serial_num: serial_num};
     $.post('/reserve', jsonToSend)
       .done(function() {
         location.reload();
     });
-    $('#reserveModal').modal('hide');
+    $('#reserveCPUModal').modal('hide');
+  });
+
+  $('#reserveSSDSave').on('click', function() {
+    var serial_num = ssd_data.serial_num;
+    jsonToSend = {serial_num: serial_num};
+    $.post('/reserve', jsonToSend)
+      .done(function() {
+        location.reload();
+    });
+    $('#reserveSSDModal').modal('hide');
+  });
+
+  $('#reserveMemorySave').on('click', function() {
+    var serial_num = memory_data.serial_num;
+    jsonToSend = {serial_num: serial_num};
+    $.post('/reserve', jsonToSend)
+      .done(function() {
+        location.reload();
+    });
+    $('#reserveMemoryModal').modal('hide');
+  });
+
+  $('#reserveFlashSave').on('click', function() {
+    var serial_num = flash_data.serial_num;
+    jsonToSend = {serial_num: serial_num};
+    $.post('/reserve', jsonToSend)
+      .done(function() {
+        location.reload();
+    });
+    $('#reserveFlashModal').modal('hide');
+  });
+
+  $('#reserveBoardSave').on('click', function() {
+    var serial_num = board_data.serial_num;
+    jsonToSend = {serial_num: serial_num};
+    $.post('/reserve', jsonToSend)
+      .done(function() {
+        location.reload();
+    });
+    $('#reserveBoardModal').modal('hide');
   });
 
   $('#editSSDModal').on('show.bs.modal', function (event) {

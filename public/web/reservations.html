@@ -143,22 +143,28 @@
               <tr id="ssdFilterCols">
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
                 <th>User</th>
+                <th id="colBtn"></th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
               <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>Model</th>
                 <th>User</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -172,6 +178,8 @@
               <tr id="memoryFilterCols">
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Manufacturer</th>
                 <th>Physical Size</th>
@@ -181,12 +189,15 @@
                 <th>Capacity</th>
                 <th>Speed</th>
                 <th>User</th>
+                <th id="colBtn"></th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
               <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Manufacturer</th>
                 <th>Physical Size</th>
@@ -196,6 +207,7 @@
                 <th>Capacity</th>
                 <th>Speed</th>
                 <th>User</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -209,20 +221,26 @@
               <tr id="flashFilterCols">
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>User</th>
+                <th id="colBtn"></th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
               <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>Capacity</th>
                 <th>Manufacturer</th>
                 <th>User</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -236,24 +254,30 @@
               <tr id="boardFilterCols">
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>FPGA</th>
                 <th>BIOS</th>
                 <th>MAC Address</th>
                 <th>Fab</th>
                 <th>User</th>
+                <th id="colBtn"></th>
                 <th id="colBtn"></th>
                 <th id="colBtn"></th>
               </tr>
               <tr>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
                 <th>Serial Number</th>
                 <th>FPGA</th>
                 <th>BIOS</th>
                 <th>MAC Address</th>
                 <th>Fab</th>
                 <th>User</th>
+                <th></th>
                 <th></th>
                 <th></th>
               </tr>
@@ -271,7 +295,7 @@
 </div>
 
 <!-- Modals -->
-<div id="reserveModal" class="modal fade" tabindex="-1" role="dialog">
+<div id="reserveCPUModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -285,7 +309,87 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button id="reserveSave" type="button" class="btn btn-primary">Reserve</button>
+        <button id="reserveCPUSave" type="button" class="btn btn-primary">Reserve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reserveSSDModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reserve Item</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div align="center">Would you like to reserve this item?</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="reserveSSDSave" type="button" class="btn btn-primary">Reserve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reserveMemoryModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reserve Item</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div align="center">Would you like to reserve this item?</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="reserveMemorySave" type="button" class="btn btn-primary">Reserve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reserveFlashModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reserve Item</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div align="center">Would you like to reserve this item?</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="reserveFlashSave" type="button" class="btn btn-primary">Reserve</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="reserveBoardModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Reserve Item</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div align="center">Would you like to reserve this item?</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="reserveBoardSave" type="button" class="btn btn-primary">Reserve</button>
       </div>
     </div>
   </div>
