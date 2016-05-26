@@ -122,10 +122,15 @@ background-color: #f5f5f5;
 .camera {
   visibility: hidden;
   position: absolute;
+  top: 0;
 }
 
 .dataTables_filter {
     display: none;
+}
+
+.row-select {
+  background-color: #8B93FF !important;
 }
 
 #inner_camera {

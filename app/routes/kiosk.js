@@ -2,7 +2,9 @@ var rootdir = process.env.ROOT_DIR;
 var request = require('request');
 var models = require(rootdir + '/app/models');
 var fs = require('fs');
-var util = require('util');
+var path = require('path');
+var exec = require('child_process').exec;
+
 require('../templates')();
 
 module.exports = function(app, pool) {
@@ -78,7 +80,40 @@ module.exports = function(app, pool) {
 		 			res.send(results[0][0]);
 		 		});
 		 });
-  });
+  	});
+
+  	app.get('/kiosk/frusers', function(req, res) {
+  		pool.getConnection(function(err, conn) {
+  			conn.query('CALL get_fr_users();', function(error, results, fields) {
+  				if (error) { throw error; }
+  				conn.release();
+
+  				var users = results[0];
+  				var sendToClient = [];
+  				var keepOnServer = [];
+  				// strip the wwid before sending to the client, and keep and index
+  				// on the users. Client will return the index value, which will point
+  				// us to the wwid kept on the server.
+  				for (var i = 0; i < users.length; i++) {
+  					sendToClient.push({
+  						index: i,
+  						first_name: users[i].first_name,
+  						last_name: users[i].last_name
+					});
+
+  					keepOnServer.push({
+  						index: i,
+  						first_name: users[i].first_name,
+  						last_name: users[i].last_name,
+  						wwid: users[i].wwid
+  					});
+  				}
+  				req.session.frUsers = keepOnServer;
+
+  				res.send(sendToClient);
+  			});
+  		});
+  	});
 
 	// After the user is in the cart, get all the saved items.
 	app.get('/kiosk/saveforlater', function(req, res) {
@@ -276,85 +311,103 @@ module.exports = function(app, pool) {
 	 */
 
 	app.use('/kiosk/image', function(req, res, next) {
-		var thewwid = -1;
+		var thewwid = '-1';
 		var rgbUri;
 		var depthUri;
+		var depthVal;
+		var colorVal;
+		const COLOR_THRESHOLD = 3;
+		const DEPTH_THRESHOLD = -16;
 
-		var dir = './tmp';
-		if (!fs.existsSync(dir)){
-		    fs.mkdirSync(dir);
-		}
+		// Clear the current kiosk information (just in case).
+		req.session.kiosk = new models.SessionUser();
 
-		// Get the images just taken by the user.
-		for (var i = 0; i < req.body.images.length; i++) {
-			if (req.body.images[i].type === 'rgb') {
-				var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
-				var buf = new Buffer(raw, 'base64');
-				fs.writeFile('./tmp/rcompare.jpg', buf);
-			}
-			if (req.body.images[i].type === 'depth') {
-				var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
-				var buf = new Buffer(raw, 'base64');
-				fs.writeFile('./tmp/dcompare.jpg', buf);
-			}
-		}
 
-		pool.getConnection(function(err, conn) {
-		 	conn.query('CALL get_all_user_images();', 
-		 		function(error, results, fields) {
-				if(error) {
-					throw error;
+		// Get the user's wwid
+		if (req.session.hasOwnProperty('frUsers')) {
+			for (var i = 0; i < req.session.frUsers.length; i++) {
+				if (req.session.frUsers[i].index === parseInt(req.body.index)) {
+					thewwid = req.session.frUsers[i].wwid;
+					break;
 				}
-				conn.release();
+			}
+		}
 
-				// check images here, get wwid back.
-				for (var i = 0; i < results[0].length; i++) {
-					if (results[0][i].rgb_image_uri && results[0][i].depth_image_uri) {
-						var rawRGB = results[0][i].rgb_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
-						var rawDepth = results[0][i].depth_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+		if (thewwid === '-1') {
+			// Didn't find wwid, abort.
+			res.status(400).send({message: 'could not find user.'});
+		} else {
+			// Create a unique temp folder.
+			mkTmpDir(thewwid, function(folder) {
+				console.log(folder);
+				// Get the images just taken by the user.
+				for (var i = 0; i < req.body.images.length; i++) {
+					if (req.body.images[i].type === 'rgb') {
+						var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
+						var buf = new Buffer(raw, 'base64');
+						fs.writeFile(folder+'/ruser.jpg', buf);
+					}
+					if (req.body.images[i].type === 'depth') {
+						var raw = req.body.images[i].uri.replace(/^data\:image\/\w+\;base64\,/, '');
+						var buf = new Buffer(raw, 'base64');
+						fs.writeFile(folder+'/duser.jpg', buf);
+					}
+				}
+
+				// Get the user's images from the database
+				pool.getConnection(function(err, conn) {
+			 		conn.query('CALL get_user_images('+thewwid+');', 
+				 		function(error, results, fields) {
+						if(error) {
+							throw error;
+						}
+						conn.release();
+
+						// Got the images. Write them to the temp folder.
+						var rawRGB = results[0][0].rgb_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
+						var rawDepth = results[0][0].depth_image_uri.replace(/^data\:image\/\w+\;base64\,/, '');
 
 						var rgbBuffer = new Buffer(rawRGB, 'base64');
 						var depthBuffer = new Buffer(rawDepth, 'base64');
-						fs.writeFile('./tmp/r'+results[0][i].wwid+'.jpg', rgbBuffer);
-						fs.writeFile('./tmp/d'+results[0][i].wwid+'.jpg', depthBuffer);
-					}
+						fs.writeFileSync(folder+'/r.jpg', rgbBuffer);
+						fs.writeFileSync(folder+'/d.jpg', depthBuffer);
 
-					if (i === results[0].length-1) {
+						// Compare here!!!
+						var command_color = 'br -algorithm FaceRecognition -compare '+folder+'/ruser.jpg '+folder+'/r.jpg';
+						var command_depth = 'br -algorithm ImageSimilarity -compare '+folder+'/duser.jpg '+folder+'/d.jpg';
 
-						// delete all the tmp files
-						// fs.readdir('./tmp', function(err, files) {
-						// 	deleteTmpFiles(files, function() {});
-						// });
-
-						if (thewwid === -1) {
-							res.redirect('/kiosk');
-						} else {
-							request.post({url: process.env.CRED_ADDR, form: {'wwid': thewwid}},
-								function(error, response, body) {					
-									if (error) {
-						 				console.log(error);
-						 			}
-						 			// Checking if the user exists in AD.
-						 			if (body !== '') {
-
-						 				req.session.kiosk = new models.SessionUser();
-						 				// We have a user in the AD system. Parse out the wwid.
-						 				req.session.kiosk.wwid = body;
-						 				next();
-						 			} else {
-						 				// No wwid found, send user back to login page.
-						 				res.redirect('/kiosk');
-						 			}
-								});
-						}
-					}
-				}
-
+						exec(command_color, function(erro, stdout, stderr){
+							colorVal = parseFloat(stdout);
+							
+							exec(command_depth, function(erro, stdout, stderr){
+								// We no longer need the images. Remove them.
+								rmdir(folder);
+								
+								depthVal = parseFloat(stdout);
+								if (colorVal > COLOR_THRESHOLD && depthVal > DEPTH_THRESHOLD) {
+									if (process.env.ENV === 'dev') { 
+										console.log(colorVal);
+										console.log(depthVal);
+										console.log("user found");
+									}
+									
+	 								// We have a user in the AD system. Parse out the wwid.
+	 								req.session.kiosk.wwid = thewwid;
+	 								next();
+								} else {
+									if (process.env.ENV === 'dev') {
+										console.log(colorVal);
+										console.log(depthVal);
+										console.log("user not found");
+									}
+									res.end();
+								}
+							});	
+						});
+					});
+			 	});
 			});
-		 });
-
-
-		
+		}
 	}, function(req, res, next) {
 		// We know at this point we have a wwid, so let's try to get the user from our DB.
       	pool.getConnection(function(err, conn) {
@@ -462,17 +515,31 @@ function enforceLogin(req, res, next) {
 	}
 }
 
-function deleteTmpFiles(files, callback){
-  var i = files.length;
-  files.forEach(function(filepath){
-    fs.unlink('./tmp/'+filepath, function(err) {
-      i--;
-      if (err) {
-        callback(err);
-        return;
-      } else if (i <= 0) {
-        callback(null);
-      }
-    });
-  });
+function mkTmpDir(thewwid, callback) {
+	if (!fs.existsSync('./tmp')){
+		fs.mkdirSync('./tmp');
+	}
+	if (!fs.existsSync('./tmp/'+thewwid)) {
+		fs.mkdirSync('./tmp/'+thewwid);
+	}
+	callback('./tmp/'+thewwid);
 }
+
+var rmdir = function(dir) {
+	var list = fs.readdirSync(dir);
+	for(var i = 0; i < list.length; i++) {
+		var filename = path.join(dir, list[i]);
+		var stat = fs.statSync(filename);
+		
+		if(filename == "." || filename == "..") {
+			// pass these files
+		} else if(stat.isDirectory()) {
+			// rmdir recursively
+			rmdir(filename);
+		} else {
+			// rm fiilename
+			fs.unlinkSync(filename);
+		}
+	}
+	fs.rmdirSync(dir);
+};
