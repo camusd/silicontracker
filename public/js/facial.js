@@ -73,6 +73,10 @@ $(document).ready(function() {
     jpeg_quality: 90
   });
 
+  $('#SuccessModal').on('hidden.bs.modal', function(e) {
+    location.reload();
+  });
+
   // Linux cuts off the ends of the camera names, because they are too long.
   // The end of the camera names determine the differences between the cameras.
   // This makes it so we have to determine ourselves which camera is being run.
@@ -125,8 +129,14 @@ $(document).ready(function() {
                   window.location.pathname === '/settings/facial-setup/') {
                 $.post('/web/image', {images: imagesToSend})
                   .done(function() {
-                    alert("images saved!");
-                    location.reload();
+                    // alert("images saved!");
+                    $('#SuccessModal').modal();
+        
+                    // After 5 seconds, close the modal.
+                    setTimeout(function() {
+                      $('#SuccessModal').modal('hide');
+                    }, 5000);
+                    // location.reload();
                   });
               }
 
